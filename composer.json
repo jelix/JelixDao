@@ -1,0 +1,30 @@
+{
+    "name": "jelix/dao",
+    "type": "library",
+    "description": "Lightweight object relation mapping based on the Database Access Object pattern",
+    "keywords": ["database", "orm", "dao"],
+    "homepage": "https://jelix.org",
+    "license": "LGPL-2.1",
+    "authors": [
+        {
+            "name": "Laurent Jouanneau",
+            "email": "laurent@jelix.org"
+        }
+    ],
+    "require": {
+        "php": ">=7.2",
+        "psr/log": "^1.1.2"
+    },
+    "require-dev" : {
+        "phpunit/phpunit": "8.5.*"
+    },
+    "archive": {
+        "exclude": ["/tests"]
+    },
+    "autoload": {
+        "psr-4" : {
+            "Jelix\\Dao\\" : "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}

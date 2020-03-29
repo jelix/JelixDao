@@ -1,0 +1,32 @@
+version: '3'
+services:
+  pgsql:
+    image: postgres:11
+    container_name: jdao_test_pgsql
+    restart: always
+    environment:
+      POSTGRES_DB: jelixtests
+      POSTGRES_USER: jelix
+      POSTGRES_PASSWORD: jelixpass
+    ports:
+      - "8521:5432"
+  mysql:
+    image: mysql
+    container_name: jdao_test_mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: mysqlpass
+      MYSQL_DATABASE: jelixtests
+      MYSQL_USER: jelix
+      MYSQL_PASSWORD: jelixpass
+    ports:
+      - "8522:3306"
+  php:
+    build: ./docker-conf/php
+    container_name: jdao_test_php
+    volumes:
+      - "../:/src/tests/"
+    depends_on:
+      - pgsql
+      - mysql
