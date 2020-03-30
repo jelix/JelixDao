@@ -22,7 +22,7 @@ Then:
 Credentials to access to postgresql:
 
 - host: `localhost`
-- port: 8521
+- port: 8531
 - database: `jelixtests`
 - user: `jelix`
 - password: `jelixpass`
@@ -30,7 +30,7 @@ Credentials to access to postgresql:
 Credentials to access to mysql:
 
 - host: `localhost`
-- port: 8522
+- port: 8532
 - database: `jelixtests`
 - user: `jelix`
 - password: `jelixpass`

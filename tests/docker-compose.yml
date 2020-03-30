@@ -1,4 +1,4 @@
-version: '3'
+version: '3.4'
 services:
   pgsql:
     image: postgres:11
@@ -9,7 +9,9 @@ services:
       POSTGRES_USER: jelix
       POSTGRES_PASSWORD: jelixpass
     ports:
-      - "8521:5432"
+      - "8531:5432"
+    volumes:
+      - jdao_pg_data:/var/lib/postgresql
   mysql:
     image: mysql
     container_name: jdao_test_mysql
@@ -21,7 +23,7 @@ services:
       MYSQL_USER: jelix
       MYSQL_PASSWORD: jelixpass
     ports:
-      - "8522:3306"
+      - "8532:3306"
   php:
     build: ./docker-conf/php
     container_name: jdao_test_php
@@ -30,3 +32,6 @@ services:
     depends_on:
       - pgsql
       - mysql
+volumes:
+  jdao_pg_data:
+    name: jdao_test_pg_data
