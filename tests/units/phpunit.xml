@@ -2,6 +2,7 @@
 <phpunit bootstrap="bootstrap.php">
   <testsuites>
     <testsuite name="Miscellaneous">
+      <directory>parser/</directory>
       <directory>misc/</directory>
     </testsuite>
   </testsuites>

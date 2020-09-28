@@ -13,6 +13,15 @@ namespace Jelix\Dao;
 
 use Jelix\Database\Schema\SqlToolsInterface;
 
+/**
+ * It allows to abstract the environment or framework where JelixDao is used.
+ *
+ * A framework or an application should provides an object that implement this
+ * interface so JelixDao could run.
+ *
+ * @package Jelix\Dao
+ */
+
 interface ContextInterface
 {
     /**
@@ -21,13 +30,27 @@ interface ContextInterface
     function getDbTools();
 
     /**
-     * @param $path
+     * Convert the given path, representing an XML DAO file, to the corresponding
+     * DaoFileInterface object.
+     *
+     * The path can be a system file path, or an URI, or any other structured
+     * name representing the DAO file. The path type depends of the framework
+     * or the environment where JelixDao is used.
+     *
+     * @param string $path
      *
      * @return DaoFileInterface
      */
     function resolveDaoPath($path);
 
     /**
+     * Convert the given path, representing a PHP class implementing a record,
+     * to the corresponding DaoFileInterface object.
+     *
+     * The path can be a system file path, or an URI, or any other structured
+     * name representing the class file. The path type depends of the framework
+     * or the environment where JelixDao is used.
+     *
      * @param $path
      *
      * @return DaoFileInterface

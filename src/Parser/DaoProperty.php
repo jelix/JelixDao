@@ -98,14 +98,14 @@ class DaoProperty
     /**
      * constructor.
      *
-     * @param array      $aAttributes
+     * @param \SimpleXMLElement $aAttributes xml element from which attributes should be read
      * @param XMLDaoParser $parser      the parser on the dao file
      *
      * @throws ParserException
      *
      * @internal param array $attributes list of attributes of a simpleXmlElement
      */
-    public function __construct($aAttributes, XMLDaoParser $parser)
+    public function __construct(\SimpleXMLElement $aAttributes, XMLDaoParser $parser)
     {
         $needed = array('name', 'fieldname', 'table', 'datatype', 'required',
             'minlength', 'maxlength', 'regexp', 'sequence', 'default', 'autoincrement', );

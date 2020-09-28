@@ -111,14 +111,23 @@ class XMLDaoParser
         $this->context = $context;
     }
 
+    /**
+     * @return ContextInterface
+     */
     public function getContext() {
         return $this->context;
     }
 
+    /**
+     * @return DaoFileInterface
+     */
     public function getDaoFile() {
         return $this->daoFile;
     }
 
+    /**
+     * @return bool
+     */
     public function hasOnlyPrimaryKeys() {
         return $this->_hasOnlyPrimaryKeys;
     }
@@ -127,7 +136,6 @@ class XMLDaoParser
      * parse a dao xml content.
      *
      * @param \SimpleXMLElement $xml
-     * @param int              $debug for debug only 0:parse all, 1:parse only datasource+record, 2;parse only datasource
      */
     public function parse(\SimpleXMLElement $xml)
     {
@@ -260,9 +268,9 @@ class XMLDaoParser
         $this->_hasOnlyPrimaryKeys = ($countprop == 0);
     }
 
-    protected function parseFactory($xml)
+    protected function parseFactory(\SimpleXMLElement $xml)
     {
-        // get additionnal methods definition
+        // get additional methods definition
         if (isset($xml->factory)) {
             if (isset($xml->factory[0]['events'])) {
                 $events = (string) $xml->factory[0]['events'];

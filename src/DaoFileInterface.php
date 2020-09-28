@@ -11,6 +11,15 @@
 
 namespace Jelix\Dao;
 
+/**
+ * Interface for objects representing an XML DAO file
+ *
+ * Depending of the framework which is integrate JelixDao, the implementation
+ * should know where to read the content, and where to store the generated
+ * PHP content.
+ *
+ * @package Jelix\Dao
+ */
 interface DaoFileInterface
 {
     /**

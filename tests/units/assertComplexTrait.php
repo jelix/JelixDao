@@ -1,12 +1,13 @@
 <?php
 /**
  * @author      Laurent Jouanneau
- * @copyright   2006-2019 Laurent Jouanneau
+ * @copyright   2006-2020 Laurent Jouanneau
  * @link        https://jelix.org
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
  */
+namespace Jelix\UnitTests;
 
-trait assertComplexTrait
+trait AssertComplexTrait
 {
 
     //    complex equality
