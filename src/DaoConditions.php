@@ -126,11 +126,11 @@ class DaoConditions
      * @param string $operator      the sql operator
      * @param string $value         the value which is compared to the property
      * @param string $field_pattern the pattern to use on the property (WHERE clause)
-     * @param bool   $foo           parameter for internal use : don't use it or set to false
+     * @param bool   $isExpr        parameter for internal use : don't use it or set to false
      *
      * @throws Exception
      */
-    public function addCondition($field_id, $operator, $value, $field_pattern = '%s', $foo = false)
+    public function addCondition($field_id, $operator, $value, $field_pattern = '%s', $isExpr = false, $dbType='')
     {
         $operator = trim(strtoupper($operator));
         if (preg_match('/^[^\w\d\s;\(\)]+$/', $operator) ||
@@ -143,7 +143,10 @@ class DaoConditions
                 'field_id' => $field_id,
                 'field_pattern' => $field_pattern,
                 'value' => $value,
-                'operator' => $operator, 'isExpr' => $foo, );
+                'operator' => $operator,
+                'isExpr' => $isExpr,
+                'dbType' => $dbType
+            );
         } else {
             throw new Exception('Invalid given operator "'.$operator.'"', 503);
         }
