@@ -3,7 +3,7 @@
   <testsuites>
     <testsuite name="Miscellaneous">
       <directory>parser/</directory>
-      <directory>misc/</directory>
+      <directory>frontend/</directory>
     </testsuite>
   </testsuites>
 </phpunit>
