@@ -11,6 +11,7 @@
 namespace Jelix\Dao\Parser;
 
 use Jelix\Dao\ContextInterface;
+use Jelix\Dao\CustomRecordClassFileInterface;
 use Jelix\Dao\DaoFile;
 use Jelix\Dao\DaoFileInterface;
 use Jelix\Database\Schema\AbstractSqlTools;
@@ -79,9 +80,9 @@ class XMLDaoParser
     /**
      * selector of the user record class.
      *
-     * @var DaoFileInterface
+     * @var CustomRecordClassFileInterface
      */
-    private $_userRecord;
+    private $_customRecord;
 
     /**
      * selector of the imported dao.
@@ -168,7 +169,7 @@ class XMLDaoParser
         $this->_ojoins = $parser->getOuterJoins();
         $this->_ijoins = $parser->getInnerJoins();
         $this->_eventList = $parser->getEvents();
-        $this->_userRecord = $parser->getUserRecord();
+        $this->_customRecord = $parser->getCustomRecord();
         $this->_importedDao = $parser->getImportedDao();
         $this->_hasOnlyPrimaryKeys = $parser->hasOnlyPrimaryKeys();
 
@@ -229,7 +230,7 @@ class XMLDaoParser
         //add the record properties
         if (isset($xml->record)) {
             if (isset($xml->record[0]['extends'])) {
-                $this->_userRecord = $this->context->resolveRecordClassPath((string) $xml->record[0]['extends']);
+                $this->_customRecord = $this->context->resolveCustomRecordClassPath((string) $xml->record[0]['extends']);
             }
             if (isset($xml->record[0]->property)) {
                 // don't append directly new properties into _properties,
@@ -459,11 +460,11 @@ class XMLDaoParser
     /**
      * selector of the user record class.
      *
-     * @return DaoFileInterface
+     * @return CustomRecordClassFileInterface
      */
-    public function getUserRecord()
+    public function getCustomRecord()
     {
-        return $this->_userRecord;
+        return $this->_customRecord;
     }
 
     /**

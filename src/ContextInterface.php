@@ -45,7 +45,7 @@ interface ContextInterface
 
     /**
      * Convert the given path, representing a PHP class implementing a record,
-     * to the corresponding DaoFileInterface object.
+     * to the corresponding CustomRecordClassFileInterface object.
      *
      * The path can be a system file path, or an URI, or any other structured
      * name representing the class file. The path type depends of the framework
@@ -53,7 +53,7 @@ interface ContextInterface
      *
      * @param $path
      *
-     * @return DaoFileInterface
+     * @return CustomRecordClassFileInterface
      */
-    function resolveRecordClassPath($path);
+    function resolveCustomRecordClassPath($path);
 }

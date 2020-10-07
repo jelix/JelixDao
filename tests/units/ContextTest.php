@@ -8,12 +8,13 @@
 namespace Jelix\DaoTests;
 
 use Jelix\Dao\ContextInterface;
+use Jelix\Dao\CustomRecordClassFileInterface;
 use Jelix\Dao\DaoFileInterface;
 use \Jelix\Database\AccessParameters;
 use \Jelix\Database\Connection;
 
 
-class FileTest implements DaoFileInterface
+class DaoFileTest implements DaoFileInterface
 {
     protected $name;
 
@@ -42,6 +43,29 @@ class FileTest implements DaoFileInterface
     public function getCompiledFilePath()
     {
         return $this->compilPath;
+    }
+}
+
+class RecordClassTest implements CustomRecordClassFileInterface
+{
+    protected $name;
+
+    protected $path;
+
+    function __construct($name, $path)
+    {
+        $this->name = $name;
+        $this->path = $path;
+    }
+
+    public function getClassName()
+    {
+        return $this->name;
+    }
+
+    public function getPath()
+    {
+        return $this->path;
     }
 }
 
@@ -112,17 +136,16 @@ class ContextTest implements ContextInterface
 
     public function resolveDaoPath($path)
     {
-        return new FileTest($path,
+        return new DaoFileTest($path,
             __DIR__.'/resources/dao/'.$path.'.xml',
             __DIR__.'/tmp/compile.'.$path.'.php'
         );
     }
 
-    public function resolveRecordClassPath($path)
+    public function resolveCustomRecordClassPath($path)
     {
-        return new FileTest($path,
-            __DIR__.'/resources/records/'.$path.'.php',
-            __DIR__.'/tmp/compile-record.'.$path.'.php'
+        return new RecordClassTest($path,
+            __DIR__.'/resources/records/'.$path.'.php'
         );
     }
 }

@@ -17,7 +17,7 @@ class ParseDatasourceTest extends TestCase {
 
     protected function setUp(): void
     {
-        $this->_selector = new \Jelix\DaoTests\FileTest("foo", "bar", "baz");
+        $this->_selector = new \Jelix\DaoTests\DaoFileTest("foo", "bar", "baz");
         $this->_context = new \Jelix\DaoTests\ContextTest("sqlite");
     }
 
