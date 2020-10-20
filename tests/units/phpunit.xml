@@ -3,6 +3,7 @@
   <testsuites>
     <testsuite name="Miscellaneous">
       <directory>parser/</directory>
+      <directory>generator/</directory>
       <directory>frontend/</directory>
     </testsuite>
   </testsuites>

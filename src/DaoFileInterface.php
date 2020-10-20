@@ -23,18 +23,29 @@ namespace Jelix\Dao;
 interface DaoFileInterface
 {
     /**
-     * @return string
+     * A name that allow to identify easily the dao.
+     *
+     * @return string a filename, a URI or another identifier
      */
     function getName();
 
     /**
-     * @return string
+     * @return string path to the Dao file
      */
     function getPath();
 
     /**
-     * @return string
+     * @return string path of a file where to store generated classes
      */
     function getCompiledFilePath();
 
+    /**
+     * @return string name of the factory class that should be used by the generator
+     */
+    function getCompiledFactoryClass();
+
+    /**
+     * @return string name of the record class that should be used by the generator
+     */
+    function getCompiledRecordClass();
 }

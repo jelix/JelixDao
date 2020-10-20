@@ -37,6 +37,8 @@ class DaoCondition
      *            - field_pattern
      *            - value
      *            - operator
+     *            - isExpr
+     *            - dbType ('' or 'mysql', 'pgsql' ...)
      */
     public $conditions = array();
 

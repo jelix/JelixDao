@@ -32,7 +32,15 @@ class DaoMethod
     public $distinct = false;
     public $eventBeforeEnabled = false;
     public $eventAfterEnabled = false;
+
+    /**
+     * @var DaoConditions
+     */
     private $_conditions;
+
+    /**
+     * @var string[]
+     */
     private $_parameters = array();
     private $_parametersDefaultValues = array();
     private $_limit;
@@ -221,11 +229,17 @@ class DaoMethod
         }
     }
 
+    /**
+     * @return DaoConditions
+     */
     public function getConditions()
     {
         return $this->_conditions;
     }
 
+    /**
+     * @return string[]
+     */
     public function getParameters()
     {
         return $this->_parameters;
