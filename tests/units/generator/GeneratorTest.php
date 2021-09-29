@@ -35,14 +35,14 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase {
     protected $_selector;
 
     /**
-     * @var \Jelix\DaoTests\ContextTest
+     * @var \Jelix\DaoTests\ContextForTest
      */
     protected $_context;
 
     protected function setUp(): void
     {
-        $this->_selector = new \Jelix\DaoTests\DaoFileTest("foo", "bar", "baz");
-        $this->_context = new \Jelix\DaoTests\ContextTest("mysql");
+        $this->_selector = new \Jelix\DaoTests\DaoFileForTest("foo", "bar", "baz");
+        $this->_context = new \Jelix\DaoTests\ContextForTest("mysql");
     }
 
     protected function tearDown(): void
@@ -529,7 +529,7 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase {
         </method>
     </factory>
 </dao>';
-        $context = new \Jelix\DaoTests\ContextTest("pgsql");
+        $context = new \Jelix\DaoTests\ContextForTest("pgsql");
         $parser = new \Jelix\Dao\Parser\XMLDaoParser($this->_selector, $context);
         $parser->parse(simplexml_load_string($doc));
         $sqlTools = $context->getDbTools();

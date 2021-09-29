@@ -34,7 +34,7 @@ interface ContextInterface
      * DaoFileInterface object.
      *
      * The path can be a system file path, or an URI, or any other structured
-     * name representing the DAO file. The path type depends of the framework
+     * name representing the DAO file. The path type depends on the framework
      * or the environment where JelixDao is used.
      *
      * @param string $path
@@ -48,7 +48,7 @@ interface ContextInterface
      * to the corresponding CustomRecordClassFileInterface object.
      *
      * The path can be a system file path, or an URI, or any other structured
-     * name representing the class file. The path type depends of the framework
+     * name representing the class file. The path type depends on the framework
      * or the environment where JelixDao is used.
      *
      * @param $path
@@ -56,4 +56,12 @@ interface ContextInterface
      * @return CustomRecordClassFileInterface
      */
     function resolveCustomRecordClassPath($path);
+
+    /**
+     * In the generated class, indicate if the cache should be checked and then
+     * recompiled before loading
+     *
+     * @return boolean
+     */
+    function shouldCheckCompiledClassCache();
 }

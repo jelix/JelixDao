@@ -1,76 +1,17 @@
 <?php
 /**
  * @author      Laurent
- * @copyright   2020 Laurent Jouanneau
+ * @copyright   2020-2021 Laurent Jouanneau
  * @link        https://jelix.org
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
  */
 namespace Jelix\DaoTests;
 
 use Jelix\Dao\ContextInterface;
-use Jelix\Dao\CustomRecordClassFileInterface;
-use Jelix\Dao\DaoFileInterface;
-use \Jelix\Database\AccessParameters;
-use \Jelix\Database\Connection;
+use Jelix\Database\AccessParameters;
+use Jelix\Database\Connection;
 
-
-class DaoFileTest implements DaoFileInterface
-{
-    protected $name;
-
-    protected $path;
-
-    protected $compilPath;
-
-
-    function __construct($name, $path, $compilPath)
-    {
-        $this->name = $name;
-        $this->path = $path;
-        $this->compilPath = $compilPath;
-    }
-
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    public function getPath()
-    {
-        return $this->path;
-    }
-
-    public function getCompiledFilePath()
-    {
-        return $this->compilPath;
-    }
-}
-
-class RecordClassTest implements CustomRecordClassFileInterface
-{
-    protected $name;
-
-    protected $path;
-
-    function __construct($name, $path)
-    {
-        $this->name = $name;
-        $this->path = $path;
-    }
-
-    public function getClassName()
-    {
-        return $this->name;
-    }
-
-    public function getPath()
-    {
-        return $this->path;
-    }
-}
-
-
-class ContextTest implements ContextInterface
+class ContextForTest implements ContextInterface
 {
     /**
      * @var \Jelix\Database\ConnectionInterface
@@ -82,14 +23,15 @@ class ContextTest implements ContextInterface
      */
     protected $dbTools;
 
+
+    protected $checkCompiledCache = true;
+
     /**
      * ContextTest constructor.
      *
      * @param $databaseType
      */
-
-
-    public function __construct($databaseType)
+    public function __construct($databaseType, $checkCompiledCache=true)
     {
         if ($databaseType == 'mysql') {
             $parameters = array(
@@ -127,6 +69,8 @@ class ContextTest implements ContextInterface
         $accessParameters = new AccessParameters($parameters, array('charset'=>'UTF-8'));
         $this->connection = Connection::create($accessParameters);
         $this->dbTools = new $toolsClass($this->connection);
+
+        $this->checkCompiledCache = $checkCompiledCache;
     }
 
     public function getDbTools()
@@ -136,7 +80,7 @@ class ContextTest implements ContextInterface
 
     public function resolveDaoPath($path)
     {
-        return new DaoFileTest($path,
+        return new DaoFileForTest($path,
             __DIR__.'/resources/dao/'.$path.'.xml',
             __DIR__.'/tmp/compile.'.$path.'.php'
         );
@@ -144,9 +88,13 @@ class ContextTest implements ContextInterface
 
     public function resolveCustomRecordClassPath($path)
     {
-        return new RecordClassTest($path,
+        return new RecordClassForTest($path,
             __DIR__.'/resources/records/'.$path.'.php'
         );
+    }
+
+    public function shouldCheckCompiledClassCache() {
+        return $this->checkCompiledCache;
     }
 }
 

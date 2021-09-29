@@ -21,11 +21,15 @@ namespace Jelix\Dao;
 interface CustomRecordClassFileInterface
 {
     /**
+     * The class name
      * @return string
      */
     function getClassName();
 
     /**
+     * Path of the PHP file containing the class. It can be empty if the class
+     * can be autoloaded
+     *
      * @return string
      */
     function getPath();
