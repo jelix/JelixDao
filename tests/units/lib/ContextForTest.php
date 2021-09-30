@@ -10,6 +10,7 @@ namespace Jelix\DaoTests;
 use Jelix\Dao\ContextInterface;
 use Jelix\Database\AccessParameters;
 use Jelix\Database\Connection;
+use Jelix\Database\ConnectionInterface;
 
 class ContextForTest implements ContextInterface
 {
@@ -71,6 +72,14 @@ class ContextForTest implements ContextInterface
         $this->dbTools = new $toolsClass($this->connection);
 
         $this->checkCompiledCache = $checkCompiledCache;
+    }
+
+    /**
+     * @return ConnectionInterface
+     */
+    function getConnector()
+    {
+        return $this->connection;
     }
 
     public function getDbTools()

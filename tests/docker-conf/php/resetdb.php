@@ -37,7 +37,8 @@ while($tryAgain) {
     id serial NOT NULL,
     name character varying(150) NOT NULL,
     price real DEFAULT 0,
-    promo boolean NOT NULL
+    promo boolean NOT NULL,
+    publish_date time with time zone
 )");
 
     pg_query($cnx, "SELECT pg_catalog.setval(pg_catalog.pg_get_serial_sequence('products', 'id'), 1, false)");

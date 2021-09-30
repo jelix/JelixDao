@@ -11,6 +11,7 @@
 
 namespace Jelix\Dao;
 
+use Jelix\Database\ConnectionInterface;
 use Jelix\Database\Schema\SqlToolsInterface;
 
 /**
@@ -24,6 +25,12 @@ use Jelix\Database\Schema\SqlToolsInterface;
 
 interface ContextInterface
 {
+    /**
+     * @return ConnectionInterface
+     */
+    function getConnector();
+
+
     /**
      * @return SqlToolsInterface
      */
