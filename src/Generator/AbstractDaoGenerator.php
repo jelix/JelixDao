@@ -6,7 +6,7 @@
  * @contributor Julien Issler, Guillaume Dugas
  * @contributor Philippe Villiers
  *
- * @copyright  2001-2005 CopixTeam, 2005-2020 Laurent Jouanneau
+ * @copyright  2001-2005 CopixTeam, 2005-2021 Laurent Jouanneau
  * @copyright  2007-2008 Julien Issler
  *
  * @see        https://jelix.org
@@ -71,7 +71,8 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
      */
     public function __construct(
         SqlToolsInterface $tools,
-        XMLDaoParser $daoParser)
+        XMLDaoParser $daoParser
+    )
     {
         $this->_dataParser = $daoParser;
         $this->tools = $tools;
@@ -108,10 +109,14 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         //-----------------------
         $customRecord = $this->_dataParser->getCustomRecord();
         if ($customRecord) {
-            $src[] = ' require_once (\''.$customRecord->getPath().'\');';
+            $customRecordPath = $customRecord->getPath();
+            // if the path is empty, it means the class can be autoloaded
+            if ($customRecordPath) {
+                $src[] = ' require_once (\''.$customRecordPath.'\');';
+            }
             $extendedObject = $customRecord->getClassName();
         } else {
-            $extendedObject = '\Jelix\Dao\AbstractDaoRecordBase';
+            $extendedObject = '\Jelix\Dao\AbstractDaoRecord';
         }
 
         $src[] = "\nclass ".$daoRecordClass.' extends '.$extendedObject.' {';
@@ -127,24 +132,24 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
             }
         }
 
-        $src[] = '   public function getSelector() { return "'.$daoFile->getName().'"; }';
+        $src[] = '   public function getDaoName() { return "'.$daoFile->getName().'"; }';
 
         $src[] = '   public function getProperties() { return '.$daoFactoryClass.'::$_properties; }';
         $src[] = '   public function getPrimaryKeyNames() { return '.$daoFactoryClass.'::$_pkFields; }';
         $src[] = '}';
 
-        //--------------------
-        // Build the dao class
-        //--------------------
+        //----------------------------
+        // Build the dao factory class
+        //----------------------------
 
-        $src[] = "\nclass ".$daoFactoryClass.' extends \Jelix\Dao\AbstractDaoFactoryBase {';
+        $src[] = "\nclass ".$daoFactoryClass.' extends \Jelix\Dao\AbstractDaoFactory {';
         $src[] = '   protected $_tables = '.var_export($tables, true).';';
         $src[] = '   protected $_primaryTable = \''.$this->_dataParser->getPrimaryTable().'\';';
         $src[] = '   protected $_selectClause=\''.$this->sqlSelectClause.'\';';
         $src[] = '   protected $_fromClause;';
         $src[] = '   protected $_whereClause=\''.$this->sqlWhereClause.'\';';
         $src[] = '   protected $_DaoRecordClassName=\''.$daoRecordClass.'\';';
-        $src[] = '   protected $_daoSelector = \''.$daoFile->getName().'\';';
+        $src[] = '   protected $_daoName = \''.$daoFile->getName().'\';';
 
         if ($this->tools->trueValue != '1') {
             $src[] = '   protected $trueValue ='.var_export($this->tools->trueValue, true).';';
@@ -237,12 +242,14 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         } else {
             $fields = $this->_getPropertiesBy('PrimaryTable');
         }
-// FIXME
+
         if ($this->_dataParser->hasEvent('insertbefore') || $this->_dataParser->hasEvent('insert')) {
-            $src[] = '   jEvent::notify("daoInsertBefore", array(\'dao\'=>$this->_daoSelector, \'record\'=>$record));';
+            $src[] = '   if ($this->hook) {';
+            $src[] = '      $this->hook->onInsert($this->_daoName, $record, DaoHookInterface::EVENT_BEFORE);';
+            $src[] = '   }';
         }
 
-        // if there isn't a autoincrement as primary key, then we do a full insert.
+        // if there isn't an autoincrement as primary key, then we do a full insert.
         // if there isn't a value for the autoincrement field and if this is a mysql/sqlserver and pgsql,
         // we do an insert without given primary key. In other case, we do a full insert.
 
@@ -287,9 +294,11 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
                 $src[] = '  $record->'.$prop->name.' = $newrecord->'.$prop->name.';';
             }
         }
-// FIXME
+
         if ($this->_dataParser->hasEvent('insertafter') || $this->_dataParser->hasEvent('insert')) {
-            $src[] = '   jEvent::notify("daoInsertAfter", array(\'dao\'=>$this->_daoSelector, \'record\'=>$record));';
+            $src[] = '   if ($this->hook) {';
+            $src[] = '      $this->hook->onInsert($this->_daoName, $record, DaoHookInterface::EVENT_AFTER);';
+            $src[] = '   }';
         }
 
         $src[] = '    return $result;';
@@ -313,9 +322,10 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         list($fields, $values) = $this->_prepareValues($this->_getPropertiesBy('PrimaryFieldsExcludePk'), 'updatePattern', 'record->');
 
         if (count($fields)) {
-// FIXME
             if ($this->_dataParser->hasEvent('updatebefore') || $this->_dataParser->hasEvent('update')) {
-                $src[] = '   jEvent::notify("daoUpdateBefore", array(\'dao\'=>$this->_daoSelector, \'record\'=>$record));';
+                $src[] = '   if ($this->hook) {';
+                $src[] = '      $this->hook->onUpdate($this->_daoName, $record, DaoHookInterface::EVENT_BEFORE);';
+                $src[] = '   }';
             }
 
             $src[] = '   $query = \'UPDATE '.$this->tableRealNameEsc.' SET ';
@@ -349,9 +359,11 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
                 $src[] = '  $rs  =  $this->_conn->query ($query, jDbConnection::FETCH_INTO, $record);';
                 $src[] = '  $record =  $rs->fetch ();';
             }
-// FIXME
+
             if ($this->_dataParser->hasEvent('updateafter') || $this->_dataParser->hasEvent('update')) {
-                $src[] = '   jEvent::notify("daoUpdateAfter", array(\'dao\'=>$this->_daoSelector, \'record\'=>$record));';
+                $src[] = '   if ($this->hook) {';
+                $src[] = '      $this->hook->onUpdate($this->_daoName, $record, DaoHookInterface::EVENT_AFTER);';
+                $src[] = '   }';
             }
 
             $src[] = '   return $result;';
@@ -359,8 +371,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
             //the dao is mapped on a table which contains only primary key : update is impossible
             // so we will generate an error on update
             $daoFile = $this->_dataParser->getDaoFile();
-// FIXME
-            $src[] = "     throw new jException('jelix~dao.error.update.impossible',array('".$daoFile->getName()."','".$daoFile->getPath()."'));";
+            $src[] = "     throw new \\Jelix\\Dao\\Generator\\Exception('(502)Update is impossible with this dao because table contains only primary keys (DAO: ".$daoFile->getName().", file: ".$daoFile->getPath().")');";
         }
 
         $src[] = ' }'; //ends the update function
@@ -434,17 +445,18 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
                 case 'update':
                     if ($method->eventBeforeEnabled || $method->eventAfterEnabled) {
                         $src[] = '   $args = func_get_args();';
-                        $methname = ($method->type == 'update' ? 'Update' : 'Delete');
                         if ($method->eventBeforeEnabled) {
-// FIXME
-                            $src[] = '   jEvent::notify("daoSpecific'.$methname.'Before", array(\'dao\'=>$this->_daoSelector,\'method\'=>\''.
-                            $method->name.'\', \'params\'=>$args));';
+                            $src[] = '   if ($this->hook) {';
+                            $src[] = '      $this->hook->onCustomMethod($this->_daoName, \''.$method->name.'\', $args, DaoHookInterface::EVENT_BEFORE);';
+                            $src[] = '   }';
                         }
                         if ($method->eventAfterEnabled) {
                             $src[] = '   $result = $this->_conn->exec ($__query);';
-// FIXME
-                            $src[] = '   jEvent::notify("daoSpecific'.$methname.'After", array(\'dao\'=>$this->_daoSelector,\'method\'=>\''.
-                                $method->name.'\', \'params\'=>$args));';
+
+                            $src[] = '   if ($this->hook) {';
+                            $src[] = '      $this->hook->onCustomMethod($this->_daoName, \''.$method->name.'\', $args, DaoHookInterface::EVENT_AFTER);';
+                            $src[] = '   }';
+
                             $src[] = '   return $result;';
                         } else {
                             $src[] = '    return $this->_conn->exec ($__query);';
@@ -1192,10 +1204,9 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
             case 'numeric':
             case 'decimal':
                 if ($checknull) {
-//FIXME
-                    $expr = '('.$expr.' === null ? \''.$opnull.'NULL\' : '.$forCondition.'jDb::floatToStr('.$expr.'))';
+                    $expr = '('.$expr.' === null ? \''.$opnull.'NULL\' : '.$forCondition.'\\Jelix\Database\\Utilities::floatToStr('.$expr.'))';
                 } else {
-                    $expr = $forCondition.'jDb::floatToStr('.$expr.')';
+                    $expr = $forCondition.'\\Jelix\Database\\Utilities::floatToStr('.$expr.')';
                 }
 
                 break;
@@ -1234,8 +1245,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
             case 'float':
             case 'numeric':
             case 'decimal':
-// FIXME
-                return 'function($__e){return jDb::floatToStr($__e);}';
+                return 'function($__e){return \\Jelix\Database\\Utilities::floatToStr($__e);}';
             case 'boolean':
                 return 'array($this, \'_callbackBool\')';
             default:

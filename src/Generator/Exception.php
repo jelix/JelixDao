@@ -11,7 +11,6 @@
  */
 namespace Jelix\Dao\Generator;
 
-
 /**
  * Exception for Dao compiler.
  *

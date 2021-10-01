@@ -10,7 +10,6 @@
 
 namespace Jelix\Dao;
 
-
 use Jelix\Database\ConnectionInterface;
 use Jelix\FileUtilities\Path;
 
@@ -25,7 +24,8 @@ class Context implements ContextInterface
 
     protected $tempPath;
 
-    function __construct(ConnectionInterface $connection, $tempPath, $daosDirectory = '') {
+    public function __construct(ConnectionInterface $connection, $tempPath, $daosDirectory = '')
+    {
         $this->connection = $connection;
         $this->tempPath = $tempPath;
         $this->basePath = $daosDirectory;
@@ -34,7 +34,7 @@ class Context implements ContextInterface
     /**
      * @return ConnectionInterface
      */
-    function getConnector()
+    public function getConnector()
     {
         return $this->connection;
     }
@@ -58,7 +58,7 @@ class Context implements ContextInterface
         if (!preg_match("/\\.xml$/", $path)) {
             $path .= '.xml';
         }
-        return new DaoSimpleFile($path, $this->tempPath);
+        return new DaoSimpleFile($path, $this->connection->getSQLType(), $this->tempPath);
     }
 
     /**

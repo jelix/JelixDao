@@ -24,7 +24,7 @@ interface CustomRecordClassFileInterface
      * The class name
      * @return string
      */
-    function getClassName();
+    public function getClassName();
 
     /**
      * Path of the PHP file containing the class. It can be empty if the class
@@ -32,6 +32,5 @@ interface CustomRecordClassFileInterface
      *
      * @return string
      */
-    function getPath();
-
+    public function getPath();
 }

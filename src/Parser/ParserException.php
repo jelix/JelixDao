@@ -32,8 +32,8 @@ class ParserException extends \UnexpectedValueException
         $this->message = $message . ' (dao: '.$daoFile->getName().', file: '.$daoFile->getPath().')';
     }
 
-    public function getDao() {
+    public function getDao()
+    {
         return $this->daoFile;
     }
-
 }

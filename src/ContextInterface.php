@@ -28,13 +28,13 @@ interface ContextInterface
     /**
      * @return ConnectionInterface
      */
-    function getConnector();
+    public function getConnector();
 
 
     /**
      * @return SqlToolsInterface
      */
-    function getDbTools();
+    public function getDbTools();
 
     /**
      * Convert the given path, representing an XML DAO file, to the corresponding
@@ -48,7 +48,7 @@ interface ContextInterface
      *
      * @return DaoFileInterface
      */
-    function resolveDaoPath($path);
+    public function resolveDaoPath($path);
 
     /**
      * Convert the given path, representing a PHP class implementing a record,
@@ -62,7 +62,7 @@ interface ContextInterface
      *
      * @return CustomRecordClassFileInterface
      */
-    function resolveCustomRecordClassPath($path);
+    public function resolveCustomRecordClassPath($path);
 
     /**
      * In the generated class, indicate if the cache should be checked and then
@@ -70,5 +70,5 @@ interface ContextInterface
      *
      * @return boolean
      */
-    function shouldCheckCompiledClassCache();
+    public function shouldCheckCompiledClassCache();
 }

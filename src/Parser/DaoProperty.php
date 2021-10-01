@@ -168,8 +168,7 @@ class DaoProperty
                 $this->sequenceName = $params['sequence'];
                 $this->autoIncrement = true;
             }
-        }
-        else if ($this->autoIncrement) {
+        } elseif ($this->autoIncrement) {
             throw new ParserException($parser->getDaoFile(), 'property "'.$this->fieldName.'" non numeric cannot be auto incremented', 535);
         }
 

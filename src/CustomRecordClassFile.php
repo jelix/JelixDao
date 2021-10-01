@@ -11,7 +11,7 @@
 
 namespace Jelix\Dao;
 
-class CustomRecordClassFile implements  CustomRecordClassFileInterface
+class CustomRecordClassFile implements CustomRecordClassFileInterface
 {
     protected $path;
 

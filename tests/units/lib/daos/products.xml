@@ -6,9 +6,50 @@
    <record>
       <property name="id"   fieldname="id" datatype="autoincrement"/>
       <property name="name" fieldname="name" datatype="string"  required="true"/>
-      <property name="price" fieldname="price" datatype="float"/>
-      <property name="promo" fieldname="promo" datatype="boolean"/>
-      <property name="publish_date" datatype="date" />
+      <property name="price" fieldname="price" datatype="float" default="0" required="true"/>
+      <property name="create_date" fieldname="create_date" datatype="datetime" insertpattern="NOW()" />
+      <property name="promo" fieldname="promo" datatype="boolean" required="true" default="false"/>
+      <property name="dummy" fieldname="dummy" datatype="string" />
    </record>
+   <factory>
+      <method name="findByMaxId" type="select">
+         <parameter name="maxId" />
+         <conditions>
+            <lt property="id" expr="$maxId" />
+         </conditions>
+      </method>
+      <method name="findBetweenId" type="select">
+         <parameter name="minId" />
+         <parameter name="maxId" />
+         <conditions>
+            <gt property="id" expr="$minId" />
+            <lt property="id" expr="$maxId" />
+         </conditions>
+      </method>
+      <method name="findOrderPrice" type="select">
+         <order>
+            <orderitem property="price" way="asc" />
+            <orderitem property="name" way="asc" />
+         </order>
+      </method>
+      <method name="findFourchette" type="select">
+         <conditions>
+            <eq property="name" value="fourchette" />
+         </conditions>
+      </method>
+
+      <method name="findStarted" type="select">
+         <conditions>
+            <eq property="dummy" value="started" />
+         </conditions>
+      </method>
+
+      <method name="findBySomeNames" type="select">
+         <parameter name="names" default="fourchette" />
+         <conditions>
+            <in property="name" expr="$names" />
+         </conditions>
+      </method>
+   </factory>
 </dao>
 

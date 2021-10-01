@@ -115,21 +115,24 @@ class XMLDaoParser
     /**
      * @return ContextInterface
      */
-    public function getContext() {
+    public function getContext()
+    {
         return $this->context;
     }
 
     /**
      * @return DaoFileInterface
      */
-    public function getDaoFile() {
+    public function getDaoFile()
+    {
         return $this->daoFile;
     }
 
     /**
      * @return bool
      */
-    public function hasOnlyPrimaryKeys() {
+    public function hasOnlyPrimaryKeys()
+    {
         return $this->_hasOnlyPrimaryKeys;
     }
 

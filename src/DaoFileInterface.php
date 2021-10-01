@@ -27,25 +27,25 @@ interface DaoFileInterface
      *
      * @return string a filename, a URI or another identifier
      */
-    function getName();
+    public function getName();
 
     /**
      * @return string path to the Dao file
      */
-    function getPath();
+    public function getPath();
 
     /**
      * @return string path of a file where to store generated classes
      */
-    function getCompiledFilePath();
+    public function getCompiledFilePath();
 
     /**
      * @return string name of the factory class that should be used by the generator
      */
-    function getCompiledFactoryClass();
+    public function getCompiledFactoryClass();
 
     /**
      * @return string name of the record class that should be used by the generator
      */
-    function getCompiledRecordClass();
+    public function getCompiledRecordClass();
 }

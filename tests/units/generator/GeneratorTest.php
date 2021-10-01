@@ -70,28 +70,28 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals('intval($foo)',$this->_getProp('integer','$foo', false));
         $this->assertEquals('intval($foo)',$this->_getProp('autoincrement','$foo', false));
         $this->assertEquals('$this->_conn->quote($foo)',$this->_getProp('string','$foo', false));
-        $this->assertEquals('jDb::floatToStr($foo)',$this->_getProp('double','$foo', false));
-        $this->assertEquals('jDb::floatToStr($foo)',$this->_getProp('float','$foo', false));
-        $this->assertEquals('jDb::floatToStr($foo)',$this->_getProp('numeric','$foo', false));
-        $this->assertEquals('jDb::floatToStr($foo)',$this->_getProp('bigautoincrement','$foo', false));
+        $this->assertEquals('\\Jelix\\Database\\Utilities::floatToStr($foo)',$this->_getProp('double','$foo', false));
+        $this->assertEquals('\\Jelix\\Database\\Utilities::floatToStr($foo)',$this->_getProp('float','$foo', false));
+        $this->assertEquals('\\Jelix\\Database\\Utilities::floatToStr($foo)',$this->_getProp('numeric','$foo', false));
+        $this->assertEquals('\\Jelix\\Database\\Utilities::floatToStr($foo)',$this->_getProp('bigautoincrement','$foo', false));
 
         // with checknull 
         $this->assertEquals('($foo === null ? \'NULL\' : intval($foo))',$this->_getProp('integer','$foo', true));
         $this->assertEquals('($foo === null ? \'NULL\' : intval($foo))',$this->_getProp('autoincrement','$foo', true));
         $this->assertEquals('($foo === null ? \'NULL\' : $this->_conn->quote2($foo,false))',$this->_getProp('string','$foo', true));
-        $this->assertEquals('($foo === null ? \'NULL\' : jDb::floatToStr($foo))',$this->_getProp('double','$foo', true));
-        $this->assertEquals('($foo === null ? \'NULL\' : jDb::floatToStr($foo))',$this->_getProp('float','$foo', true));
-        $this->assertEquals('($foo === null ? \'NULL\' : jDb::floatToStr($foo))',$this->_getProp('numeric','$foo', true));
-        $this->assertEquals('($foo === null ? \'NULL\' : jDb::floatToStr($foo))',$this->_getProp('bigautoincrement','$foo', true));
+        $this->assertEquals('($foo === null ? \'NULL\' : \\Jelix\\Database\\Utilities::floatToStr($foo))',$this->_getProp('double','$foo', true));
+        $this->assertEquals('($foo === null ? \'NULL\' : \\Jelix\\Database\\Utilities::floatToStr($foo))',$this->_getProp('float','$foo', true));
+        $this->assertEquals('($foo === null ? \'NULL\' : \\Jelix\\Database\\Utilities::floatToStr($foo))',$this->_getProp('numeric','$foo', true));
+        $this->assertEquals('($foo === null ? \'NULL\' : \\Jelix\\Database\\Utilities::floatToStr($foo))',$this->_getProp('bigautoincrement','$foo', true));
 
         // with checknull and operator =
         $this->assertEquals('($foo === null ? \'IS NULL\' : \' = \'.intval($foo))',$this->_getProp('integer','$foo', true,'='));
         $this->assertEquals('($foo === null ? \'IS NULL\' : \' = \'.intval($foo))',$this->_getProp('autoincrement','$foo', true,'='));
         $this->assertEquals('($foo === null ? \'IS NULL\' : \' = \'.$this->_conn->quote2($foo,false))',$this->_getProp('string','$foo', true,'='));
-        $this->assertEquals('($foo === null ? \'IS NULL\' : \' = \'.jDb::floatToStr($foo))',$this->_getProp('double','$foo', true,'='));
-        $this->assertEquals('($foo === null ? \'IS NULL\' : \' = \'.jDb::floatToStr($foo))',$this->_getProp('float','$foo', true,'='));
-        $this->assertEquals('($foo === null ? \'IS NULL\' : \' = \'.jDb::floatToStr($foo))',$this->_getProp('numeric','$foo', true,'='));
-        $this->assertEquals('($foo === null ? \'IS NULL\' : \' = \'.jDb::floatToStr($foo))',$this->_getProp('bigautoincrement','$foo', true,'='));
+        $this->assertEquals('($foo === null ? \'IS NULL\' : \' = \'.\\Jelix\\Database\\Utilities::floatToStr($foo))',$this->_getProp('double','$foo', true,'='));
+        $this->assertEquals('($foo === null ? \'IS NULL\' : \' = \'.\\Jelix\\Database\\Utilities::floatToStr($foo))',$this->_getProp('float','$foo', true,'='));
+        $this->assertEquals('($foo === null ? \'IS NULL\' : \' = \'.\\Jelix\\Database\\Utilities::floatToStr($foo))',$this->_getProp('numeric','$foo', true,'='));
+        $this->assertEquals('($foo === null ? \'IS NULL\' : \' = \'.\\Jelix\\Database\\Utilities::floatToStr($foo))',$this->_getProp('bigautoincrement','$foo', true,'='));
 
         // with checknull with default value and operator =
         /*$prop->defaultValue=34;
@@ -128,13 +128,13 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase {
         $result = $this->_getProp('string','$foo', true,'<>');
         $this->assertEquals('($foo === null ? \'IS NOT NULL\' : \' <> \'.$this->_conn->quote2($foo,false))',$result);
         $result = $this->_getProp('double','$foo', true,'<>');
-        $this->assertEquals('($foo === null ? \'IS NOT NULL\' : \' <> \'.jDb::floatToStr($foo))',$result);
+        $this->assertEquals('($foo === null ? \'IS NOT NULL\' : \' <> \'.\\Jelix\\Database\\Utilities::floatToStr($foo))',$result);
         $result = $this->_getProp('float','$foo', true,'<>');
-        $this->assertEquals('($foo === null ? \'IS NOT NULL\' : \' <> \'.jDb::floatToStr($foo))',$result);
+        $this->assertEquals('($foo === null ? \'IS NOT NULL\' : \' <> \'.\\Jelix\\Database\\Utilities::floatToStr($foo))',$result);
         $result = $this->_getProp('numeric','$foo', true,'<>');
-        $this->assertEquals('($foo === null ? \'IS NOT NULL\' : \' <> \'.jDb::floatToStr($foo))',$result);
+        $this->assertEquals('($foo === null ? \'IS NOT NULL\' : \' <> \'.\\Jelix\\Database\\Utilities::floatToStr($foo))',$result);
         $result = $this->_getProp('bigautoincrement','$foo', true,'<>');
-        $this->assertEquals('($foo === null ? \'IS NOT NULL\' : \' <> \'.jDb::floatToStr($foo))',$result);
+        $this->assertEquals('($foo === null ? \'IS NOT NULL\' : \' <> \'.\\Jelix\\Database\\Utilities::floatToStr($foo))',$result);
 
         // with checknull and other operator <=
         $result = $this->_getProp('integer','$foo', true,'<=');
@@ -144,13 +144,13 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase {
         $result = $this->_getProp('string','$foo', true,'<=');
         $this->assertEquals('\' <= \'.$this->_conn->quote($foo)',$result);
         $result = $this->_getProp('double','$foo', true,'<=');
-        $this->assertEquals('\' <= \'.jDb::floatToStr($foo)',$result);
+        $this->assertEquals('\' <= \'.\\Jelix\\Database\\Utilities::floatToStr($foo)',$result);
         $result = $this->_getProp('float','$foo', true,'<=');
-        $this->assertEquals('\' <= \'.jDb::floatToStr($foo)',$result);
+        $this->assertEquals('\' <= \'.\\Jelix\\Database\\Utilities::floatToStr($foo)',$result);
         $result = $this->_getProp('numeric','$foo', true,'<=');
-        $this->assertEquals('\' <= \'.jDb::floatToStr($foo)',$result);
+        $this->assertEquals('\' <= \'.\\Jelix\\Database\\Utilities::floatToStr($foo)',$result);
         $result = $this->_getProp('bigautoincrement','$foo', true,'<=');
-        $this->assertEquals('\' <= \'.jDb::floatToStr($foo)',$result);
+        $this->assertEquals('\' <= \'.\\Jelix\\Database\\Utilities::floatToStr($foo)',$result);
 
         // with checknull and other operator LIKE
         $result = $this->_getProp('integer','$foo', true,'LIKE');
@@ -803,8 +803,8 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase {
         $generator->GetBuildUpdateUserQuery($methods['test'], $src, $primaryFields);
         
         $this->assertEquals('    $__query = \'UPDATE  SET '."\n".
-            ' `price`= \'.($price === null ? \'NULL\' : jDb::floatToStr($price)).\','.
-            ' `price_big`= \'.($price_big === null ? \'NULL\' : jDb::floatToStr($price_big)).\','.
+            ' `price`= \'.($price === null ? \'NULL\' : \\Jelix\\Database\\Utilities::floatToStr($price)).\','.
+            ' `price_big`= \'.($price_big === null ? \'NULL\' : \\Jelix\\Database\\Utilities::floatToStr($price_big)).\','.
             ' `name`= concat(name, \'.($price === null ? \'NULL\' : $this->_conn->quote2($price,false)).\')\';'
             , implode("\n",$src));
     }

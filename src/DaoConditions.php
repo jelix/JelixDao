@@ -17,7 +17,6 @@
  */
 namespace Jelix\Dao;
 
-
 /**
  * container for all criteria of a query.
  */

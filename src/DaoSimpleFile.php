@@ -13,20 +13,23 @@ namespace Jelix\Dao;
 
 class DaoSimpleFile implements DaoFileInterface
 {
-
     protected $daoFile;
 
     protected $tempPath;
 
+    protected $sqlType;
+
     /**
      * DaoSimpleFile constructor.
      * @param string $daoXmlFile the path to the dao file
+     * @param string $sqlType type of the sql language (pgsql, sqlite, mysql...)
      * @param string $tempPath directory where to store the compiled file
      */
-    function __construct($daoXmlFile, $tempPath)
+    public function __construct($daoXmlFile, $sqlType, $tempPath)
     {
         $this->daoFile = $daoXmlFile;
         $this->tempPath = $tempPath;
+        $this->sqlType = ucfirst($sqlType);
     }
 
     /**
@@ -34,7 +37,7 @@ class DaoSimpleFile implements DaoFileInterface
      *
      * @return string a filename, a URI or another identifier
      */
-    function getName()
+    public function getName()
     {
         return basename($this->daoFile);
     }
@@ -42,7 +45,7 @@ class DaoSimpleFile implements DaoFileInterface
     /**
      * @return string path to the Dao file
      */
-    function getPath()
+    public function getPath()
     {
         return $this->daoFile;
     }
@@ -50,24 +53,24 @@ class DaoSimpleFile implements DaoFileInterface
     /**
      * @return string path of a file where to store generated classes
      */
-    function getCompiledFilePath()
+    public function getCompiledFilePath()
     {
-        return $this->tempPath.'/'.$this->getName().'.php';
+        return $this->tempPath.'/'.$this->getName().'.'.$this->sqlType.'.php';
     }
 
     /**
      * @return string name of the factory class that should be used by the generator
      */
-    function getCompiledFactoryClass()
+    public function getCompiledFactoryClass()
     {
-        return ucfirst(str_replace('.xml', '', $this->getName())).'Factory';
+        return ucfirst(str_replace('.xml', '', $this->getName())).$this->sqlType.'Factory';
     }
 
     /**
      * @return string name of the record class that should be used by the generator
      */
-    function getCompiledRecordClass()
+    public function getCompiledRecordClass()
     {
-        return ucfirst(str_replace('.xml', '', $this->getName())).'Record';
+        return ucfirst(str_replace('.xml', '', $this->getName())).$this->sqlType.'Record';
     }
 }

@@ -4,7 +4,7 @@
  * @contributor Gwendal Jouannic
  * @contributor Philippe Villiers
  *
- * @copyright  2007-2020 Laurent Jouanneau, 2013 Philippe Villiers
+ * @copyright  2007-2021 Laurent Jouanneau, 2013 Philippe Villiers
  *
  * @see      http://www.jelix.org
  * @licence  http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
@@ -98,9 +98,11 @@ class OciDaoGenerator extends \Jelix\Dao\Generator\AbstractDaoGenerator
 
         $src = array();
         $src[] = 'public function insert ($record){';
-// FIXME
+
         if ($this->_dataParser->hasEvent('insertbefore') || $this->_dataParser->hasEvent('insert')) {
-            $src[] = '   jEvent::notify("daoInsertBefore", array(\'dao\'=>$this->_daoSelector, \'record\'=>$record));';
+            $src[] = '   if ($this->hook) {';
+            $src[] = '      $this->hook->onInsert($this->_daoName, $record, DaoHookInterface::EVENT_BEFORE);';
+            $src[] = '   }';
         }
 
         $src[] = '    $query = \'INSERT INTO '.$this->tableRealNameEsc.' (';
@@ -213,9 +215,11 @@ class OciDaoGenerator extends \Jelix\Dao\Generator\AbstractDaoGenerator
                 $src[] = '  $record->'.$prop->name.' = $newrecord->'.$prop->name.';';
             }
         }
-// FIXME
+
         if ($this->_dataParser->hasEvent('insertafter') || $this->_dataParser->hasEvent('insert')) {
-            $src[] = '   jEvent::notify("daoInsertAfter", array(\'dao\'=>$this->_daoSelector, \'record\'=>$record));';
+            $src[] = '   if ($this->hook) {';
+            $src[] = '      $this->hook->onInsert($this->_daoName, $record, DaoHookInterface::EVENT_AFTER);';
+            $src[] = '   }';
         }
 
         $src[] = '    return $result;';
@@ -240,9 +244,11 @@ class OciDaoGenerator extends \Jelix\Dao\Generator\AbstractDaoGenerator
         $fieldsObj = $this->_getPropertiesBy('PrimaryFieldsExcludePk');
 
         if (count($fields)) {
-//FIXME
+
             if ($this->_dataParser->hasEvent('updatebefore') || $this->_dataParser->hasEvent('update')) {
-                $src[] = '   jEvent::notify("daoUpdateBefore", array(\'dao\'=>$this->_daoSelector, \'record\'=>$record));';
+                $src[] = '   if ($this->hook) {';
+                $src[] = '      $this->hook->onUpdate($this->_daoName, $record, DaoHookInterface::EVENT_BEFORE);';
+                $src[] = '   }';
             }
 
             $src[] = '   $query = \'UPDATE '.$this->tableRealNameEsc.' SET ';
@@ -311,18 +317,19 @@ class OciDaoGenerator extends \Jelix\Dao\Generator\AbstractDaoGenerator
                 $src[] = '  $rs  =  $this->_conn->query ($query, jDbConnection::FETCH_INTO, $record);';
                 $src[] = '  $record =  $rs->fetch ();';
             }
-// FIXME
+
             if ($this->_dataParser->hasEvent('updateafter') || $this->_dataParser->hasEvent('update')) {
-                $src[] = '   jEvent::notify("daoUpdateAfter", array(\'dao\'=>$this->_daoSelector, \'record\'=>$record));';
+                $src[] = '   if ($this->hook) {';
+                $src[] = '      $this->hook->onUpdate($this->_daoName, $record, DaoHookInterface::EVENT_AFTER);';
+                $src[] = '   }';
             }
 
             $src[] = '   return $result;';
         } else {
-// FIXME
             //the dao is mapped on a table which contains only primary key : update is impossible
             // so we will generate an error on update
-            $src[] = "     throw new jException('jelix~dao.error.update.impossible',array('".$this->_daoId."','".$this->_daoPath."'));";
-        }
+            $daoFile = $this->_dataParser->getDaoFile();
+            $src[] = "     throw new \\Jelix\\Dao\\Generator\\Exception('(502)Update is impossible with this dao because table contains only primary keys (DAO: ".$daoFile->getName().", file: ".$daoFile->getPath().")');";        }
 
         $src[] = ' }'; //ends the update function
         return implode("\n", $src);
