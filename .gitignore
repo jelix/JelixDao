@@ -4,7 +4,7 @@ vendor/
 composer.lock
 tests/units/.phpunit.result.cache
 tests/units/tests.sqlite3
-tests/temp/*
-!tests/temp/.dummy
+tests/tmp/*
+!tests/tmp/.dummy
 .idea
 .php_cs.cache

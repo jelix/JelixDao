@@ -12,10 +12,10 @@ while($tryAgain) {
     }
     $tryAgain = false;
     pg_query($cnx, "drop table if exists products");
-    pg_query($cnx, "drop table if exists product_test");
     pg_query($cnx, "drop table if exists labels_test");
+    pg_query($cnx, "drop table if exists jsessions");
 
-    pg_query($cnx, "CREATE TABLE product_test (
+    pg_query($cnx, "CREATE TABLE products (
         id serial NOT NULL,
         name character varying(150) NOT NULL,
         price real NOT NULL,
@@ -24,7 +24,7 @@ while($tryAgain) {
         dummy character varying (10) NULL CONSTRAINT dummy_check CHECK (dummy IN ('created','started','stopped'))
     )");
 
-    pg_query($cnx, "SELECT pg_catalog.setval(pg_catalog.pg_get_serial_sequence('product_test', 'id'), 1, false)");
+    pg_query($cnx, "SELECT pg_catalog.setval(pg_catalog.pg_get_serial_sequence('products', 'id'), 1, false)");
 
     pg_query($cnx, "CREATE TABLE labels_test (
     \"key\" integer NOT NULL,
@@ -33,26 +33,23 @@ while($tryAgain) {
     label character varying(50) NOT NULL
 )");
 
-    pg_query($cnx, "CREATE TABLE products (
-    id serial NOT NULL,
-    name character varying(150) NOT NULL,
-    price real DEFAULT 0,
-    promo boolean NOT NULL,
-    publish_date time with time zone
+    pg_query($cnx, "CREATE TABLE jsessions (
+    id character varying(64) NOT NULL,
+    creation timestamp NOT NULL,
+    \"access\" timestamp NOT NULL,
+    data bytea NOT NULL
 )");
 
-    pg_query($cnx, "SELECT pg_catalog.setval(pg_catalog.pg_get_serial_sequence('products', 'id'), 1, false)");
+
+             pg_query($cnx, "SELECT pg_catalog.setval(pg_catalog.pg_get_serial_sequence('products', 'id'), 1, false)");
 
     pg_query($cnx, "ALTER TABLE ONLY labels_test ADD CONSTRAINT labels_test_pkey PRIMARY KEY (\"key\", lang)");
 
-
     pg_query($cnx, "ALTER TABLE ONLY labels_test ADD CONSTRAINT labels_test_keyalias UNIQUE (\"keyalias\")");
 
-
-    pg_query($cnx, "ALTER TABLE ONLY product_test ADD CONSTRAINT product_test_pkey PRIMARY KEY (id)");
-
-
     pg_query($cnx, "ALTER TABLE ONLY products ADD CONSTRAINT products_pkey PRIMARY KEY (id)");
+
+    pg_query($cnx, "ALTER TABLE ONLY jsessions ADD CONSTRAINT jsession_pkey PRIMARY KEY (id)");
 
     pg_close($cnx);
 }
@@ -71,10 +68,10 @@ while ($tryAgain) {
 
     $tryAgain = false;
     $cnx->query('drop table if exists products');
-    $cnx->query('drop table if exists product_test');
     $cnx->query('drop table if exists labels_test');
+    $cnx->query('drop table if exists jsessions');
 
-    $cnx->query("CREATE TABLE IF NOT EXISTS `product_test` (
+    $cnx->query("CREATE TABLE IF NOT EXISTS `products` (
 `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
 `name` VARCHAR( 150 ) NOT NULL ,
 `price` FLOAT NOT NULL,
@@ -92,13 +89,13 @@ PRIMARY KEY ( `key` , `lang` ),
 UNIQUE (`keyalias`)
 ) ENGINE=InnoDb");
 
-    $cnx->query("CREATE TABLE IF NOT EXISTS `products` (
-`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-`name` VARCHAR( 150 ) NOT NULL ,
-`price` FLOAT   default '0',
-`promo` BOOL NOT NULL,
-`publish_date` DATE NOT NULL
-) ENGINE = InnoDb");
+    $cnx->query("CREATE TABLE  IF NOT EXISTS `jsessions` (
+  `id` varchar(64) NOT NULL,
+  `creation` datetime NOT NULL,
+  `access` datetime NOT NULL,
+  `data` longblob NOT NULL,
+  PRIMARY KEY  (`id`)
+) DEFAULT CHARSET=utf8;");
 
     $cnx->close();
 }
@@ -116,7 +113,7 @@ if (file_exists($SQLITE_FILE)) {
 }
 
 $sqlite = new Sqlite3($SQLITE_FILE);
-$sqlite->exec("CREATE TABLE product_test (
+$sqlite->exec("CREATE TABLE products (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR( 150 ) NOT NULL ,
     price FLOAT NOT NULL,
@@ -124,18 +121,20 @@ $sqlite->exec("CREATE TABLE product_test (
     promo BOOL NOT NULL default 0,
     dummy varchar(10) DEFAULT NULL
 )");
-$sqlite->exec("CREATE TABLE products (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name varchar(150) not null,
-    price float default 0
-)");
+
 $sqlite->exec("CREATE TABLE labels_test (
     \"key\" INTEGER PRIMARY KEY,
     keyalias varchar( 10 ) NULL,
     lang varchar(5) NOT NULL,
     label varchar(50) NOT NULL
 )");
-
+$sqlite->exec("CREATE TABLE jsessions (
+  id varchar(64) NOT NULL,
+  creation datetime NOT NULL,
+  access datetime NOT NULL,
+  data blob NOT NULL,
+  PRIMARY KEY  (id)
+);");
 echo "  tables restored\n";
 
 

@@ -21,7 +21,7 @@ case $COMMAND in
     composer-update)
         docker exec -t -i jdao_test_php appctl.sh composer-update;;
     unit-tests)
-        docker exec -t -i jdao_test_php appctl.sh unit-tests;;
+        docker exec -t -i jdao_test_php appctl.sh unit-tests "$@";;
     shell)
        docker exec -it --user usertest jdao_test_php  /bin/bash -l;;
     shellroot)

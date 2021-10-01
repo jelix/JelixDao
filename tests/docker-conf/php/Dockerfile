@@ -1,10 +1,10 @@
 FROM debian:buster-slim
 
-ARG composer_version=1.9.3
+ARG composer_version=2.0.3
 
 ENV TEST_USER_ID=1000 \
     TEST_GROUP_ID=1000 \
-    PHP_VERSION=7.3
+    PHP_VERSION=7.4
 
 RUN set -eux; \
     echo 'alias ll="ls -al"' > /etc/profile.d/start; \
