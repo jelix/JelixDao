@@ -3,6 +3,7 @@ Lightweight object relation mapping based on the Database Access Object pattern.
 This library has been extracted from the [Jelix](https://jelix.org) framework 1.7,
 and has been modernized a bit.
 
+The work to use it outside Jelix is in progress.
 
 # installation
 
@@ -58,5 +59,7 @@ $record = $dao->get($primaryKey);
 
 $list = $dao->myCustomMethod();
 
-
 ```
+
+Documentation is not available yet. But you can read the documentation of 
+the original library from Jelix, to know more : [jDao](https://docs.jelix.org/en/manual-1.7/components/daos).
