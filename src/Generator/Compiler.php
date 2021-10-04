@@ -32,20 +32,7 @@ class Compiler
      */
     public function compile(DaoFileInterface $daoFile, ContextInterface $context)
     {
-
-        // load the XML file
-        $doc = new \DOMDocument();
-
-        if (!$doc->load($daoFile->getPath())) {
-            throw new \Exception('Unknown dao file ('.$daoFile->getPath().')', 510);
-        }
-
-        if ($doc->documentElement->namespaceURI != self::XML_NAMESPACE) {
-            throw new \Exception('bad namespace in the DAO file "'.$daoFile->getPath().'" ('.$doc->namespaceURI.')', 511);
-        }
-
-        $parser = new XMLDaoParser($daoFile, $context);
-        $parser->parse(simplexml_import_dom($doc));
+        $parser = $this->parse($daoFile, $context);
 
         $sqlTools = $context->getDbTools();
         $dbType = ucfirst($sqlTools->getConnection()->getSQLType());
@@ -78,4 +65,31 @@ class Compiler
 
         return true;
     }
+
+    /**
+     * @param  DaoFileInterface  $daoFile
+     * @param  ContextInterface  $context
+     *
+     * @return XMLDaoParser
+     * @throws \Exception
+     */
+    public function parse(DaoFileInterface $daoFile, ContextInterface $context)
+    {
+        // load the XML file
+        $doc = new \DOMDocument();
+
+        if (!$doc->load($daoFile->getPath())) {
+            throw new \Exception('Unknown dao file ('.$daoFile->getPath().')', 510);
+        }
+
+        if ($doc->documentElement->namespaceURI != self::XML_NAMESPACE) {
+            throw new \Exception('bad namespace in the DAO file "'.$daoFile->getPath().'" ('.$doc->namespaceURI.')', 511);
+        }
+
+        $parser = new XMLDaoParser($daoFile, $context);
+        $parser->parse(simplexml_import_dom($doc));
+        return $parser;
+    }
+
+
 }
