@@ -35,7 +35,7 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
 
     function setUp() : void
     {
-        $tempPath = __DIR__.'/../tmp/';
+        $tempPath = __DIR__.'/../tmp/mainapi/';
         $daosDirectory = __DIR__.'/../lib/daos/';
 
         $this->daoLoader = new \Jelix\Dao\DaoLoader(

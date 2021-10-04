@@ -12,6 +12,7 @@ namespace Jelix\Dao\Generator;
 use Jelix\Dao\ContextInterface;
 use Jelix\Dao\DaoFileInterface;
 use Jelix\Dao\Parser\XMLDaoParser;
+use Jelix\FileUtilities\File;
 
 /**
  * The compiler for the DAO xml files.
@@ -73,7 +74,7 @@ class Compiler
             $compiled .= $generator->buildClasses()."\n return true;";
         }
 
-        file_put_contents($daoFile->getCompiledFilePath(), $compiled);
+        File::write($daoFile->getCompiledFilePath(), $compiled);
 
         return true;
     }

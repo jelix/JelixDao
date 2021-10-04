@@ -91,7 +91,7 @@ class ContextForTest implements ContextInterface
     {
         return new DaoFileForTest($path,
             __DIR__.'/resources/dao/'.$path.'.xml',
-            __DIR__.'/tmp/compile.'.$path.'.php'
+            __DIR__.'/tmp/compiled/compile.'.$path.'.php'
         );
     }
 
