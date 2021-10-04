@@ -101,7 +101,7 @@ class OciDaoGenerator extends \Jelix\Dao\Generator\AbstractDaoGenerator
 
         if ($this->_dataParser->hasEvent('insertbefore') || $this->_dataParser->hasEvent('insert')) {
             $src[] = '   if ($this->hook) {';
-            $src[] = '      $this->hook->onInsert($this->_daoName, $record, DaoHookInterface::EVENT_BEFORE);';
+            $src[] = '      $this->hook->onInsert($this->_daoName, $record, \Jelix\Dao\DaoHookInterface::EVENT_BEFORE);';
             $src[] = '   }';
         }
 
@@ -218,7 +218,7 @@ class OciDaoGenerator extends \Jelix\Dao\Generator\AbstractDaoGenerator
 
         if ($this->_dataParser->hasEvent('insertafter') || $this->_dataParser->hasEvent('insert')) {
             $src[] = '   if ($this->hook) {';
-            $src[] = '      $this->hook->onInsert($this->_daoName, $record, DaoHookInterface::EVENT_AFTER);';
+            $src[] = '      $this->hook->onInsert($this->_daoName, $record, \Jelix\Dao\DaoHookInterface::EVENT_AFTER);';
             $src[] = '   }';
         }
 
@@ -247,7 +247,7 @@ class OciDaoGenerator extends \Jelix\Dao\Generator\AbstractDaoGenerator
 
             if ($this->_dataParser->hasEvent('updatebefore') || $this->_dataParser->hasEvent('update')) {
                 $src[] = '   if ($this->hook) {';
-                $src[] = '      $this->hook->onUpdate($this->_daoName, $record, DaoHookInterface::EVENT_BEFORE);';
+                $src[] = '      $this->hook->onUpdate($this->_daoName, $record, \Jelix\Dao\DaoHookInterface::EVENT_BEFORE);';
                 $src[] = '   }';
             }
 
@@ -320,7 +320,7 @@ class OciDaoGenerator extends \Jelix\Dao\Generator\AbstractDaoGenerator
 
             if ($this->_dataParser->hasEvent('updateafter') || $this->_dataParser->hasEvent('update')) {
                 $src[] = '   if ($this->hook) {';
-                $src[] = '      $this->hook->onUpdate($this->_daoName, $record, DaoHookInterface::EVENT_AFTER);';
+                $src[] = '      $this->hook->onUpdate($this->_daoName, $record, \Jelix\Dao\DaoHookInterface::EVENT_AFTER);';
                 $src[] = '   }';
             }
 

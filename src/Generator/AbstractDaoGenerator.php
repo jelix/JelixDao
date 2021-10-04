@@ -104,8 +104,6 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         $daoFactoryClass = $daoFile->getCompiledFactoryClass();
         $daoRecordClass = $daoFile->getCompiledRecordClass();
 
-        $src[] = 'use Jelix\Dao\DaoHookInterface;';
-
         //-----------------------
         // Build the record class
         //-----------------------
@@ -247,7 +245,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
 
         if ($this->_dataParser->hasEvent('insertbefore') || $this->_dataParser->hasEvent('insert')) {
             $src[] = '   if ($this->hook) {';
-            $src[] = '      $this->hook->onInsert($this->_daoName, $record, DaoHookInterface::EVENT_BEFORE);';
+            $src[] = '      $this->hook->onInsert($this->_daoName, $record, \Jelix\Dao\DaoHookInterface::EVENT_BEFORE);';
             $src[] = '   }';
         }
 
@@ -299,7 +297,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
 
         if ($this->_dataParser->hasEvent('insertafter') || $this->_dataParser->hasEvent('insert')) {
             $src[] = '   if ($this->hook) {';
-            $src[] = '      $this->hook->onInsert($this->_daoName, $record, DaoHookInterface::EVENT_AFTER);';
+            $src[] = '      $this->hook->onInsert($this->_daoName, $record, \Jelix\Dao\DaoHookInterface::EVENT_AFTER);';
             $src[] = '   }';
         }
 
@@ -326,7 +324,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         if (count($fields)) {
             if ($this->_dataParser->hasEvent('updatebefore') || $this->_dataParser->hasEvent('update')) {
                 $src[] = '   if ($this->hook) {';
-                $src[] = '      $this->hook->onUpdate($this->_daoName, $record, DaoHookInterface::EVENT_BEFORE);';
+                $src[] = '      $this->hook->onUpdate($this->_daoName, $record, \Jelix\Dao\DaoHookInterface::EVENT_BEFORE);';
                 $src[] = '   }';
             }
 
@@ -364,7 +362,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
 
             if ($this->_dataParser->hasEvent('updateafter') || $this->_dataParser->hasEvent('update')) {
                 $src[] = '   if ($this->hook) {';
-                $src[] = '      $this->hook->onUpdate($this->_daoName, $record, DaoHookInterface::EVENT_AFTER);';
+                $src[] = '      $this->hook->onUpdate($this->_daoName, $record, \Jelix\Dao\DaoHookInterface::EVENT_AFTER);';
                 $src[] = '   }';
             }
 
@@ -449,14 +447,14 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
                         $src[] = '   $args = func_get_args();';
                         if ($method->eventBeforeEnabled) {
                             $src[] = '   if ($this->hook) {';
-                            $src[] = '      $this->hook->onCustomMethod($this->_daoName, \''.$method->name.'\', \''.$method->type.'\', $args, DaoHookInterface::EVENT_BEFORE);';
+                            $src[] = '      $this->hook->onCustomMethod($this->_daoName, \''.$method->name.'\', \''.$method->type.'\', $args, \Jelix\Dao\DaoHookInterface::EVENT_BEFORE);';
                             $src[] = '   }';
                         }
                         if ($method->eventAfterEnabled) {
                             $src[] = '   $result = $this->_conn->exec ($__query);';
 
                             $src[] = '   if ($this->hook) {';
-                            $src[] = '      $this->hook->onCustomMethod($this->_daoName, \''.$method->name.'\', \''.$method->type.'\', $args, DaoHookInterface::EVENT_AFTER);';
+                            $src[] = '      $this->hook->onCustomMethod($this->_daoName, \''.$method->name.'\', \''.$method->type.'\', $args, \Jelix\Dao\DaoHookInterface::EVENT_AFTER);';
                             $src[] = '   }';
 
                             $src[] = '   return $result;';
