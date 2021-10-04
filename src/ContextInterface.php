@@ -58,7 +58,7 @@ interface ContextInterface
      * name representing the class file. The path type depends on the framework
      * or the environment where JelixDao is used.
      *
-     * @param $path
+     * @param string $path
      *
      * @return CustomRecordClassFileInterface
      */

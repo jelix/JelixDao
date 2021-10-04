@@ -61,10 +61,11 @@ interface DaoHookInterface
     /**
      * @param string $daoName
      * @param string $methodName
+     * @param string $methodType the type of the method : 'update' or 'delete'
      * @param array  $parameters
      * @param int $when DaoHookInterface::EVENT_BEFORE or DaoHookInterface::EVENT_AFTER
      *
      * @return void
      */
-    public function onCustomMethod(string $daoName, string $methodName, $parameters, $when);
+    public function onCustomMethod(string $daoName, string $methodName, string $methodType, $parameters, $when);
 }

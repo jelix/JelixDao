@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<dao xmlns="http://jelix.org/ns/dao/1.0">
+   <datasources>
+      <primarytable name="products" primarykey="id" />
+   </datasources>
+   <record>
+      <property name="id"   fieldname="id" datatype="autoincrement"/>
+      <property name="name" fieldname="name" datatype="string"  required="true"/>
+      <property name="price" fieldname="price" datatype="float" default="0" required="true"/>
+      <property name="create_date" fieldname="create_date" datatype="datetime" insertpattern="NOW()" />
+      <property name="promo" fieldname="promo" datatype="boolean" required="true" default="false"/>
+      <property name="dummy" fieldname="dummy" datatype="string" />
+   </record>
+   <factory events="deletebefore,deleteafter,updatebefore,updateafter,insertbefore,insertafter,deletebybefore,deletebyafter">
+
+      <method name="removePromo" type="update"  eventbefore="true" eventafter="true">
+         <conditions>
+            <eq property="promo" value="1"/>
+         </conditions>
+         <values>
+            <value property="promo" value="0" />
+         </values>
+      </method>
+
+   </factory>
+</dao>
+

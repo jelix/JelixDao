@@ -52,13 +52,18 @@ class Context implements ContextInterface
      */
     public function resolveDaoPath($path)
     {
+
         if (!Path::isAbsolute($path)) {
+            $daoName = $path;
             $path = Path::normalizePath($this->basePath.'/'.$path);
+        }
+        else {
+            $daoName = basename($path);
         }
         if (!preg_match("/\\.xml$/", $path)) {
             $path .= '.xml';
         }
-        return new DaoSimpleFile($path, $this->connection->getSQLType(), $this->tempPath);
+        return new DaoSimpleFile($daoName, $path, $this->connection->getSQLType(), $this->tempPath);
     }
 
     /**

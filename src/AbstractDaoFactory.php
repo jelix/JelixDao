@@ -308,7 +308,7 @@ abstract class AbstractDaoFactory implements DaoFactoryInterface
         }
         $result = $this->_conn->exec($q);
         if ($this->_deleteAfterEvent) {
-            $this->hook->onDelete($this->_daoName, $keys, DaoHookInterface::EVENT_BEFORE, $result);
+            $this->hook->onDelete($this->_daoName, $keys, DaoHookInterface::EVENT_AFTER, $result);
         }
 
         return $result;

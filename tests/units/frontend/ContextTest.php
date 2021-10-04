@@ -37,12 +37,16 @@ class ContextTest extends \PHPUnit\Framework\TestCase
         $daoFilePath = realpath(__DIR__.'/../lib/daos/products.xml');
 
         $daoFile = $context->resolveDaoPath('products.xml');
+        $this->assertEquals('products.xml', $daoFile->getName());
+
         $this->assertEquals($daoFilePath, $daoFile->getPath());
 
         $daoFile = $context->resolveDaoPath('products');
+        $this->assertEquals('products', $daoFile->getName());
         $this->assertEquals($daoFilePath, $daoFile->getPath());
 
         $daoFile = $context->resolveDaoPath(__DIR__.'/../lib/daos/products.xml');
+        $this->assertEquals('products.xml', $daoFile->getName());
         $this->assertEquals(__DIR__.'/../lib/daos/products.xml', $daoFile->getPath());
 
         $daoCompiledClassPath = __DIR__.'/../tmp/products.xml.Sqlite.php';

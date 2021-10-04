@@ -21,12 +21,14 @@ class DaoSimpleFile implements DaoFileInterface
 
     /**
      * DaoSimpleFile constructor.
+     * @param string $daoName the name as given to JelixDao API.
      * @param string $daoXmlFile the path to the dao file
      * @param string $sqlType type of the sql language (pgsql, sqlite, mysql...)
      * @param string $tempPath directory where to store the compiled file
      */
-    public function __construct($daoXmlFile, $sqlType, $tempPath)
+    public function __construct($daoName, $daoXmlFile, $sqlType, $tempPath)
     {
+        $this->daoName = $daoName;
         $this->daoFile = $daoXmlFile;
         $this->tempPath = $tempPath;
         $this->sqlType = ucfirst($sqlType);
@@ -39,7 +41,7 @@ class DaoSimpleFile implements DaoFileInterface
      */
     public function getName()
     {
-        return basename($this->daoFile);
+        return $this->daoName;
     }
 
     /**
@@ -63,7 +65,7 @@ class DaoSimpleFile implements DaoFileInterface
      */
     public function getCompiledFactoryClass()
     {
-        return ucfirst(str_replace('.xml', '', $this->getName())).$this->sqlType.'Factory';
+        return ucfirst(str_replace(array('/', '.xml'), '', $this->getName())).$this->sqlType.'Factory';
     }
 
     /**
@@ -71,6 +73,6 @@ class DaoSimpleFile implements DaoFileInterface
      */
     public function getCompiledRecordClass()
     {
-        return ucfirst(str_replace('.xml', '', $this->getName())).$this->sqlType.'Record';
+        return ucfirst(str_replace(array('/', '.xml'), '', $this->getName())).$this->sqlType.'Record';
     }
 }
