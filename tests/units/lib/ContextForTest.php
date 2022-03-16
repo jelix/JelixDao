@@ -59,7 +59,7 @@ class ContextForTest implements ContextInterface
         {
             $parameters = array(
                 'driver'=>'sqlite3',
-                "database"=>"/src/tests/tests/units/tests.sqlite3",
+                "database"=>"/app/tests/units/tests.sqlite3",
             );
             $toolsClass = '\Jelix\Database\Schema\Sqlite\SQLTools';
         }
