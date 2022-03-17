@@ -10,11 +10,16 @@ require_once(__DIR__.'/MainApiAbstract.lib.php');
 /**
  *
  */
-class jdao_main_api_sqlite3Test extends MainApiAbstract {
+class jdao_main_api_sqlite3Test extends MainApiAbstract
+{
 
-    static protected $productIdType = 'integer';
-    static protected $productPriceType = 'float';
-    static protected $productPromoType = 'integer';
+    function setUp() : void
+    {
+        parent::setUp();
+        static::$productIdType = 'integer';
+        static::$productPriceType = 'float';
+        static::$productPromoType = 'integer';
+    }
 
     protected function getConnector()
     {

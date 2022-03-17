@@ -169,7 +169,7 @@ class DaoMethod
             return;
         }
 
-        if (strlen($params['distinct'])) {
+        if ($params['distinct'] != '') {
             if ($this->type == 'select') {
                 $this->distinct = $this->_parser->getBool($params['distinct']);
             } elseif ($this->type == 'count') {
@@ -201,7 +201,7 @@ class DaoMethod
             }
         }
 
-        if (strlen($params['groupby'])) {
+        if ($params['groupby'] != '') {
             throw new ParserException(
                 $this->_parser->getDaoFile(),
                 'the "groupby" attribute is not allowed on the "<method name="'.$this->name.'">" element',

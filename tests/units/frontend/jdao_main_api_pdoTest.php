@@ -33,6 +33,11 @@ class jdao_main_api_pdoTest extends MainApiAbstract {
     function setUp() : void  {
         parent::setUp();
         $this->needPDO =  true;
+        if (version_compare(PHP_VERSION, '8.1', '>=')) {
+            static::$productIdType = 'integer';
+            static::$productPriceType = 'float';
+            static::$productPromoType = 'integer';
+        }
     }
 }
 

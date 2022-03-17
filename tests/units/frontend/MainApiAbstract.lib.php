@@ -29,6 +29,7 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
     static protected $productPriceType = 'string';
     static protected $productPromoType = 'string';
 
+    /** @var \Jelix\Dao\DaoLoader  */
     protected $daoLoader;
     protected static $conn = array();
     protected $sqlType;
@@ -45,6 +46,9 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
         );
 
         $this->sqlType = ucfirst($this->getConnection()->getSQLType());
+        static::$productIdType = 'string';
+        static::$productPriceType = 'string';
+        static::$productPromoType = 'string';
     }
 
     function tearDown() : void  {

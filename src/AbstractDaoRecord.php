@@ -74,7 +74,7 @@ abstract class AbstractDaoRecord implements DaoRecordInterface
                     break;
                 }
                 // test regexp
-                if ($infos['regExp'] !== null && preg_match($infos['regExp'], $value) === 0) {
+                if ($infos['regExp'] !== null && preg_match($infos['regExp'], (string)$value) === 0) {
                     $errors[$prop][] = DaoRecordInterface::ERROR_BAD_FORMAT;
 
                     break;
@@ -82,7 +82,7 @@ abstract class AbstractDaoRecord implements DaoRecordInterface
 
                 //  test maxlength et minlength
                 $charset = $this->_factory->getConnection()->getConnectionCharset();
-                $len = iconv_strlen($value, $charset);
+                $len = iconv_strlen((string)$value, $charset);
                 if ($infos['maxlength'] !== null && $len > intval($infos['maxlength'])) {
                     $errors[$prop][] = DaoRecordInterface::ERROR_MAXLENGTH;
                 }
@@ -103,20 +103,20 @@ abstract class AbstractDaoRecord implements DaoRecordInterface
 
                 break;
             case 'datetime':
-                if (!preg_match('/^(\d{4}-(((0[1,3-9]|1[0-2])-([012][0-9]|3[01]))|((02-([01][0-9]|2[0-9])))) (([01][0-9])|(2[0-3])):[0-5][0-9]:[0-5][0-9])?$/', $value)) {
+                if (!preg_match('/^(\d{4}-(((0[1,3-9]|1[0-2])-([012][0-9]|3[01]))|((02-([01][0-9]|2[0-9])))) (([01][0-9])|(2[0-3])):[0-5][0-9]:[0-5][0-9])?$/', (string)$value)) {
                     $errors[$prop][] = DaoRecordInterface::ERROR_BAD_FORMAT;
                 }
 
                 break;
             case 'time':
-                if (!preg_match('/^((([01][0-9])|(2[0-3])):[0-5][0-9]:[0-5][0-9])?$/', $value)) {
+                if (!preg_match('/^((([01][0-9])|(2[0-3])):[0-5][0-9]:[0-5][0-9])?$/', (string)$value)) {
                     $errors[$prop][] = DaoRecordInterface::ERROR_BAD_FORMAT;
                 }
 
                 break;
             case 'varchardate':
             case 'date':
-                if (!preg_match('/^(\d{4}-(((0[1,3-9]|1[0-2])-([012][0-9]|3[01]))|((02-([01][0-9]|2[0-9])))))?$/', $value)) {
+                if (!preg_match('/^(\d{4}-(((0[1,3-9]|1[0-2])-([012][0-9]|3[01]))|((02-([01][0-9]|2[0-9])))))?$/', (string)$value)) {
                     $errors[$prop][] = DaoRecordInterface::ERROR_BAD_FORMAT;
                 }
 
