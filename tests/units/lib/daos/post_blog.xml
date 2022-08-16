@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dao xmlns="http://jelix.org/ns/dao/1.0" import="posts">
+    <record extends="postBlog">
+        <!-- redefine author property -->
+        <property name="author" fieldname="author" datatype="varchar" maxlength="100"/>
+        <!-- add new property -->
+        <property name="email" fieldname="email" datatype="varchar" maxlength="120"/>
+    </record>
+</dao>

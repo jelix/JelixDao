@@ -90,7 +90,7 @@ class ContextForTest implements ContextInterface
     public function resolveDaoPath($path)
     {
         return new DaoFileForTest($path,
-            __DIR__.'/resources/dao/'.$path.'.xml',
+            __DIR__.'/daos/'.$path.'.xml',
             __DIR__.'/tmp/compiled/compile.'.$path.'.php'
         );
     }
@@ -98,7 +98,7 @@ class ContextForTest implements ContextInterface
     public function resolveCustomRecordClassPath($path)
     {
         return new RecordClassForTest($path,
-            __DIR__.'/resources/records/'.$path.'.php'
+            __DIR__.'/daos/'.$path.'.php'
         );
     }
 
