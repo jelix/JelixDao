@@ -1,5 +1,6 @@
 <?php
 
+use Jelix\Dao\Context;
 use Jelix\Dao\DaoHookInterface;
 
 /**
@@ -33,9 +34,11 @@ class HookTest extends \Jelix\UnitTests\UnitTestCaseDb
         $tempPath = __DIR__.'/../tmp/hook_compiled/';
         $daosDirectory = __DIR__.'/../lib/daos/';
         $daoLoader = new \Jelix\Dao\DaoLoader(
-            $this->getConnection(),
-            $tempPath,
-            $daosDirectory
+            new Context(
+                $this->getConnection(),
+                $tempPath,
+                $daosDirectory
+            )
         );
         $this->emptyTable('products');
         $dao = $daoLoader->create ('products_events');

@@ -40,9 +40,11 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
         $daosDirectory = __DIR__.'/../lib/daos/';
 
         $this->daoLoader = new \Jelix\Dao\DaoLoader(
-            $this->getConnection(),
-            $tempPath,
-            $daosDirectory
+            new \Jelix\Dao\Context(
+                $this->getConnection(),
+                $tempPath,
+                $daosDirectory
+            )
         );
 
         $this->sqlType = ucfirst($this->getConnection()->getSQLType());

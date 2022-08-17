@@ -2,7 +2,7 @@
 
 /**
  * @author      Laurent Jouanneau
- * @copyright   2021 Laurent Jouanneau
+ * @copyright   2021-2022 Laurent Jouanneau
  *
  * @see         https://jelix.org
  * @licence     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
@@ -10,25 +10,8 @@
 
 namespace Jelix\Dao;
 
-use Jelix\Database\ConnectionInterface;
-
 class DaoLoader
 {
-    /**
-     * @var ConnectionInterface
-     */
-    protected $connector;
-
-    /**
-     * @var string
-     */
-    protected $tempPath;
-
-    /**
-     * @var string
-     */
-    protected $basePath;
-
     /**
      * @var Context
      */
@@ -40,21 +23,13 @@ class DaoLoader
     protected $daoSingleton = array();
 
     /**
-     * @param ConnectionInterface $connector
+     * @param Context $connector
      * @param string $tempPath
      * @param string $daosDirectory
      */
-    public function __construct(ConnectionInterface $connector, $tempPath, $daosDirectory = '')
+    public function __construct(Context $context)
     {
-        $this->connector = $connector;
-        $this->tempPath = $tempPath;
-        $this->basePath = $daosDirectory;
-
-        $this->context = new Context(
-            $connector,
-            $tempPath,
-            $daosDirectory
-        );
+        $this->context = $context;
     }
 
     /**
@@ -76,7 +51,7 @@ class DaoLoader
         }
         require_once($daoFile->getCompiledFilePath());
         $class = $daoFile->getCompiledFactoryClass();
-        $dao = new $class($this->connector);
+        $dao = new $class($this->context->getConnector());
         return $dao;
     }
 
@@ -90,7 +65,7 @@ class DaoLoader
      */
     public function get($daoXmlFile)
     {
-        $daoId = $daoXmlFile.'#'.$this->connector->getSQLType();
+        $daoId = $daoXmlFile.'#'.$this->context->getConnector()->getSQLType();
         if (!isset($this->daoSingleton[$daoId])) {
             $this->daoSingleton[$daoId] = $this->create($daoXmlFile);
         }

@@ -41,10 +41,13 @@ $tempPath = '...';
 // it is optional
 $daosDirectory = '...';
 
+// instance of a dao loader, using a Context object
 $loader = new DaoLoader(
+    new \Jelix\Dao\Context(
         $connector,
         $tempPath,
         $daosDirectory
+    )
 );
 
 $daoFile = 'myDao.xml';

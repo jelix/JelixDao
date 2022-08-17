@@ -24,9 +24,11 @@ class jDaoImportTest extends \Jelix\UnitTests\UnitTestCaseDb {
         $this->daosDirectory = __DIR__.'/../lib/daos/';
 
         $this->daoLoader = new \Jelix\Dao\DaoLoader(
-            $this->getConnection(),
-            $this->tempPath,
-            $this->daosDirectory
+            new \Jelix\Dao\Context(
+                $this->getConnection(),
+                $this->tempPath,
+                $this->daosDirectory
+            )
         );
     }
 
