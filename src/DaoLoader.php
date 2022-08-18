@@ -23,6 +23,11 @@ class DaoLoader
     protected $daoSingleton = array();
 
     /**
+     * @var DaoHookInterface
+     */
+    protected $commonHook;
+
+    /**
      * @param Context $connector
      * @param string $tempPath
      * @param string $daosDirectory
@@ -51,7 +56,11 @@ class DaoLoader
         }
         require_once($daoFile->getCompiledFilePath());
         $class = $daoFile->getCompiledFactoryClass();
+        /** @var DaoFactoryInterface $dao */
         $dao = new $class($this->context->getConnector());
+        if ($this->commonHook) {
+            $dao->setHook($this->commonHook);
+        }
         return $dao;
     }
 
@@ -68,6 +77,10 @@ class DaoLoader
         $daoId = $daoXmlFile.'#'.$this->context->getConnector()->getSQLType();
         if (!isset($this->daoSingleton[$daoId])) {
             $this->daoSingleton[$daoId] = $this->create($daoXmlFile);
+        }
+        else if ($this->commonHook) {
+            // set the hook, in case it has changed since the instantiation of the dao
+            $this->daoSingleton[$daoId]->setHook($this->commonHook);
         }
 
         return $this->daoSingleton[$daoId];
@@ -96,5 +109,18 @@ class DaoLoader
     {
         $dao = $this->get($daoXmlFile);
         return $dao->createRecord();
+    }
+
+    /**
+     * Set a hook that is called during insert/update/delete of all dao
+     *
+     * The hook is active only with dao retrieved with `create()` or `get()` **after** the call of setHook
+     *
+     * @param DaoHookInterface $hook
+     * @return void
+     */
+    public function setHook(DaoHookInterface $hook)
+    {
+       $this->commonHook = $hook;
     }
 }
