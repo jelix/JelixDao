@@ -74,6 +74,7 @@ The documentation is available into [the docs directory](docs/index.md).
 
 ## History
 
-This library has been extracted from the [Jelix](https://jelix.org) framework 1.7,
-and has been modernized a bit since. Excepts class names, API of factories and records are mostly the same.
+This library has been extracted from the [Jelix](https://jelix.org) framework 1.7/1.8,
+and has been modernized a bit since. Except class names, API of factories and records are mostly the same.
+The XML format of dao file is the same as in Jelix 1.6/1.7/1.8.
 

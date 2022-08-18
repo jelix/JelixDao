@@ -17,7 +17,7 @@
         "ext-dom": "*",
         "ext-iconv": "*",
         "psr/log": "^1.1.2",
-        "jelix/database": "dev-master",
+        "jelix/database": "^1.2.1",
         "jelix/file-utilities": "^1.8.4"
 
     },
@@ -25,7 +25,7 @@
         "phpunit/phpunit": "8.5.*"
     },
     "archive": {
-        "exclude": ["/tests"]
+        "exclude": ["/tests", "/docs"]
     },
     "autoload": {
         "psr-4" : {
