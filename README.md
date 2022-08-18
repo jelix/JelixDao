@@ -38,7 +38,6 @@ $connector = Connection::create($accessParameters);
 $tempPath = '...'; 
 
 // path to a directory where to find dao xml files
-// it is optional
 $daosDirectory = '...';
 
 // instance of a dao loader, using a Context object

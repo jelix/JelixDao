@@ -25,6 +25,6 @@ from the project and is now a standalone project.
 - [Manipulating a result set](result-sets.md)
 - [Declaring methods in the XML file](xml_methods.md)
 - [Adding PHP methods to the factory](php_methods.md)
-- [Automatic events](events)
+- [Hooks](hooks.md)
 
    
