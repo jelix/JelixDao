@@ -1,11 +1,10 @@
-Lightweight object relation mapping based on the Database Access Object pattern. 
+# JelixDao
 
-This library has been extracted from the [Jelix](https://jelix.org) framework 1.7,
-and has been modernized a bit.
+A lightweight object relation mapping based on the Database Access Object pattern.
 
-The work to use it outside Jelix is in progress.
+It uses [JelixDatabase](https://github.com/jelix/JelixDatabase/) as database connector.
 
-# installation
+## installation
 
 You can install it from Composer. In your project:
 
@@ -13,7 +12,7 @@ You can install it from Composer. In your project:
 composer require "jelix/dao"
 ```
 
-# Usage
+## Usage
 
 Quick start:
 
@@ -49,19 +48,32 @@ $loader = new DaoLoader(
     )
 );
 
-$daoFile = 'myDao.xml';
+$daoFile = 'myDao';
 
 $dao = $loader->get($daoFile);
 
 // we can now use methods to query records
 
 $list = $dao->findAll();
+foreach($list as $record) {
+    echo $record->aField;
+}
 
 $record = $dao->get($primaryKey);
+echo $record->aField;
 
 $list = $dao->myCustomMethod();
 
+//...
 ```
 
-Documentation is not available yet. But you can read the documentation of 
-the original library from Jelix, to know more : [jDao](https://docs.jelix.org/en/manual-1.7/components/daos).
+## Documentation
+
+The documentation is available into [the docs directory](docs/index.md).
+
+
+## History
+
+This library has been extracted from the [Jelix](https://jelix.org) framework 1.7,
+and has been modernized a bit since. Excepts class names, API of factories and records are mostly the same.
+
