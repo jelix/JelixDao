@@ -32,5 +32,11 @@
             "Jelix\\Dao\\" : "src/"
         }
     },
-    "minimum-stability": "stable"
+    "minimum-stability": "stable",
+    "extra" : {
+        "branch-alias": {
+            "dev-main": "2.0-dev",
+            "dev-1.x": "1.x-dev"
+        }
+    }
 }
