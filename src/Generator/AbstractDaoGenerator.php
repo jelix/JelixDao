@@ -1169,9 +1169,16 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         return $r;
     }
 
+    /**
+     * @param string $expr
+     * @param DaoProperty $field
+     * @param bool $checknull
+     * @param string $forCondition
+     * @return string the PHP expression to insert into the generated class
+     */
     protected function _preparePHPExpr($expr, $field, $checknull = true, $forCondition = '')
     {
-        $opnull = $opval = '';
+        $opnull = '';
         if ($checknull && $forCondition != '') {
             if ($forCondition == '=') {
                 $opnull = 'IS ';

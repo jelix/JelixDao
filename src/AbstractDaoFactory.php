@@ -272,9 +272,13 @@ abstract class AbstractDaoFactory implements DaoFactoryInterface
         if (count($pk) == 1 && is_array($pk[0])) {
             $pk = $pk[0];
         }
-        $keys = @array_combine(static::$_pkFields, $pk);
 
-        if ($keys === false) {
+        try {
+            $keys = @array_combine(static::$_pkFields, $pk);
+            if ($keys === false) {
+                throw new Exception('(501) Identifier is missing');
+            }
+        } catch (\ValueError $e) { // In PHP8+
             throw new Exception('(501) Identifier is missing');
         }
 
@@ -296,10 +300,16 @@ abstract class AbstractDaoFactory implements DaoFactoryInterface
         if (count($pk) == 1 && is_array($pk[0])) {
             $pk = $pk[0];
         }
-        $keys = array_combine(static::$_pkFields, $pk);
-        if ($keys === false) {
+
+        try {
+            $keys = @array_combine(static::$_pkFields, $pk);
+            if ($keys === false) {
+                throw new Exception('(501) Identifier is missing');
+            }
+        } catch (\ValueError $e) { // In PHP8+
             throw new Exception('(501) Identifier is missing');
         }
+
         $q = 'DELETE FROM '.$this->_conn->encloseName($this->_tables[$this->_primaryTable]['realname']).' ';
         $q .= $this->_getPkWhereClauseForNonSelect($keys);
 
