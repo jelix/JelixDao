@@ -39,12 +39,13 @@ class ParseDatasourceTest extends TestCase {
 <object class="\Jelix\Dao\Parser\XMLDaoParser">
     <array method="getProperties()">[]</array>
     <array method="getTables()">
-        <array key="news">
-            <string key="name" value="news" />
-            <string key="realname" value="news" />
-            <array key="pk" value="">["news_id"]</array>
-            <array key="fields">[]</array>
-        </array>
+        <object class="\Jelix\Dao\Parser\DaoTable" key="news">
+            <string property="name" value="news" />
+            <string property="realName" value="news" />
+            <array property="primaryKey" value="">["news_id"]</array>
+            <array property="foreignKeys">[]</array>
+            <array property="fields">[]</array>
+        </object>
     </array>
     <string method="getPrimaryTable()" value="news"/>
     <array method="getMethods()">[]</array>
@@ -64,12 +65,12 @@ class ParseDatasourceTest extends TestCase {
 <object class="\Jelix\Dao\Parser\XMLDaoParser">
     <array method="getProperties()">[]</array>
     <array method="getTables()">
-        <array key="news">
-            <string key="name" value="news" />
-            <string key="realname" value="foo_news" />
-            <array key="pk" value="">["news_id"]</array>
-            <array key="fields">[]</array>
-        </array>
+        <object class="\Jelix\Dao\Parser\DaoTable" key="news">
+            <string property="name" value="news" />
+            <string property="realName" value="foo_news" />
+            <array property="primaryKey" value="">["news_id"]</array>
+            <array property="fields">[]</array>
+        </object>
     </array>
     <string method="getPrimaryTable()" value="news"/>
     <array method="getMethods()">[]</array>
@@ -92,19 +93,19 @@ class ParseDatasourceTest extends TestCase {
 <object class="\Jelix\Dao\Parser\XMLDaoParser">
     <array method="getProperties()">[]</array>
     <array method="getTables()">
-        <array key="news">
-            <string key="name" value="news" />
-            <string key="realname" value="news" />
-            <array key="pk" value="">["news_id"]</array>
-            <array key="fields">[]</array>
-        </array>
-        <array key="news_rubriques">
-            <string key="name" value="news_rubriques" />
-            <string key="realname" value="news_rubriques" />
-            <array key="pk" value="">["news_rubriques_id"]</array>
-            <array key="fk" value="">["news_rubrique"]</array>
-            <array key="fields">[]</array>
-        </array>
+        <object class="\Jelix\Dao\Parser\DaoTable" key="news">
+            <string property="name" value="news" />
+            <string property="realName" value="news" />
+            <array property="primaryKey" value="">["news_id"]</array>
+            <array property="fields">[]</array>
+        </object>
+        <object class="\Jelix\Dao\Parser\DaoTable" key="news_rubriques">
+            <string property="name" value="news_rubriques" />
+            <string property="realName" value="news_rubriques" />
+            <array property="primaryKey" value="">["news_rubriques_id"]</array>
+            <array property="foreignKeys" value="">["news_rubrique"]</array>
+            <array property="fields">[]</array>
+        </object>
     </array>
     <string method="getPrimaryTable()" value="news"/>
     <array method="getMethods()">[]</array>
@@ -126,20 +127,20 @@ class ParseDatasourceTest extends TestCase {
 <object class="\Jelix\Dao\Parser\XMLDaoParser">
     <array method="getProperties()">[]</array>
     <array method="getTables()">
-        <array key="news">
-            <string key="name" value="news" />
-            <string key="realname" value="news" />
-            <array key="pk" value="">["news_id"]</array>
-            <!-- <array key="fk" value="">[]</array>-->
-            <array key="fields">[]</array>
-        </array>
-        <array key="news_rubriques">
-            <string key="name" value="news_rubriques" />
-            <string key="realname" value="news_rubriques" />
-            <array key="pk" value="">["news_rubriques_id"]</array>
-            <array key="fk" value="">["news_rubrique"]</array>
-            <array key="fields">[]</array>
-        </array>
+        <object class="\Jelix\Dao\Parser\DaoTable" key="news">
+            <string property="name" value="news" />
+            <string property="realName" value="news" />
+            <array property="primaryKey" value="">["news_id"]</array>
+            <!-- <array property="foreignKeys" value="">[]</array>-->
+            <array property="fields">[]</array>
+        </object>
+        <object class="\Jelix\Dao\Parser\DaoTable" key="news_rubriques">
+            <string property="name" value="news_rubriques" />
+            <string property="realName" value="news_rubriques" />
+            <array property="primaryKey" value="">["news_rubriques_id"]</array>
+            <array property="foreignKeys" value="">["news_rubrique"]</array>
+            <array property="fields">[]</array>
+        </object>
     </array>
     <string method="getPrimaryTable()" value="news"/>
     <array method="getMethods()">[]</array>
@@ -162,27 +163,27 @@ class ParseDatasourceTest extends TestCase {
 <object class="\Jelix\Dao\Parser\XMLDaoParser">
     <array method="getProperties()">[]</array>
     <array method="getTables()">
-        <array key="news">
-            <string key="name" value="news" />
-            <string key="realname" value="news" />
-            <array key="pk">["news_id"]</array>
-            <!-- <array key="fk" value="">[]</array>-->
-            <array key="fields">[]</array>
-        </array>
-        <array key="news_rubriques">
-            <string key="name" value="news_rubriques" />
-            <string key="realname" value="news_rubriques" />
-            <array key="pk">["news_rubriques_id"]</array>
-            <array key="fk">["news_rubrique"]</array>
-            <array key="fields">[]</array>
-        </array>
-        <array key="news_author">
-            <string key="name" value="news_author" />
-            <string key="realname" value="jx_authors_news" />
-            <array key="pk">["author_id"]</array>
-            <array key="fk">["author_id"]</array>
-            <array key="fields">[]</array>
-        </array>
+        <object class="\Jelix\Dao\Parser\DaoTable" key="news">
+            <string property="name" value="news" />
+            <string property="realName" value="news" />
+            <array property="primaryKey">["news_id"]</array>
+            <!-- <array property="foreignKeys" value="">[]</array>-->
+            <array property="fields">[]</array>
+        </object>
+        <object class="\Jelix\Dao\Parser\DaoTable" key="news_rubriques">
+            <string property="name" value="news_rubriques" />
+            <string property="realName" value="news_rubriques" />
+            <array property="primaryKey">["news_rubriques_id"]</array>
+            <array property="foreignKeys">["news_rubrique"]</array>
+            <array property="fields">[]</array>
+        </object>
+        <object class="\Jelix\Dao\Parser\DaoTable" key="news_author">
+            <string property="name" value="news_author" />
+            <string property="realName" value="jx_authors_news" />
+            <array property="primaryKey">["author_id"]</array>
+            <array property="foreignKeys">["author_id"]</array>
+            <array property="fields">[]</array>
+        </object>
     </array>
     <string method="getPrimaryTable()" value="news"/>
     <array method="getMethods()">[]</array>

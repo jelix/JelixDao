@@ -46,6 +46,7 @@ abstract class AbstractDaoFactory implements DaoFactoryInterface
      *   'name' => ' the table alias',
      *   'realname' => 'the real name of the table',
      *   'pk' => array ( list of primary keys name ),
+     *   'fk' => array ( list of foreign keys name ),
      *   'fields' => array ( list of property name attached to this table )
      * )
      * </pre>

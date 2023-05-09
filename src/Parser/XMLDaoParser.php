@@ -3,7 +3,7 @@
  * @author      Gérald Croes, Laurent Jouanneau
  * @contributor Laurent Jouanneau
  *
- * @copyright   2001-2005 CopixTeam, 2005-2020 Laurent Jouanneau
+ * @copyright   2001-2005 CopixTeam, 2005-2023 Laurent Jouanneau
  *
  * @see        https://jelix.org
  * @licence  http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
@@ -12,9 +12,7 @@ namespace Jelix\Dao\Parser;
 
 use Jelix\Dao\ContextInterface;
 use Jelix\Dao\CustomRecordClassFileInterface;
-use Jelix\Dao\DaoFile;
 use Jelix\Dao\DaoFileInterface;
-use Jelix\Database\Schema\AbstractSqlTools;
 
 /**
  * extract data from a dao xml content.
@@ -32,15 +30,10 @@ class XMLDaoParser
     private $_properties = array();
 
     /**
-     * all tables with their properties, and their own fields
-     * keys = table code name
-     * values = array()
-     *          'name'=> table code name, 'realname'=>'real table name',
-     *           'pk'=> primary keys list
-     *          'fk'=> foreign keys list
-     *          'fields'=>array(list of field code name).
+     * All tables with their properties, and their own fields
      *
-     * @var array[]
+     * keys = table code name
+     * @var DaoTable[]
      */
     private $_tables = array();
 
@@ -52,14 +45,14 @@ class XMLDaoParser
     private $_primaryTable = '';
 
     /**
-     * code name of foreign table with a outer join.
+     * code name of foreign table with an outer join.
      *
      * @var array[] list of array(table code name, 0)
      */
     private $_ojoins = array();
 
     /**
-     * code name of foreign table with a inner join.
+     * code name of foreign table with an inner join.
      *
      * @var string[] list of table code name
      */
@@ -203,24 +196,24 @@ class XMLDaoParser
             $this->_ijoins = array();
             $this->_ojoins = array();
 
-            $t = $this->_parseTable(0, $xml->datasources[0]->primarytable[0]);
-            $this->_primaryTable = $t['name'];
-            if (isset($previousTables[$t['name']])) {
-                $this->_tables[$t['name']]['fields'] = $previousTables[$t['name']]['fields'];
+            $t = $this->_parseTable(DaoTable::TYPE_PRIMARY, $xml->datasources[0]->primarytable[0]);
+            $this->_primaryTable = $t->name;
+            if (isset($previousTables[$t->name])) {
+                $this->_tables[$t->name]->fields = $previousTables[$t->name]->fields;
             }
             if (isset($xml->datasources[0]->primarytable[1])) {
                 throw new ParserException($this->daoFile, 'Too many primary tables, only one allowed', 521);
             }
             foreach ($xml->datasources[0]->foreigntable as $table) {
-                $t = $this->_parseTable(1, $table);
-                if (isset($previousTables[$t['name']])) {
-                    $this->_tables[$t['name']]['fields'] = $previousTables[$t['name']]['fields'];
+                $t = $this->_parseTable(DaoTable::TYPE_FOREIGN, $table);
+                if (isset($previousTables[$t->name])) {
+                    $this->_tables[$t->name]->fields = $previousTables[$t->name]->fields;
                 }
             }
             foreach ($xml->datasources[0]->optionalforeigntable as $table) {
-                $t = $this->_parseTable(2, $table);
-                if (isset($previousTables[$t['name']])) {
-                    $this->_tables[$t['name']]['fields'] = $previousTables[$t['name']]['fields'];
+                $t = $this->_parseTable(DaoTable::TYPE_OPTIONAL_FOREIGN, $table);
+                if (isset($previousTables[$t->name])) {
+                    $this->_tables[$t->name]->fields = $previousTables[$t->name]->fields;
                 }
             }
         } elseif ($this->_primaryTable === '') { // no imported dao
@@ -250,8 +243,8 @@ class XMLDaoParser
                     if (isset($properties[$p->name])) {
                         throw new ParserException($this->daoFile, 'property '.$p->name.' already defined', 533);
                     }
-                    if (!in_array($p->name, $this->_tables[$p->table]['fields'])) { // if this property does not redefined an imported property
-                        $this->_tables[$p->table]['fields'][] = $p->name;
+                    if (!in_array($p->name, $this->_tables[$p->table]->fields)) { // if this property does not redefined an imported property
+                        $this->_tables[$p->table]->fields[] = $p->name;
                     }
                     $properties[$p->name] = $p;
                 }
@@ -308,57 +301,23 @@ class XMLDaoParser
     /**
      * parse a join definition.
      *
-     * @param int              $typetable
-     * @param \SimpleXMLElement $tabletag
+     * @param int              $typeTable
+     * @param \SimpleXMLElement $tableElement
+     * @return DaoTable
      */
-    private function _parseTable($typetable, $tabletag)
+    private function _parseTable($typeTable, $tableElement)
     {
-        $infos = $this->getAttr($tabletag, array('name', 'realname', 'primarykey', 'onforeignkey'));
-
-        if ($infos['name'] === null) {
-            throw new ParserException($this->daoFile, 'table name is missing', 522);
+        $table = DaoTable::parseFromXml($typeTable, $tableElement, $this);
+        if ($typeTable == $table::TYPE_FOREIGN) { // for the foreigntable and optionalforeigntable
+            $this->_ijoins[] = $table->name;
+        }
+        else if ($typeTable == $table::TYPE_OPTIONAL_FOREIGN) {
+            $this->_ojoins[] = array($table->name, 0);
         }
 
-        if ($infos['realname'] === null) {
-            $infos['realname'] = $infos['name'];
-        }
+        $this->_tables[$table->name] = $table;
 
-        if ($infos['primarykey'] === null) {
-            throw new ParserException($this->daoFile, 'primary key name is missing', 523);
-        }
-
-        $infos['pk'] = preg_split('/[\\s,]+/', $infos['primarykey']);
-        unset($infos['primarykey']);
-
-        if (count($infos['pk']) == 0 || $infos['pk'][0] == '') {
-            throw new ParserException($this->daoFile, 'primary key name is missing', 523);
-        }
-
-        if ($typetable) { // for the foreigntable and optionalforeigntable
-            if ($infos['onforeignkey'] === null) {
-                throw new ParserException($this->daoFile, 'foreign key name is missing on a join', 524);
-            }
-            $infos['fk'] = preg_split('/[\\s,]+/', $infos['onforeignkey']);
-            unset($infos['onforeignkey']);
-            if (count($infos['fk']) == 0 || $infos['fk'][0] == '') {
-                throw new ParserException($this->daoFile, 'foreign key name is missing on a join', 524);
-            }
-            if (count($infos['fk']) != count($infos['pk'])) {
-                throw new ParserException($this->daoFile, 'foreign key name is missing on a join', 524);
-            }
-            if ($typetable == 1) {
-                $this->_ijoins[] = $infos['name'];
-            } else {
-                $this->_ojoins[] = array($infos['name'], 0);
-            }
-        } else {
-            unset($infos['onforeignkey']);
-        }
-
-        $infos['fields'] = array();
-        $this->_tables[$infos['name']] = $infos;
-
-        return $infos;
+        return $table;
     }
 
     /**
@@ -420,13 +379,7 @@ class XMLDaoParser
     /**
      * all tables with their properties, and their own fields
      * keys = table code name
-     * values = array()
-     *          'name'=> table code name, 'realname'=>'real table name',
-     *           'pk'=> primary keys list
-     *          'fk'=> foreign keys list
-     *          'fields'=>array(list of field code name).
-     *
-     * @return array
+     * @return DaoTable[]
      */
     public function getTables()
     {

@@ -4,7 +4,7 @@
  * @contributor Gwendal Jouannic
  * @contributor Philippe Villiers
  *
- * @copyright  2007-2021 Laurent Jouanneau, 2013 Philippe Villiers
+ * @copyright  2007-2023 Laurent Jouanneau, 2013 Philippe Villiers
  *
  * @see      http://www.jelix.org
  * @licence  http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
@@ -29,12 +29,12 @@ class OciDaoGenerator extends \Jelix\Dao\Generator\AbstractDaoGenerator
         $sqlWhere = '';
         foreach ($this->_dataParser->getOuterJoins() as $tablejoin) {
             $table = $tables[$tablejoin[0]];
-            $tablename = $this->_encloseName($table['name']);
+            $tablename = $this->_encloseName($table->name);
 
-            if ($table['name'] != $table['realname']) {
-                $r = $this->_encloseName($table['realname']).' '.$tablename;
+            if ($table->name != $table->realName) {
+                $r = $this->_encloseName($table->realName).' '.$tablename;
             } else {
-                $r = $this->_encloseName($table['realname']);
+                $r = $this->_encloseName($table->realName);
             }
 
             $fieldjoin = '';
@@ -46,8 +46,8 @@ class OciDaoGenerator extends \Jelix\Dao\Generator\AbstractDaoGenerator
                 $operand = '(+)=';
                 $opafter = '';
             }
-            foreach ($table['fk'] as $k => $fk) {
-                $fieldjoin .= ' AND '.$primaryTableName.'.'.$this->_encloseName($fk).$operand.$tablename.'.'.$this->_encloseName($table['pk'][$k]).$opafter;
+            foreach ($table->foreignKeys as $k => $fk) {
+                $fieldjoin .= ' AND '.$primaryTableName.'.'.$this->_encloseName($fk).$operand.$tablename.'.'.$this->_encloseName($table->primaryKey[$k]).$opafter;
             }
             $sqlFrom .= ', '.$r;
             $sqlWhere .= $fieldjoin;

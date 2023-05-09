@@ -4,7 +4,7 @@
  * @contributor Loic Mathaud <loic@mathaud.net>
  * @contributor Steven Jehannet
  *
- * @copyright  2007-2021 Laurent Jouanneau, 2008 Loic Mathaud, 2010 Steven Jehannet
+ * @copyright  2007-2023 Laurent Jouanneau, 2008 Loic Mathaud, 2010 Steven Jehannet
  *
  * @see      https://www.jelix.org
  * @licence  http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
@@ -42,7 +42,7 @@ class SqliteDaoGenerator extends \Jelix\Dao\Generator\AbstractDaoGenerator
             $properties = $this->_dataParser->getProperties();
             $tables = $this->_dataParser->getTables();
             $prop = $properties[$method->distinct];
-            $distinct = ' DISTINCT '.$this->_encloseName($tables[$prop->table]['name']).'.'.$this->_encloseName($prop->fieldName);
+            $distinct = ' DISTINCT '.$this->_encloseName($tables[$prop->table]->name).'.'.$this->_encloseName($prop->fieldName);
         } else {
             $distinct = '';
         }

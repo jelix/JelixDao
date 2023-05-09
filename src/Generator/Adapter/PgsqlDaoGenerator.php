@@ -1,7 +1,7 @@
 <?php
 /**
  * @author     Laurent Jouanneau
- * @copyright  2007-2020 Laurent Jouanneau
+ * @copyright  2007-2023 Laurent Jouanneau
  *
  * @see      https://www.jelix.org
  * @licence  http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
@@ -27,7 +27,7 @@ class PgsqlDaoGenerator extends \Jelix\Dao\Generator\AbstractDaoGenerator
         }
 
         $tb = $this->_dataParser->getTables();
-        $tb = $tb[$this->_dataParser->getPrimaryTable()]['realname'];
+        $tb = $tb[$this->_dataParser->getPrimaryTable()]->realName;
 
         foreach ($using as $id => $field) {
             if (!$field->isPK) {
