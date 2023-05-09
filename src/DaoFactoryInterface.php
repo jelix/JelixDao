@@ -2,7 +2,7 @@
 /**
  *
  * @author      Laurent Jouanneau
- * @copyright   2021 Laurent Jouanneau
+ * @copyright   2021-2023 Laurent Jouanneau
  *
  * @see        http://www.jelix.org
  * @licence     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
@@ -38,6 +38,7 @@ interface DaoFactoryInterface
      *   'name' => ' the table alias',
      *   'realname' => 'the real name of the table',
      *   'pk' => array ( list of primary keys name ),
+     *   'fk' => array ( list of foreign keys name ),
      *   'fields' => array ( list of property name attached to this table )
      * )
      * </pre>

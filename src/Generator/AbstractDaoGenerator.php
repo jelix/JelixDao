@@ -6,7 +6,7 @@
  * @contributor Julien Issler, Guillaume Dugas
  * @contributor Philippe Villiers
  *
- * @copyright  2001-2005 CopixTeam, 2005-2021 Laurent Jouanneau
+ * @copyright  2001-2005 CopixTeam, 2005-2023 Laurent Jouanneau
  * @copyright  2007-2008 Julien Issler
  *
  * @see        https://jelix.org
@@ -18,6 +18,7 @@ use Jelix\Dao\DaoCondition;
 use Jelix\Dao\DaoConditions;
 use Jelix\Dao\Parser\DaoMethod;
 use Jelix\Dao\Parser\DaoProperty;
+use Jelix\Dao\Parser\DaoTable;
 use Jelix\Dao\Parser\XMLDaoParser;
 use Jelix\Database\Schema\SqlToolsInterface;
 
@@ -92,7 +93,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
 
         $tables = $this->_dataParser->getTables();
         $pkFields = $this->_getPrimaryFieldsList();
-        $this->tableRealName = $tables[$this->_dataParser->getPrimaryTable()]['realname'];
+        $this->tableRealName = $tables[$this->_dataParser->getPrimaryTable()]->realName;
         $this->tableRealNameEsc = $this->_encloseName('\'.$this->_conn->prefixTable(\''.$this->tableRealName.'\').\'');
 
         $sqlPkCondition = $this->buildSimpleConditions($pkFields);
@@ -142,8 +143,20 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         // Build the dao factory class
         //----------------------------
 
+        $serializedTables = array();
+        foreach($tables as $name =>$table) {
+            $serializedTables[$name] = array(
+                'name' => $table->name,
+                'realname' => $table->realName,
+                'pk' => $table->primaryKey,
+                'fk' => $table->foreignKeys,
+                'fields' => $table->fields,
+                'usageType' => $table->usageType,
+            );
+        }
+
         $src[] = "\nclass ".$daoFactoryClass.' extends \Jelix\Dao\AbstractDaoFactory {';
-        $src[] = '   protected $_tables = '.var_export($tables, true).';';
+        $src[] = '   protected $_tables = '.var_export($serializedTables, true).';';
         $src[] = '   protected $_primaryTable = \''.$this->_dataParser->getPrimaryTable().'\';';
         $src[] = '   protected $_selectClause=\''.$this->sqlSelectClause.'\';';
         $src[] = '   protected $_fromClause;';
@@ -625,15 +638,16 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
      */
     protected function buildFromWhereClause()
     {
-        $tables = $this->_dataParser->getTables();
+        $tables = array();
 
-        foreach ($tables as $table_name => $table) {
-            $tables[$table_name]['realname'] = '\'.$this->_conn->prefixTable(\''.$table['realname'].'\').\'';
+        foreach ($this->_dataParser->getTables() as $table_name => $table) {
+            $tables[$table_name] = clone $table;
+            $tables[$table_name]->realName = '\'.$this->_conn->prefixTable(\''.$table->realName.'\').\'';
         }
 
         $primarytable = $tables[$this->_dataParser->getPrimaryTable()];
-        $ptrealname = $this->_encloseName($primarytable['realname']);
-        $ptname = $this->_encloseName($primarytable['name']);
+        $ptrealname = $this->_encloseName($primarytable->realName);
+        $ptname = $this->_encloseName($primarytable->name);
 
         list($sqlFrom, $sqlWhere) = $this->buildOuterJoins($tables, $ptname);
 
@@ -641,11 +655,12 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
 
         foreach ($this->_dataParser->getInnerJoins() as $tablejoin) {
             $table = $tables[$tablejoin];
-            $tablename = $this->_encloseName($table['name']);
-            $sqlFrom .= ', '.$this->_encloseName($table['realname']).$this->aliasWord.$tablename;
+            $tablename = $this->_encloseName($table->name);
+            $sqlFrom .= ', '.$this->_encloseName($table->realName).$this->aliasWord.$tablename;
 
-            foreach ($table['fk'] as $k => $fk) {
-                $sqlWhere .= ' AND '.$ptname.'.'.$this->_encloseName($fk).'='.$tablename.'.'.$this->_encloseName($table['pk'][$k]);
+            foreach ($table->foreignKeys as $k => $fk) {
+                $sqlWhere .= ' AND '.$ptname.'.'.$this->_encloseName($fk).'='.
+                    $tablename.'.'.$this->_encloseName($table->primaryKey[$k]);
             }
         }
 
@@ -656,7 +671,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
     /**
      * generates the part of the FROM clause for outer joins.
      *
-     * @param mixed $tables
+     * @param DaoTable[] $tables
      * @param mixed $primaryTableName
      *
      * @return array [0]=> the part of the FROM clause, [1]=> the part to add to the WHERE clause when needed
@@ -666,13 +681,14 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         $sqlFrom = '';
         foreach ($this->_dataParser->getOuterJoins() as $tablejoin) {
             $table = $tables[$tablejoin[0]];
-            $tablename = $this->_encloseName($table['name']);
+            $tablename = $this->_encloseName($table->name);
 
-            $r = $this->_encloseName($table['realname']).$this->aliasWord.$tablename;
+            $r = $this->_encloseName($table->realName).$this->aliasWord.$tablename;
 
             $fieldjoin = '';
-            foreach ($table['fk'] as $k => $fk) {
-                $fieldjoin .= ' AND '.$primaryTableName.'.'.$this->_encloseName($fk).'='.$tablename.'.'.$this->_encloseName($table['pk'][$k]);
+            foreach ($table->foreignKeys as $k => $fk) {
+                $fieldjoin .= ' AND '.$primaryTableName.'.'.$this->_encloseName($fk).
+                    '='.$tablename.'.'.$this->_encloseName($table->primaryKey[$k]);
             }
             $fieldjoin = substr($fieldjoin, 4);
 
@@ -699,7 +715,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
 
         $tables = $this->_dataParser->getTables();
         foreach ($this->_dataParser->getProperties() as $id => $prop) {
-            $table = $this->_encloseName($tables[$prop->table]['name']).'.';
+            $table = $this->_encloseName($tables[$prop->table]->name).'.';
 
             if ($prop->selectPattern != '') {
                 $result[] = $this->buildSelectPattern($prop->selectPattern, $table, $prop->fieldName, $prop->name);
@@ -713,7 +729,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
      * build an item for the select clause.
      *
      * @param mixed $pattern
-     * @param mixed $table
+     * @param string $table
      * @param mixed $fieldname
      * @param mixed $propname
      */
@@ -796,8 +812,8 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         $primTable = $tables[$this->_dataParser->getPrimaryTable()];
         $props = $this->_dataParser->getProperties();
         // we want to have primary keys as the same order indicated into primarykey attr
-        foreach ($primTable['pk'] as $pkname) {
-            foreach ($primTable['fields'] as $f) {
+        foreach ($primTable->primaryKey as $pkname) {
+            foreach ($primTable->fields as $f) {
                 if ($props[$f]->fieldName == $pkname) {
                     $pkFields[$props[$f]->name] = $props[$f];
 
@@ -984,7 +1000,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
     {
         $values = $fields = array();
 
-        foreach ((array) $fieldList as $fieldName => $field) {
+        foreach ($fieldList as $fieldName => $field) {
             if ($pattern != '' && $field->{$pattern} == '') {
                 continue;
             }

@@ -6,6 +6,10 @@
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
  */
 
+use Jelix\Dao\DaoSimpleFile;
+use Jelix\Dao\Generator\Compiler;
+use Jelix\Dao\Parser\DaoTable;
+
 class jDaoImportTest extends \Jelix\UnitTests\UnitTestCaseDb {
 
     use \Jelix\UnitTests\AssertComplexTrait;
@@ -91,13 +95,13 @@ class jDaoImportTest extends \Jelix\UnitTests\UnitTestCaseDb {
     public function testImportedEvents()
     {
 
-        $postSel = new \Jelix\Dao\DaoSimpleFile("posts", $this->daosDirectory.'posts.xml', "sqlite", $this->tempPath);
-        $blogSel = new \Jelix\Dao\DaoSimpleFile("post_blog", $this->daosDirectory.'post_blog.xml', "sqlite", $this->tempPath);
-        $trackerSel = new \Jelix\Dao\DaoSimpleFile("post_tracker", $this->daosDirectory.'post_tracker.xml', "sqlite", $this->tempPath);
+        $postSel = new DaoSimpleFile("posts", $this->daosDirectory.'posts.xml', "sqlite", $this->tempPath);
+        $blogSel = new DaoSimpleFile("post_blog", $this->daosDirectory.'post_blog.xml', "sqlite", $this->tempPath);
+        $trackerSel = new DaoSimpleFile("post_tracker", $this->daosDirectory.'post_tracker.xml', "sqlite", $this->tempPath);
 
         $context = new \Jelix\DaoTests\ContextForTest("sqlite");
 
-        $compiler = new \Jelix\Dao\Generator\Compiler();
+        $compiler = new Compiler();
 
         $postParser =  $compiler->parse($postSel, $context);
         $this->assertEquals(array('deletebefore'), $postParser->getEvents());
@@ -111,21 +115,20 @@ class jDaoImportTest extends \Jelix\UnitTests\UnitTestCaseDb {
 
     public function testImportWithRedefinedMethods()
     {
-        $trackerSel = new \Jelix\Dao\DaoSimpleFile("post_tracker", $this->daosDirectory.'post_tracker.xml', "sqlite", $this->tempPath);
+        $trackerSel = new DaoSimpleFile("post_tracker", $this->daosDirectory.'post_tracker.xml', "sqlite", $this->tempPath);
 
         $context = new \Jelix\DaoTests\ContextForTest("sqlite");
-        $compiler = new \Jelix\Dao\Generator\Compiler();
+        $compiler = new Compiler();
 
         $postTrackerParser = $compiler->parse($trackerSel, $context);
 
+        $postTable = new DaoTable('posts',
+            'posts', array('id'), DaoTable::TYPE_PRIMARY);
+        $postTable->fields = array('id', 'title', 'author', 'content', 'type', 'status', 'date');
+
         $this->assertEquals(
             array(
-                'posts'=> array(
-                    'name'=> 'posts',
-                    'realname'=>'posts',
-                    'pk'=> array('id'),
-                    'fields'=>array('id', 'title', 'author', 'content', 'type', 'status', 'date')
-                )
+                'posts'=> $postTable
             ),
             $postTrackerParser->getTables());
         $properties = '<?xml version="1.0"?>
@@ -490,23 +493,23 @@ class jDaoImportTest extends \Jelix\UnitTests\UnitTestCaseDb {
 
     protected function launchTestImportWithRedefinedProperties($daoName)
     {
-        $postSel = new \Jelix\Dao\DaoSimpleFile("posts", $this->daosDirectory.'posts.xml', "sqlite", $this->tempPath);
-        $blogSel = new \Jelix\Dao\DaoSimpleFile($daoName, $this->daosDirectory.$daoName.'.xml', "sqlite", $this->tempPath);
+        $postSel = new DaoSimpleFile("posts", $this->daosDirectory.'posts.xml', "sqlite", $this->tempPath);
+        $blogSel = new DaoSimpleFile($daoName, $this->daosDirectory.$daoName.'.xml', "sqlite", $this->tempPath);
 
         $context = new \Jelix\DaoTests\ContextForTest("sqlite");
-        $compiler = new \Jelix\Dao\Generator\Compiler();
+        $compiler = new Compiler();
 
         $postBlogParser = $compiler->parse($blogSel, $context);
+
+        $postTable = new DaoTable('posts', 'posts', array('id'), DaoTable::TYPE_PRIMARY);
+        $postTable->fields = array('id', 'title', 'author', 'content', 'type', 'status', 'date', 'email');
+
         $this->assertEquals(
             array(
-                'posts'=> array(
-                    'name'=> 'posts',
-                    'realname'=>'posts',
-                    'pk'=> array('id'),
-                    'fields'=>array('id', 'title', 'author', 'content', 'type', 'status', 'date', 'email')
-                )
+                'posts'=> $postTable
             ),
             $postBlogParser->getTables());
+
         $properties = '<?xml version="1.0"?>
         <array>
             <object key="id" class="\Jelix\Dao\Parser\DaoProperty">

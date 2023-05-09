@@ -4,7 +4,7 @@
  * @contributor Laurent Jouanneau
  * @contributor Philippe Villiers
  *
- * @copyright   2001-2005 CopixTeam, 2005-2020 Laurent Jouanneau
+ * @copyright   2001-2005 CopixTeam, 2005-2023 Laurent Jouanneau
  *
  * @see        https://jelix.org
  * @licence  http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
@@ -172,15 +172,15 @@ class DaoProperty
             throw new ParserException($parser->getDaoFile(), 'property "'.$this->fieldName.'" non numeric cannot be auto incremented', 535);
         }
 
-        $pkeys = array_map('strtolower', $tables[$this->table]['pk']);
+        $pkeys = array_map('strtolower', $tables[$this->table]->primaryKey);
         $this->isPK = in_array(strtolower($this->fieldName), $pkeys);
         if (!$this->isPK && $this->table == $parser->getPrimaryTable()) {
-            foreach ($tables as $table => $info) {
-                if ($table == $this->table) {
+            foreach ($tables as $tableName => $table) {
+                if ($tableName == $this->table) {
                     continue;
                 }
-                if (isset($info['fk'])) {
-                    $fkeys = array_map('strtolower', $info['fk']);
+                if ($table->foreignKeys) {
+                    $fkeys = array_map('strtolower', $table->foreignKeys);
                     if (in_array(strtolower($this->fieldName), $fkeys)) {
                         $this->isFK = true;
 

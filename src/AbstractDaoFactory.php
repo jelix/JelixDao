@@ -11,7 +11,7 @@
  * @contributor Steven Jehannet, Didier Huguet
  * @contributor Philippe Villiers
  *
- * @copyright   2005-2021 Laurent Jouanneau
+ * @copyright   2005-2023 Laurent Jouanneau
  * @copyright   2007 Loic Mathaud
  * @copyright   2007-2009 Julien Issler
  * @copyright   2008 Thomas
@@ -46,6 +46,7 @@ abstract class AbstractDaoFactory implements DaoFactoryInterface
      *   'name' => ' the table alias',
      *   'realname' => 'the real name of the table',
      *   'pk' => array ( list of primary keys name ),
+     *   'fk' => array ( list of foreign keys name ),
      *   'fields' => array ( list of property name attached to this table )
      * )
      * </pre>

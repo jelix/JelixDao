@@ -12,4 +12,4 @@ if [ "$CMD" == "" ]; then
     CMD="up -d"
 fi
 
-docker-compose -p jdao-tests $CMD
+docker compose -p jdao-tests $CMD
