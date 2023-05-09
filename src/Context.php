@@ -2,7 +2,7 @@
 
 /**
  * @author      Laurent Jouanneau
- * @copyright   2021 Laurent Jouanneau
+ * @copyright   2021-2023 Laurent Jouanneau
  *
  * @see         https://jelix.org
  * @licence     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
@@ -23,6 +23,11 @@ class Context implements ContextInterface
     protected $basePath;
 
     protected $tempPath;
+
+    protected $daoXmlSuffix = '.xml';
+    protected $daoXmlSuffixRe = '/\\.xml$/';
+    protected $daoPhpSuffix = '.php';
+    protected $daoPhpSuffixRe = '/\\.php$/';
 
     public function __construct(ConnectionInterface $connection, $tempPath, $daosDirectory = '')
     {
@@ -60,10 +65,11 @@ class Context implements ContextInterface
         else {
             $daoName = basename($path);
         }
-        if (!preg_match("/\\.xml$/", $path)) {
-            $path .= '.xml';
+
+        if (!preg_match($this->daoXmlSuffixRe, $path)) {
+            $path .= $this->daoXmlSuffix;
         }
-        return new DaoSimpleFile($daoName, $path, $this->connection->getSQLType(), $this->tempPath);
+        return new DaoSimpleFile($daoName, $path, $this->connection->getSQLType(), $this->tempPath, $this->daoXmlSuffix);
     }
 
     /**
@@ -81,11 +87,11 @@ class Context implements ContextInterface
             $path = Path::normalizePath($this->basePath.'/'.$path);
         }
 
-        if (!preg_match("/\\.php$/", $path)) {
-            $path .= '.php';
+        if (!preg_match($this->daoPhpSuffixRe, $path)) {
+            $path .= $this->daoPhpSuffix;
         }
 
-        $class = ucfirst(str_replace('.php', '', basename($path)));
+        $class = ucfirst(str_replace($this->daoPhpSuffix, '', basename($path)));
 
         return new CustomRecordClassFile($class, $path);
     }

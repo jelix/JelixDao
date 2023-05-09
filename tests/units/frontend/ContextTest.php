@@ -60,4 +60,41 @@ class ContextTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('Products', $customClass->getClassName());
     }
 
+    function testContextForJelix()
+    {
+        $tempPath = __DIR__.'/../tmp';
+        $daosDirectory = __DIR__.'/../lib/daos/';
+        $context = new \Jelix\Dao\JelixModuleContext(
+            $this->getConnection(),
+            $tempPath,
+            $daosDirectory,
+            true
+        );
+
+        $daoFilePath = realpath(__DIR__.'/../lib/daos/posts.dao.xml');
+
+        $daoFile = $context->resolveDaoPath('posts.dao.xml');
+        $this->assertEquals('posts.dao.xml', $daoFile->getName());
+
+        $this->assertEquals($daoFilePath, $daoFile->getPath());
+
+        $daoFile = $context->resolveDaoPath('posts');
+        $this->assertEquals('posts', $daoFile->getName());
+        $this->assertEquals($daoFilePath, $daoFile->getPath());
+
+        $daoFile = $context->resolveDaoPath(__DIR__.'/../lib/daos/posts.dao.xml');
+        $this->assertEquals('posts.dao.xml', $daoFile->getName());
+        $this->assertEquals(__DIR__.'/../lib/daos/posts.dao.xml', $daoFile->getPath());
+
+        $daoCompiledClassPath = __DIR__.'/../tmp/posts.dao.xml.Sqlite.php';
+        $this->assertEquals($daoCompiledClassPath, $daoFile->getCompiledFilePath());
+        $this->assertEquals('PostsSqliteFactory', $daoFile->getCompiledFactoryClass());
+        $this->assertEquals('PostsSqliteRecord', $daoFile->getCompiledRecordClass());
+
+        $daoClassPath = realpath(__DIR__.'/../lib/daos').'/post.daorecord.php';
+        $customClass = $context->resolveCustomRecordClassPath('post.daorecord.php');
+        $this->assertEquals($daoClassPath, $customClass->getPath());
+        $this->assertEquals('Post', $customClass->getClassName());
+    }
+
 }
