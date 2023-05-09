@@ -1,10 +1,16 @@
 Changelog
 =========
 
+
+Next
+----
+
+Context class to load dao from the daos directory of a Jelix module.
+
 1.0.1 (2023-01-22)
 ------------------
 
-Fix an issue with PHP 8
+Fix an issue with PHP 8.
 
 
 1.0.0 (2022-08-18)
