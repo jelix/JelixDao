@@ -1,7 +1,7 @@
 <?php
 /**
  * @author      Laurent Jouanneau
- * @copyright   2017-2022 Laurent Jouanneau
+ * @copyright   2017-2023 Laurent Jouanneau
  *
  * @see        https://www.jelix.org
  * @licence     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
@@ -97,7 +97,7 @@ class DbMapper
         $primaryKey = array();
         foreach ($properties as $name) {
             if (!isset($allProperties[$name])) {
-                throw new Exception("insertDaoData: Unknown property ${name}");
+                throw new Exception("insertDaoData: Unknown property {$name}");
             }
             $columns[] = $allProperties[$name]->fieldName;
             if ($allProperties[$name]->isPK) {

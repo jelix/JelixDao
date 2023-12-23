@@ -1,7 +1,7 @@
 <?php
 /**
  * @author      Laurent Jouanneau
- * @copyright   2021 Laurent Jouanneau
+ * @copyright   2021-2023 Laurent Jouanneau
  *
  * @see         https://jelix.org
  * @licence     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
@@ -60,7 +60,7 @@ class QueryLogger extends \Jelix\Database\Log\QueryLogger
 
         $traceLog = '';
         foreach ($this->trace as $k => $t) {
-            $traceLog .= "\n\t${k}\t".(isset($t['class']) ? $t['class'].$t['type'] : '').$t['function']."()\t";
+            $traceLog .= "\n\t{$k}\t".(isset($t['class']) ? $t['class'].$t['type'] : '').$t['function']."()\t";
             $traceLog .= (isset($t['file']) ? $t['file'] : '[php]').' : '.(isset($t['line']) ? $t['line'] : '');
         }
 
