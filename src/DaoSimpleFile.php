@@ -3,7 +3,7 @@
 
 /**
  * @author      Laurent Jouanneau
- * @copyright   2021 Laurent Jouanneau
+ * @copyright   2021-2023 Laurent Jouanneau
  *
  * @see         https://jelix.org
  * @licence     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
@@ -13,6 +13,8 @@ namespace Jelix\Dao;
 
 class DaoSimpleFile implements DaoFileInterface
 {
+    protected $daoName;
+
     protected $daoFile;
 
     protected $tempPath;
