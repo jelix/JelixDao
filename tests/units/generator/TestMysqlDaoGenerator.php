@@ -47,6 +47,7 @@ class TestMysqlDaoGenerator extends \Jelix\Dao\Generator\Adapter\MysqlDaoGenerat
     }
 
     function GetSelectClause ($distinct=false){
+        $this->buildFromWhereClause();
         return $this->buildSelectClause ($distinct);
     }
 

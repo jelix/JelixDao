@@ -17,7 +17,13 @@ class DaoTable
 
     public $name;
 
+    public $schema;
+
     public $realName;
+
+    public $escapedNameForPhp;
+    public $escapedNameForPhpForFrom;
+    public $enclosedName;
 
     /**
      * @var string[] list of property names that serve as primary key
@@ -42,7 +48,13 @@ class DaoTable
     public function __construct($name, $realName, $primaryKey, $usageType)
     {
         $this->name =  $name;
-        $this->realName = $realName;
+        if (is_array($realName)) {
+            list ($this->schema, $this->realName) = $realName;
+        }
+        else {
+            $this->realName = $realName;
+        }
+
         $this->primaryKey = $primaryKey;
         $this->usageType = $usageType;
     }
@@ -60,7 +72,7 @@ class DaoTable
      */
     public static function parseFromXml($usageType, \SimpleXMLElement $tableElement, XMLDaoParser $parser)
     {
-        $infos = $parser->getAttr($tableElement, array('name', 'realname', 'primarykey', 'onforeignkey'));
+        $infos = $parser->getAttr($tableElement, array('name', 'realname', 'primarykey', 'onforeignkey', 'schema'));
 
         if ($infos['name'] === null) {
             throw new ParserException($parser->getDaoFile(), 'table name is missing', 522);
@@ -70,8 +82,25 @@ class DaoTable
             throw new ParserException($parser->getDaoFile(), 'primary key name is missing', 523);
         }
 
+        if ($infos['realname']) {
+            $fullName = explode('.', $infos['realname']);
+            $realName = array_pop($fullName);
+            if ($infos['schema']) {
+                $realName = [$infos['schema'], $realName];
+            }
+            else if (count($fullName)) {
+                $realName = [array_pop($fullName), $realName];
+            }
+        }
+        else if ($infos['schema']) {
+            $realName = [$infos['schema'], $infos['name']];
+        }
+        else {
+            $realName = $infos['name'];
+        }
+
         $table = new DaoTable($infos['name'],
-            $infos['realname'] ?:$infos['name'],
+            $realName,
             preg_split('/[\\s,]+/', $infos['primarykey']),
             $usageType
         );

@@ -15,6 +15,7 @@ while($tryAgain) {
     pg_query($cnx, "drop table if exists products_tags");
     pg_query($cnx, "drop table if exists labels_test");
     pg_query($cnx, "drop table if exists jsessions");
+    pg_query($cnx, "drop table if exists newspaper.article");
 
     pg_query($cnx, "CREATE TABLE products (
         id serial NOT NULL,
@@ -25,8 +26,6 @@ while($tryAgain) {
         dummy character varying (10) NULL CONSTRAINT dummy_check CHECK (dummy IN ('created','started','stopped')),
         metadata jsonb default null
     )");
-
-    pg_query($cnx, "SELECT pg_catalog.setval(pg_catalog.pg_get_serial_sequence('products', 'id'), 1, false)");
 
     pg_query($cnx, "CREATE TABLE products_tags (
     product_id integer NOT NULL,
@@ -47,7 +46,14 @@ while($tryAgain) {
     \"access\" timestamp NOT NULL,
     data bytea NOT NULL
 )");
+    pg_query($cnx, "CREATE SCHEMA IF NOT EXISTS newspaper");
 
+    pg_query($cnx, "CREATE TABLE newspaper.article (
+        id serial NOT NULL,
+        title VARCHAR( 255 ) NOT NULL,
+        content TEXT NOT NULL
+)");
+    pg_query($cnx, "SELECT pg_catalog.setval(pg_catalog.pg_get_serial_sequence('newspaper.article', 'id'), 1, false)");
 
     pg_query($cnx, "SELECT pg_catalog.setval(pg_catalog.pg_get_serial_sequence('products', 'id'), 1, false)");
 
@@ -115,6 +121,11 @@ UNIQUE (`keyalias`)
   PRIMARY KEY  (`id`)
 ) DEFAULT CHARSET=utf8;");
 
+    $cnx->query("CREATE TABLE IF NOT EXISTS article (
+        `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+        title VARCHAR( 255 ) NOT NULL,
+        content TEXT NOT NULL
+)  ENGINE=InnoDb");
     $cnx->close();
 }
 
@@ -154,6 +165,12 @@ $sqlite->exec("CREATE TABLE jsessions (
   data blob NOT NULL,
   PRIMARY KEY  (id)
 );");
+
+$sqlite->exec("CREATE TABLE article (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title VARCHAR( 255 ) NOT NULL,
+        content TEXT NOT NULL
+)");
 
 $sqlite->exec("CREATE TABLE products_tags (
     product_id integer NOT NULL,

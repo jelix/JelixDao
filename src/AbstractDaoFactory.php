@@ -83,6 +83,13 @@ abstract class AbstractDaoFactory implements DaoFactoryInterface
     protected $_fromClause;
 
     /**
+     * the from clause you can reuse for a DELETE query.
+     *
+     * @var string
+     */
+    protected $_deleteFromClause;
+
+    /**
      * the where clause you can reuse for a specific SELECT query.
      *
      * @var string
@@ -311,7 +318,7 @@ abstract class AbstractDaoFactory implements DaoFactoryInterface
             throw new Exception('(501) Identifier is missing');
         }
 
-        $q = 'DELETE FROM '.$this->_conn->encloseName($this->_tables[$this->_primaryTable]['realname']).' ';
+        $q = 'DELETE FROM '.$this->_deleteFromClause.' ';
         $q .= $this->_getPkWhereClauseForNonSelect($keys);
 
         if ($this->_deleteBeforeEvent && $this->hook) {
@@ -422,7 +429,7 @@ abstract class AbstractDaoFactory implements DaoFactoryInterface
             return 0;
         }
 
-        $query = 'DELETE FROM '.$this->_conn->encloseName($this->_tables[$this->_primaryTable]['realname']).' WHERE ';
+        $query = 'DELETE FROM '.$this->_deleteFromClause.' WHERE ';
         $query .= $this->_createConditionsClause($searchCond, false);
 
         if ($this->_deleteByBeforeEvent && $this->hook) {

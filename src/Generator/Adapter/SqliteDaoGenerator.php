@@ -12,6 +12,7 @@
 namespace Jelix\Dao\Generator\Adapter;
 
 use Jelix\Dao\Parser\DaoProperty;
+use Jelix\Dao\Parser\DaoTable;
 
 /**
  * driver for JelixDao compiler.
@@ -42,7 +43,7 @@ class SqliteDaoGenerator extends \Jelix\Dao\Generator\AbstractDaoGenerator
             $properties = $this->_dataParser->getProperties();
             $tables = $this->_dataParser->getTables();
             $prop = $properties[$method->distinct];
-            $distinct = ' DISTINCT '.$this->_encloseName($tables[$prop->table]->name).'.'.$this->_encloseName($prop->fieldName);
+            $distinct = ' DISTINCT '.$tables[$prop->table]->enclosedName.'.'.$this->_encloseName($prop->fieldName);
         } else {
             $distinct = '';
         }
@@ -60,5 +61,12 @@ class SqliteDaoGenerator extends \Jelix\Dao\Generator\AbstractDaoGenerator
         if ($distinct != '') {
             $src[] .= '    $__query .=\')\';';
         }
+    }
+
+    protected function escapeTableNameForPHP(DaoTable $table)
+    {
+        $table->escapedNameForPhp = $this->_encloseName('\'.$this->_conn->prefixTable(\''.$table->realName.'\').\'');
+        $table->escapedNameForPhpForFrom = $table->escapedNameForPhp.$this->aliasWord.$this->_encloseName($table->name);
+        $table->enclosedName = $this->_encloseName($table->name);
     }
 }

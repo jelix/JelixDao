@@ -39,6 +39,9 @@ attributes:
   attribute is not specified, it takes the same value as the attribute
   `name`. In this case `name` must contain the real name of the
   table.
+* `schema` (optional): a schema name, for database that supports
+  it (Postgresql, Oci, SqlServer). The schema can also be indicated
+  into `realname`.
 * `primarykey` indicates the primary key. You can specify multiple
   fields, separated by a space or a comma.
 
@@ -194,7 +197,7 @@ Example:
    <optionalforeigntable name="man" realname="manufacturers" primarykey="id" onforeignkey="id_manufacturer" />
 ```
 
-As for tag `<primarytable>`, there are attributes `name`, `realname`
+As for tag `<primarytable>`, there are attributes `name`, `realname`, `schema`
 and `primarykey`. There is also an additional attribute,
 `<onforeignkey>`, which indicates the name of the field in the primary
 table, which is the foreign key on the table in question. Thus, with the above
