@@ -82,6 +82,10 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
 
         $daorec = $dao->createRecord();
         $this->assertInstanceOf('Products'.$this->sqlType.'Record', $daorec);
+
+        $dao = $this->daoLoader->create ('article');
+        $this->assertInstanceOf('Article'.$this->sqlType.'Factory', $dao);
+
     }
 
     /**
@@ -102,6 +106,7 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
     protected static $prod1;
     protected static $prod2;
     protected static $prod3;
+    protected static $art;
 
     /**
      * @depends testFindAllEmpty
@@ -155,6 +160,17 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
             'promo'=>static::$falseValue),
         );
         $this->assertTableContainsRecords('products', $records);
+
+        $dao = $this->daoLoader->create ('article');
+
+        self::$art = $this->daoLoader->createRecord ('article');
+        self::$art->title ='first news';
+        self::$art->content = 'lorem ipsum';
+        $res = $dao->insert(self::$art);
+
+        $this->assertEquals(1, $res, 'AbstractDaoFactory::insert does not return 1');
+        $this->assertNotEquals('', self::$art->id, 'AbstractDaoFactory::insert : id not set');
+
     }
 
     /**
@@ -169,6 +185,12 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
         $this->assertEquals('assiette', $prod->name,'DaoLoader::get : bad name property on record');
         $this->assertEquals(3.87, $prod->price,'DaoLoader::get : bad price property on record');
         $this->assertEquals(static::$falseValue, $prod->promo,'DaoLoader::get : bad promo property on record');
+
+        $dao = $this->daoLoader->create ('article');
+        $art = $dao->get(self::$art->id);
+        $this->assertInstanceOf('\\Jelix\\Dao\\AbstractDaoRecord', $art,'DaoLoader::get doesn\'t return a AbstractDaoRecord object');
+        $this->assertEquals(self::$art->id, $art->id, 'DaoLoader::get : bad id on record');
+        $this->assertEquals('first news', $art->title, 'DaoLoader::get : bad name property on record');
     }
 
     /**
@@ -286,6 +308,16 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
     </object>
 </array>';
         $this->assertComplexIdenticalStr($list, $verif);
+
+        $dao = $this->daoLoader->create ('article');
+
+        $res = $dao->findAll();
+        $list = array();
+        foreach($res as $r){
+            $list[] = $r;
+        }
+        $this->assertEquals(1, count($list), 'findAll doesn\'t return all articles. %s ');
+        $this->assertEquals(1, $dao->countAll(), 'countAll doesn\'t return 1');
     }
 
     /**
@@ -495,6 +527,10 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
     </object>
 </array>';
         $this->assertComplexIdenticalStr($list, $verif);
+
+        $dao = $this->daoLoader->create ('article');
+        $dao->delete(self::$art->id);
+        $this->assertEquals(0, $dao->countAll(), 'countAll doesn\'t return 0');
     }
 
     /**

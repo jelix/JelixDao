@@ -29,14 +29,6 @@ class OciDaoGenerator extends \Jelix\Dao\Generator\AbstractDaoGenerator
         $sqlWhere = '';
         foreach ($this->_dataParser->getOuterJoins() as $tablejoin) {
             $table = $tables[$tablejoin[0]];
-            $tablename = $this->_encloseName($table->name);
-
-            if ($table->name != $table->realName) {
-                $r = $this->_encloseName($table->realName).' '.$tablename;
-            } else {
-                $r = $this->_encloseName($table->realName);
-            }
-
             $fieldjoin = '';
 
             if ($tablejoin[1] == 0) {
@@ -47,9 +39,9 @@ class OciDaoGenerator extends \Jelix\Dao\Generator\AbstractDaoGenerator
                 $opafter = '';
             }
             foreach ($table->foreignKeys as $k => $fk) {
-                $fieldjoin .= ' AND '.$primaryTableName.'.'.$this->_encloseName($fk).$operand.$tablename.'.'.$this->_encloseName($table->primaryKey[$k]).$opafter;
+                $fieldjoin .= ' AND '.$primaryTableName.'.'.$this->_encloseName($fk).$operand.$table->enclosedName.'.'.$this->_encloseName($table->primaryKey[$k]).$opafter;
             }
-            $sqlFrom .= ', '.$r;
+            $sqlFrom .= ', '.$table->escapedNameForPhpForFrom;
             $sqlWhere .= $fieldjoin;
         }
 
@@ -74,7 +66,12 @@ class OciDaoGenerator extends \Jelix\Dao\Generator\AbstractDaoGenerator
     // Replaces the lastInsertId which doesn't work with oci
     protected function buildUpdateAutoIncrementPK($pkai)
     {
-        return '          $record->'.$pkai->name.'= $this->_conn->query(\'SELECT '.$pkai->sequenceName.'.currval as "'.$pkai->name.'" from dual\')->fetch()->'.$pkai->name.';';
+        $table = $this->_dataParser->getTables()[$this->_dataParser->getPrimaryTable()];
+        $sequence = $pkai->sequenceName;
+        if ($table->schema) {
+            $sequence = $table->schema.'.'.$sequence;
+        }
+        return '          $record->'.$pkai->name.'= $this->_conn->query(\'SELECT '.$sequence.'.currval as "'.$pkai->name.'" from dual\')->fetch()->'.$pkai->name.';';
     }
 
     /**

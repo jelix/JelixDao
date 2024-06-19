@@ -93,8 +93,9 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
 
         $tables = $this->_dataParser->getTables();
         $pkFields = $this->_getPrimaryFieldsList();
-        $this->tableRealName = $tables[$this->_dataParser->getPrimaryTable()]->realName;
-        $this->tableRealNameEsc = $this->_encloseName('\'.$this->_conn->prefixTable(\''.$this->tableRealName.'\').\'');
+        $primaryTable = $tables[$this->_dataParser->getPrimaryTable()];
+        $this->tableRealName = $primaryTable->realName;
+        $this->tableRealNameEsc = $primaryTable->escapedNameForPhp;
 
         $sqlPkCondition = $this->buildSimpleConditions($pkFields);
         if ($sqlPkCondition != '') {
@@ -147,6 +148,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         foreach($tables as $name =>$table) {
             $serializedTables[$name] = array(
                 'name' => $table->name,
+                'schema' => $table->schema,
                 'realname' => $table->realName,
                 'pk' => $table->primaryKey,
                 'fk' => $table->foreignKeys,
@@ -189,6 +191,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         $src[] = 'public function __construct($conn){';
         $src[] = '   parent::__construct($conn);';
         $src[] = '   $this->_fromClause = \''.$this->sqlFromClause.'\';';
+        $src[] = '   $this->_deleteFromClause = \''.$this->tableRealNameEsc.'\';';
         $src[] = '}';
 
         $src[] = ' ';
@@ -589,7 +592,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
             $properties = $this->_dataParser->getProperties();
             $tables = $this->_dataParser->getTables();
             $prop = $properties[$method->distinct];
-            $count = ' DISTINCT '.$this->_encloseName($tables[$prop->table]['name']).'.'.$this->_encloseName($prop->fieldName);
+            $count = ' DISTINCT '.$tables[$prop->table]->enclosedName.'.'.$this->_encloseName($prop->fieldName);
         } else {
             $count = '*';
         }
@@ -638,29 +641,25 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
      */
     protected function buildFromWhereClause()
     {
-        $tables = array();
+        $tables = $this->_dataParser->getTables();
 
-        foreach ($this->_dataParser->getTables() as $table_name => $table) {
-            $tables[$table_name] = clone $table;
-            $tables[$table_name]->realName = '\'.$this->_conn->prefixTable(\''.$table->realName.'\').\'';
+        foreach ($tables as $table) {
+            $this->escapeTableNameForPHP($table);
         }
 
         $primarytable = $tables[$this->_dataParser->getPrimaryTable()];
-        $ptrealname = $this->_encloseName($primarytable->realName);
-        $ptname = $this->_encloseName($primarytable->name);
 
-        list($sqlFrom, $sqlWhere) = $this->buildOuterJoins($tables, $ptname);
+        list($sqlFrom, $sqlWhere) = $this->buildOuterJoins($tables, $primarytable->enclosedName);
 
-        $sqlFrom = $ptrealname.$this->aliasWord.$ptname.$sqlFrom;
+        $sqlFrom = $primarytable->escapedNameForPhpForFrom.$sqlFrom;
 
         foreach ($this->_dataParser->getInnerJoins() as $tablejoin) {
             $table = $tables[$tablejoin];
-            $tablename = $this->_encloseName($table->name);
-            $sqlFrom .= ', '.$this->_encloseName($table->realName).$this->aliasWord.$tablename;
+            $sqlFrom .= ', '.$table->escapedNameForPhpForFrom;
 
             foreach ($table->foreignKeys as $k => $fk) {
-                $sqlWhere .= ' AND '.$ptname.'.'.$this->_encloseName($fk).'='.
-                    $tablename.'.'.$this->_encloseName($table->primaryKey[$k]);
+                $sqlWhere .= ' AND '.$primarytable->enclosedName.'.'.$this->_encloseName($fk).'='.
+                    $table->enclosedName.'.'.$this->_encloseName($table->primaryKey[$k]);
             }
         }
 
@@ -681,14 +680,13 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         $sqlFrom = '';
         foreach ($this->_dataParser->getOuterJoins() as $tablejoin) {
             $table = $tables[$tablejoin[0]];
-            $tablename = $this->_encloseName($table->name);
 
-            $r = $this->_encloseName($table->realName).$this->aliasWord.$tablename;
+            $r = $table->escapedNameForPhpForFrom;
 
             $fieldjoin = '';
             foreach ($table->foreignKeys as $k => $fk) {
                 $fieldjoin .= ' AND '.$primaryTableName.'.'.$this->_encloseName($fk).
-                    '='.$tablename.'.'.$this->_encloseName($table->primaryKey[$k]);
+                    '='.$table->enclosedName.'.'.$this->_encloseName($table->primaryKey[$k]);
             }
             $fieldjoin = substr($fieldjoin, 4);
 
@@ -715,7 +713,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
 
         $tables = $this->_dataParser->getTables();
         foreach ($this->_dataParser->getProperties() as $id => $prop) {
-            $table = $this->_encloseName($tables[$prop->table]->name).'.';
+            $table = $tables[$prop->table]->enclosedName.'.';
 
             if ($prop->selectPattern != '') {
                 $result[] = $this->buildSelectPattern($prop->selectPattern, $table, $prop->fieldName, $prop->name);
@@ -1278,6 +1276,23 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
 
                     return 'array($this, \'_callbackQuote\')';
         }
+    }
+
+
+    protected function escapeTableNameForPHP(DaoTable $table)
+    {
+        $escName = $this->_encloseName('\'.$this->_conn->prefixTable(\''.$table->realName.'\').\'');
+        if ($table->schema) {
+            $escName = $this->_encloseName($table->schema).'.'.$escName;
+        }
+        $table->escapedNameForPhp = $escName;
+        //if ($table->name != $table->realName) {
+            $table->escapedNameForPhpForFrom = $table->escapedNameForPhp.$this->aliasWord.$this->_encloseName($table->name);
+        //}
+        //else {
+        //    $table->escapedNameForPhpForFrom = $table->escapedNameForPhp;
+        //}
+        $table->enclosedName = $this->_encloseName($table->name);
     }
 
     protected function _encloseName($name)

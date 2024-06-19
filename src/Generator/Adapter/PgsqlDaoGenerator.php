@@ -17,7 +17,12 @@ class PgsqlDaoGenerator extends \Jelix\Dao\Generator\AbstractDaoGenerator
 
     protected function buildUpdateAutoIncrementPK($pkai)
     {
-        return '          $record->'.$pkai->name.'= $this->_conn->lastInsertId(\''.$pkai->sequenceName.'\');';
+        $table = $this->_dataParser->getTables()[$this->_dataParser->getPrimaryTable()];
+        $sequence = $pkai->sequenceName;
+        if ($table->schema) {
+            $sequence = $table->schema.'.'.$sequence;
+        }
+        return '          $record->'.$pkai->name.'= $this->_conn->lastInsertId(\''.$sequence.'\');';
     }
 
     protected function getAutoIncrementPKField($using = null)
@@ -26,8 +31,7 @@ class PgsqlDaoGenerator extends \Jelix\Dao\Generator\AbstractDaoGenerator
             $using = $this->_dataParser->getProperties();
         }
 
-        $tb = $this->_dataParser->getTables();
-        $tb = $tb[$this->_dataParser->getPrimaryTable()]->realName;
+        $tb = $this->_dataParser->getTables()[$this->_dataParser->getPrimaryTable()];
 
         foreach ($using as $id => $field) {
             if (!$field->isPK) {
@@ -35,7 +39,8 @@ class PgsqlDaoGenerator extends \Jelix\Dao\Generator\AbstractDaoGenerator
             }
             if ($field->autoIncrement) {
                 if (!strlen($field->sequenceName)) {
-                    $field->sequenceName = $tb.'_'.$field->name.'_seq';
+                    $field->sequenceName = $tb->realName.'_'.$field->name.'_seq';
+
                 }
 
                 return $field;

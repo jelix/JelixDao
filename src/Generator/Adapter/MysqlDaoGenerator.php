@@ -9,10 +9,19 @@
 
 namespace Jelix\Dao\Generator\Adapter;
 
+use Jelix\Dao\Parser\DaoTable;
+
 /**
  * driver for JelixDao compiler.
  */
 class MysqlDaoGenerator extends \Jelix\Dao\Generator\AbstractDaoGenerator
 {
     protected $propertiesListForInsert = 'PrimaryFieldsExcludeAutoIncrement';
+
+    protected function escapeTableNameForPHP(DaoTable $table)
+    {
+        $table->escapedNameForPhp = $this->_encloseName('\'.$this->_conn->prefixTable(\''.$table->realName.'\').\'');
+        $table->escapedNameForPhpForFrom = $table->escapedNameForPhp.$this->aliasWord.$this->_encloseName($table->name);
+        $table->enclosedName = $this->_encloseName($table->name);
+    }
 }

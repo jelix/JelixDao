@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<dao xmlns="http://jelix.org/ns/dao/1.0">
+   <datasources>
+      <primarytable name="art" realname="newspaper.article" primarykey="id" />
+   </datasources>
+   <record>
+      <property name="id"   fieldname="id" datatype="autoincrement"/>
+      <property name="title" fieldname="title" datatype="string"  required="true"/>
+      <property name="content" fieldname="content" datatype="text" required="true"/>
+   </record>
+   <factory>
+   </factory>
+</dao>
+
