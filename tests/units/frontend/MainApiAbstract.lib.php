@@ -623,4 +623,68 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
         $this->assertEquals($sess1->id, $sess2->id, 'DaoLoader::get : bad id on record');
         $this->assertEquals(bin2hex($sess1->data), bin2hex($sess2->data), 'DaoLoader::get : bad binary value on record');
     }
+
+    function testFindAllWithJoin()
+    {
+        $this->emptyTable('products');
+        $this->emptyTable('products_tags');
+
+        $dao = $this->daoLoader->create('products');
+        $p1 = $dao->createRecord();
+        $p1->name = 'Test 1';
+        $p1->price = '1.00';
+        $dao->insert($p1);
+
+        $p2 = $dao->createRecord();
+        $p2->name = 'Test 2';
+        $p2->price = '2.00';
+        $dao->insert($p2);
+
+        $p3 = $dao->createRecord();
+        $p3->name = 'Test 3';
+        $p3->price = '3.00';
+        $dao->insert($p3);
+
+        $daoTag = $this->daoLoader->create('products_tags');
+        $tag = $daoTag->createRecord();
+        $tag->id = $p1->id;
+        $tag->tag = 'tag1';
+        $daoTag->insert($tag);
+
+        $tag = $daoTag->createRecord();
+        $tag->id = $p1->id;
+        $tag->tag = 'tag2';
+        $daoTag->insert($tag);
+
+        $tag = $daoTag->createRecord();
+        $tag->id = $p2->id;
+        $tag->tag = 'tag3';
+        $daoTag->insert($tag);
+
+        $res = $daoTag->findAll();
+        $list = array();
+        foreach($res as $r){
+            $list[] = $r;
+        }
+        $this->assertEquals(3, count($list), 'findAll doesn\'t return all products. %s ');
+
+        $verif='<array>
+    <object>
+        <'.static::$productIdType.' property="id" value="'.$p1->id.'" />
+        <string property="tag" value="tag1" />
+        <string property="product_name" value="Test 1" />
+    </object>
+    <object>
+        <'.static::$productIdType.' property="id" value="'.$p1->id.'" />
+        <string property="tag" value="tag2" />
+        <string property="product_name" value="Test 1" />
+    </object>
+    <object>
+        <'.static::$productIdType.' property="id" value="'.$p2->id.'" />
+        <string property="tag" value="tag3" />
+        <string property="product_name" value="Test 2" />
+    </object>
+</array>';
+        $this->assertComplexIdenticalStr($list, $verif);
+    }
 }

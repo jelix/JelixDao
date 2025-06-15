@@ -12,6 +12,7 @@ while($tryAgain) {
     }
     $tryAgain = false;
     pg_query($cnx, "drop table if exists products");
+    pg_query($cnx, "drop table if exists products_tags");
     pg_query($cnx, "drop table if exists labels_test");
     pg_query($cnx, "drop table if exists jsessions");
 
@@ -26,6 +27,12 @@ while($tryAgain) {
     )");
 
     pg_query($cnx, "SELECT pg_catalog.setval(pg_catalog.pg_get_serial_sequence('products', 'id'), 1, false)");
+
+    pg_query($cnx, "CREATE TABLE products_tags (
+    product_id integer NOT NULL,
+    tag character varying(50) NOT NULL
+);");
+
 
     pg_query($cnx, "CREATE TABLE labels_test (
     \"key\" integer NOT NULL,
@@ -42,13 +49,15 @@ while($tryAgain) {
 )");
 
 
-             pg_query($cnx, "SELECT pg_catalog.setval(pg_catalog.pg_get_serial_sequence('products', 'id'), 1, false)");
+    pg_query($cnx, "SELECT pg_catalog.setval(pg_catalog.pg_get_serial_sequence('products', 'id'), 1, false)");
 
     pg_query($cnx, "ALTER TABLE ONLY labels_test ADD CONSTRAINT labels_test_pkey PRIMARY KEY (\"key\", lang)");
 
     pg_query($cnx, "ALTER TABLE ONLY labels_test ADD CONSTRAINT labels_test_keyalias UNIQUE (\"keyalias\")");
 
     pg_query($cnx, "ALTER TABLE ONLY products ADD CONSTRAINT products_pkey PRIMARY KEY (id)");
+
+    pg_query($cnx, "ALTER TABLE ONLY products_tags ADD CONSTRAINT products_tags_pkey PRIMARY KEY (product_id, tag)");
 
     pg_query($cnx, "ALTER TABLE ONLY jsessions ADD CONSTRAINT jsession_pkey PRIMARY KEY (id)");
 
@@ -69,6 +78,7 @@ while ($tryAgain) {
 
     $tryAgain = false;
     $cnx->query('drop table if exists products');
+    $cnx->query('drop table if exists products_tags');
     $cnx->query('drop table if exists labels_test');
     $cnx->query('drop table if exists jsessions');
 
@@ -81,6 +91,12 @@ while ($tryAgain) {
 `dummy` set('created','started','stopped') DEFAULT NULL,
 `metadata` JSON default NULL
 ) ENGINE = InnoDB");
+
+    $cnx->query("CREATE TABLE `products_tags` (
+    `product_id` INT NOT NULL ,
+    `tag` VARCHAR( 50 ) NOT NULL ,
+    PRIMARY KEY ( `product_id` , `tag` )
+) ENGINE = InnoDb");
 
     $cnx->query("CREATE TABLE IF NOT EXISTS `labels_test` (
 `key` INT NOT NULL ,
@@ -138,6 +154,13 @@ $sqlite->exec("CREATE TABLE jsessions (
   data blob NOT NULL,
   PRIMARY KEY  (id)
 );");
+
+$sqlite->exec("CREATE TABLE products_tags (
+    product_id integer NOT NULL,
+    tag character varying(50) NOT NULL,
+    PRIMARY KEY (product_id,tag)
+)");
+
 echo "  tables restored\n";
 
 
