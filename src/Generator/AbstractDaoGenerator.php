@@ -157,7 +157,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
             );
         }
 
-        $src[] = "\nclass ".$daoFactoryClass.' extends \Jelix\Dao\AbstractDaoFactory {';
+        $src[] = "\nclass ".$daoFactoryClass.' extends '.$this->_dataParser->getParentFactoryClass().' {';
         $src[] = '   protected $_tables = '.var_export($serializedTables, true).';';
         $src[] = '   protected $_primaryTable = \''.$this->_dataParser->getPrimaryTable().'\';';
         $src[] = '   protected $_selectClause=\''.$this->sqlSelectClause.'\';';
