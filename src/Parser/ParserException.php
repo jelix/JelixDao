@@ -24,7 +24,7 @@ class ParserException extends \UnexpectedValueException
      */
     protected $daoFile;
 
-    public function __construct(DaoFileInterface $daoFile, $message = "", $code = 0, \Throwable $previous = null)
+    public function __construct(DaoFileInterface $daoFile, $message = "", $code = 0, ?\Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
         $this->daoFile = $daoFile;
