@@ -34,6 +34,8 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
     protected static $conn = array();
     protected $sqlType;
 
+    protected $jsonSpace = ' ';
+
     function setUp() : void
     {
         $tempPath = __DIR__.'/../tmp/mainapi/';
@@ -118,6 +120,7 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
         self::$prod1->name ='assiette';
         self::$prod1->price = 3.87;
         self::$prod1->promo = false;
+        self::$prod1->metadata = ['tears'=>'for fears'];
         $res = $dao->insert(self::$prod1);
 
         $this->assertEquals(1, $res, 'AbstractDaoFactory::insert does not return 1');
@@ -129,6 +132,7 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
         self::$prod2->price = 1.54;
         self::$prod2->promo = true;
         self::$prod2->dummy = 'started';
+        self::$prod2->metadata = ['simple'=>'mind'];
         $res = self::$prod2->save();
 
         $this->assertEquals(1, $res, 'AbstractDaoFactory::insert does not return 1');
@@ -147,17 +151,23 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
 
         $records = array(
             array('id'=>self::$prod1->id,
-            'name'=>'assiette',
-            'price'=>3.87,
-            'promo'=> static::$falseValue),
+                'name'=>'assiette',
+                'price'=>3.87,
+                'promo'=> static::$falseValue,
+                'metadata' => '{"tears":'.$this->jsonSpace.'"for fears"}',
+            ),
             array('id'=>self::$prod2->id,
-            'name'=>'fourchette',
-            'price'=>1.54,
-            'promo'=>static::$trueValue),
+                'name'=>'fourchette',
+                'price'=>1.54,
+                'promo'=>static::$trueValue,
+                'metadata' => '{"simple":'.$this->jsonSpace.'"mind"}',
+            ),
             array('id'=>self::$prod3->id,
-            'name'=>'verre',
-            'price'=>2.43,
-            'promo'=>static::$falseValue),
+                'name'=>'verre',
+                'price'=>2.43,
+                'promo'=>static::$falseValue,
+                'metadata' => null
+            ),
         );
         $this->assertTableContainsRecords('products', $records);
 
@@ -185,6 +195,7 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
         $this->assertEquals('assiette', $prod->name,'DaoLoader::get : bad name property on record');
         $this->assertEquals(3.87, $prod->price,'DaoLoader::get : bad price property on record');
         $this->assertEquals(static::$falseValue, $prod->promo,'DaoLoader::get : bad promo property on record');
+        $this->assertEquals( ['tears'=>'for fears'], $prod->metadata);
 
         $dao = $this->daoLoader->create ('article');
         $art = $dao->get(self::$art->id);
@@ -647,5 +658,69 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
         $sess2 = $dao->get('sess_02939873A32B');
         $this->assertEquals($sess1->id, $sess2->id, 'DaoLoader::get : bad id on record');
         $this->assertEquals(bin2hex($sess1->data), bin2hex($sess2->data), 'DaoLoader::get : bad binary value on record');
+    }
+
+    function testFindAllWithJoin()
+    {
+        $this->emptyTable('products');
+        $this->emptyTable('products_tags');
+
+        $dao = $this->daoLoader->create('products');
+        $p1 = $dao->createRecord();
+        $p1->name = 'Test 1';
+        $p1->price = '1.00';
+        $dao->insert($p1);
+
+        $p2 = $dao->createRecord();
+        $p2->name = 'Test 2';
+        $p2->price = '2.00';
+        $dao->insert($p2);
+
+        $p3 = $dao->createRecord();
+        $p3->name = 'Test 3';
+        $p3->price = '3.00';
+        $dao->insert($p3);
+
+        $daoTag = $this->daoLoader->create('products_tags');
+        $tag = $daoTag->createRecord();
+        $tag->id = $p1->id;
+        $tag->tag = 'tag1';
+        $daoTag->insert($tag);
+
+        $tag = $daoTag->createRecord();
+        $tag->id = $p1->id;
+        $tag->tag = 'tag2';
+        $daoTag->insert($tag);
+
+        $tag = $daoTag->createRecord();
+        $tag->id = $p2->id;
+        $tag->tag = 'tag3';
+        $daoTag->insert($tag);
+
+        $res = $daoTag->findAll();
+        $list = array();
+        foreach($res as $r){
+            $list[] = $r;
+        }
+        $this->assertEquals(3, count($list), 'findAll doesn\'t return all products. %s ');
+
+        $verif='<array>
+    <object>
+        <'.static::$productIdType.' property="id" value="'.$p1->id.'" />
+        <string property="tag" value="tag1" />
+        <string property="product_name" value="Test 1" />
+    </object>
+    <object>
+        <'.static::$productIdType.' property="id" value="'.$p1->id.'" />
+        <string property="tag" value="tag2" />
+        <string property="product_name" value="Test 1" />
+    </object>
+    <object>
+        <'.static::$productIdType.' property="id" value="'.$p2->id.'" />
+        <string property="tag" value="tag3" />
+        <string property="product_name" value="Test 2" />
+    </object>
+</array>';
+        $this->assertComplexIdenticalStr($list, $verif);
     }
 }

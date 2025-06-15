@@ -120,7 +120,7 @@ class jdao_factory_Test extends \Jelix\UnitTests\UnitTestCaseDb
         $dao = new ProductsMysqlFactory($conn);
         $conn->expects($this->once())
              ->method('query')
-             ->with($this->equalTo('SELECT `products`.`id`, `products`.`name`, `products`.`price`, `products`.`create_date`, `products`.`promo`, `products`.`dummy` FROM `products` AS `products`'));
+             ->with($this->equalTo('SELECT `products`.`id`, `products`.`name`, `products`.`price`, `products`.`create_date`, `products`.`promo`, `products`.`dummy`, `products`.`metadata` FROM `products` AS `products`'));
         $dao->findAll();
     }
 
@@ -129,7 +129,7 @@ class jdao_factory_Test extends \Jelix\UnitTests\UnitTestCaseDb
         $dao = new ProductsMysqlFactory($conn);
         $conn->expects($this->once())
              ->method('query')
-             ->with($this->equalTo('SELECT `products`.`id`, `products`.`name`, `products`.`price`, `products`.`create_date`, `products`.`promo`, `products`.`dummy` FROM `foo_products` AS `products`'));
+             ->with($this->equalTo('SELECT `products`.`id`, `products`.`name`, `products`.`price`, `products`.`create_date`, `products`.`promo`, `products`.`dummy`, `products`.`metadata` FROM `foo_products` AS `products`'));
         $dao->findAll();
     }
 
@@ -138,7 +138,7 @@ class jdao_factory_Test extends \Jelix\UnitTests\UnitTestCaseDb
         $dao = new ProductsAliasMysqlFactory($conn);
         $conn->expects($this->once())
              ->method('query')
-             ->with($this->equalTo('SELECT `p`.`id`, `p`.`name`, `p`.`price`, `p`.`create_date`, `p`.`promo`, `p`.`dummy` FROM `products` AS `p`'));
+             ->with($this->equalTo('SELECT `p`.`id`, `p`.`name`, `p`.`price`, `p`.`create_date`, `p`.`promo`, `p`.`dummy`, `p`.`metadata` FROM `products` AS `p`'));
         $dao->findAll();
     }
 
@@ -147,7 +147,7 @@ class jdao_factory_Test extends \Jelix\UnitTests\UnitTestCaseDb
         $dao = new ProductsAliasMysqlFactory($conn);
         $conn->expects($this->once())
              ->method('query')
-             ->with($this->equalTo('SELECT `p`.`id`, `p`.`name`, `p`.`price`, `p`.`create_date`, `p`.`promo`, `p`.`dummy` FROM `foo_products` AS `p`'));
+             ->with($this->equalTo('SELECT `p`.`id`, `p`.`name`, `p`.`price`, `p`.`create_date`, `p`.`promo`, `p`.`dummy`, `p`.`metadata` FROM `foo_products` AS `p`'));
         $dao->findAll();
     }
 
@@ -219,7 +219,7 @@ class jdao_factory_Test extends \Jelix\UnitTests\UnitTestCaseDb
         $dao = new ProductsMysqlFactory($conn);
         $conn->expects($this->once())
              ->method('query')
-             ->with($this->equalTo('SELECT `products`.`id`, `products`.`name`, `products`.`price`, `products`.`create_date`, `products`.`promo`, `products`.`dummy` FROM `products` AS `products` WHERE  `products`.`id` = 32'));
+             ->with($this->equalTo('SELECT `products`.`id`, `products`.`name`, `products`.`price`, `products`.`create_date`, `products`.`promo`, `products`.`dummy`, `products`.`metadata` FROM `products` AS `products` WHERE  `products`.`id` = 32'));
         $dao->get(32);
     }
 
@@ -232,7 +232,7 @@ class jdao_factory_Test extends \Jelix\UnitTests\UnitTestCaseDb
         $dao = new ProductsMysqlFactory($conn);
         $conn->expects($this->once())
              ->method('query')
-             ->with($this->equalTo('SELECT `products`.`id`, `products`.`name`, `products`.`price`, `products`.`create_date`, `products`.`promo`, `products`.`dummy` FROM `foo_products` AS `products` WHERE  `products`.`id` = 32'));
+             ->with($this->equalTo('SELECT `products`.`id`, `products`.`name`, `products`.`price`, `products`.`create_date`, `products`.`promo`, `products`.`dummy`, `products`.`metadata` FROM `foo_products` AS `products` WHERE  `products`.`id` = 32'));
         $dao->get(32);
     }
 
@@ -245,7 +245,7 @@ class jdao_factory_Test extends \Jelix\UnitTests\UnitTestCaseDb
         $dao = new ProductsAliasMysqlFactory($conn);
         $conn->expects($this->once())
              ->method('query')
-             ->with($this->equalTo('SELECT `p`.`id`, `p`.`name`, `p`.`price`, `p`.`create_date`, `p`.`promo`, `p`.`dummy` FROM `products` AS `p` WHERE  `p`.`id` = 32'));
+             ->with($this->equalTo('SELECT `p`.`id`, `p`.`name`, `p`.`price`, `p`.`create_date`, `p`.`promo`, `p`.`dummy`, `p`.`metadata` FROM `products` AS `p` WHERE  `p`.`id` = 32'));
         $dao->get(32);
     }
 
@@ -258,7 +258,7 @@ class jdao_factory_Test extends \Jelix\UnitTests\UnitTestCaseDb
         $dao = new ProductsAliasMysqlFactory($conn);
         $conn->expects($this->once())
              ->method('query')
-             ->with($this->equalTo('SELECT `p`.`id`, `p`.`name`, `p`.`price`, `p`.`create_date`, `p`.`promo`, `p`.`dummy` FROM `foo_products` AS `p` WHERE  `p`.`id` = 32'));
+             ->with($this->equalTo('SELECT `p`.`id`, `p`.`name`, `p`.`price`, `p`.`create_date`, `p`.`promo`, `p`.`dummy`, `p`.`metadata` FROM `foo_products` AS `p` WHERE  `p`.`id` = 32'));
         $dao->get(32);
     }
 
@@ -270,7 +270,7 @@ class jdao_factory_Test extends \Jelix\UnitTests\UnitTestCaseDb
         // note: in the order clause, names are note enclosed between quotes because of the mock
         $conn->expects($this->once())
              ->method('query')
-             ->with($this->equalTo('SELECT `products`.`id`, `products`.`name`, `products`.`price`, `products`.`create_date`, `products`.`promo`, `products`.`dummy` FROM `products` AS `products` ORDER BY `price` asc'));
+             ->with($this->equalTo('SELECT `products`.`id`, `products`.`name`, `products`.`price`, `products`.`create_date`, `products`.`promo`, `products`.`dummy`, `products`.`metadata` FROM `products` AS `products` ORDER BY `price` asc'));
         $dao->findBy($cond);
     }
 
@@ -282,7 +282,7 @@ class jdao_factory_Test extends \Jelix\UnitTests\UnitTestCaseDb
         // note: in the order clause, names are note enclosed between quotes because of the mock
         $conn->expects($this->once())
              ->method('query')
-             ->with($this->equalTo('SELECT `products`.`id`, `products`.`name`, `products`.`price`, `products`.`create_date`, `products`.`promo`, `products`.`dummy` FROM `foo_products` AS `products` ORDER BY `price` asc'));
+             ->with($this->equalTo('SELECT `products`.`id`, `products`.`name`, `products`.`price`, `products`.`create_date`, `products`.`promo`, `products`.`dummy`, `products`.`metadata` FROM `foo_products` AS `products` ORDER BY `price` asc'));
         $dao->findBy($cond);
     }
 
@@ -294,7 +294,7 @@ class jdao_factory_Test extends \Jelix\UnitTests\UnitTestCaseDb
         // note: in the order clause, names are note enclosed between quotes because of the mock
         $conn->expects($this->once())
              ->method('query')
-             ->with($this->equalTo('SELECT `p`.`id`, `p`.`name`, `p`.`price`, `p`.`create_date`, `p`.`promo`, `p`.`dummy` FROM `products` AS `p` ORDER BY `price` asc'));
+             ->with($this->equalTo('SELECT `p`.`id`, `p`.`name`, `p`.`price`, `p`.`create_date`, `p`.`promo`, `p`.`dummy`, `p`.`metadata` FROM `products` AS `p` ORDER BY `price` asc'));
         $dao->findBy($cond);
     }
 
@@ -306,7 +306,7 @@ class jdao_factory_Test extends \Jelix\UnitTests\UnitTestCaseDb
         // note: in the order clause, names are note enclosed between quotes because of the mock
         $conn->expects($this->once())
              ->method('query')
-             ->with($this->equalTo('SELECT `p`.`id`, `p`.`name`, `p`.`price`, `p`.`create_date`, `p`.`promo`, `p`.`dummy` FROM `foo_products` AS `p` ORDER BY `price` asc'));
+             ->with($this->equalTo('SELECT `p`.`id`, `p`.`name`, `p`.`price`, `p`.`create_date`, `p`.`promo`, `p`.`dummy`, `p`.`metadata` FROM `foo_products` AS `p` ORDER BY `price` asc'));
         $dao->findBy($cond);
     }
 }

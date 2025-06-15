@@ -1,6 +1,16 @@
 Changelog
 =========
 
+
+1.2-pre
+-------
+
+- Native support of JSON fields: dao properties having the datatype `json`
+  are automatically encoded during insert/update, or decoded during a select.
+- Fix deprecation warning with PHP 8.4
+- Fix generator: better generated joins
+
+
 1.1.0 (2023-12-23)
 -------------------
 

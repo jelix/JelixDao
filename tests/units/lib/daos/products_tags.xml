@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<dao xmlns="http://jelix.org/ns/dao/1.0">
+   <datasources>
+      <primarytable name="products_tags" primarykey="product_id,tag" />
+      <foreigntable name="products" primarykey="id" onforeignkey="product_id"/>
+   </datasources>
+   <record>
+      <property name="id"  fieldname="product_id" datatype="int"/>
+      <property name="tag" fieldname="tag"    datatype="string"/>
+      <property name="product_name" fieldname="name" table="products" datatype="string"/>
+   </record>
+</dao>
+

@@ -6,7 +6,7 @@
  * @contributor Julien Issler, Guillaume Dugas
  * @contributor Philippe Villiers
  *
- * @copyright  2001-2005 CopixTeam, 2005-2023 Laurent Jouanneau
+ * @copyright  2001-2005 CopixTeam, 2005-2025 Laurent Jouanneau
  * @copyright  2007-2008 Julien Issler
  *
  * @see        https://jelix.org
@@ -205,6 +205,8 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         $src[] = '   extract($pk);';
         $src[] = '   return \' where '.$this->buildSimpleConditions($pkFields, '', false).'\';';
         $src[] = '}';
+
+        $src[] = $this->buildFinishResultSet();
 
         //----- Insert method
 
@@ -655,15 +657,17 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
 
         foreach ($this->_dataParser->getInnerJoins() as $tablejoin) {
             $table = $tables[$tablejoin];
-            $sqlFrom .= ', '.$table->escapedNameForPhpForFrom;
 
+            $sqlFrom .= ' INNER JOIN '.$table->escapedNameForPhpForFrom. ' ON (';
+            $innerJoin = [];
             foreach ($table->foreignKeys as $k => $fk) {
-                $sqlWhere .= ' AND '.$primarytable->enclosedName.'.'.$this->_encloseName($fk).'='.
+                $innerJoin[] = $primarytable->enclosedName.'.'.$this->_encloseName($fk).'='.
                     $table->enclosedName.'.'.$this->_encloseName($table->primaryKey[$k]);
             }
+            $sqlFrom .= implode(' AND ', $innerJoin).')';
         }
 
-        $this->sqlWhereClause = ($sqlWhere != '' ? ' WHERE '.substr($sqlWhere, 4) : '');
+        $this->sqlWhereClause = $sqlWhere;
         $this->sqlFromClause = ' FROM '.$sqlFrom;
     }
 
@@ -749,6 +753,26 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         }
 
         return $field;
+    }
+
+    protected function buildFinishResultSet()
+    {
+        $jsonFields = $this->_getPropertiesBy('JsonField');
+        $src = [];
+        if ($jsonFields) {
+            $src[] = 'protected function finishInitResultSet($rs) {';
+            $src[] = '   parent::finishInitResultSet($rs);';
+            $src[] = '   $rs->addModifier(function ($record, $rs) {';
+
+            foreach ($jsonFields as $field) {
+                $src[] = '    if ($record->'.$field->name.' !== null) { $record->'.$field->name.' = json_decode($record->'.$field->name.', true); }';
+            }
+
+            $src[] = '   });';
+            $src[] = '}';
+        }
+
+        return implode("\n", $src);
     }
 
     protected function buildEndOfClass()
@@ -919,6 +943,11 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
     protected function _captureBinaryField($field)
     {
         return $field->unifiedType == 'binary' || $field->unifiedType == 'varbinary';
+    }
+
+    protected function _captureJsonField(&$field)
+    {
+        return $field->unifiedType == 'json';
     }
 
     /**
@@ -1239,6 +1268,13 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
                 }
 
                 break;
+            case 'json':
+                if ($checknull) {
+                    $expr = '('.$expr.' === null ? \''.$opnull.'NULL\' : '.$forCondition.'$this->_conn->quote(is_string('.$expr.')?'.$expr.':json_encode('.$expr.')))';
+                } else {
+                    $expr = $forCondition.'$this->_conn->quote(is_string('.$expr.')?'.$expr.':json_encode('.$expr.'))';
+                }
+                break;
             default:
                 if ($type == 'varbinary' || $type == 'binary') {
                     $qparam = ',true';
@@ -1269,12 +1305,14 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
                 return 'function($__e){return \\Jelix\Database\\Utilities::floatToStr($__e);}';
             case 'boolean':
                 return 'array($this, \'_callbackBool\')';
+            case 'json':
+                return 'array($this, \'_callbackJson\')';
             default:
                 if ($type == 'varbinary' || $type == 'binary') {
                     return 'array($this, \'_callbackQuoteBin\')';
                 }
 
-                    return 'array($this, \'_callbackQuote\')';
+                return 'array($this, \'_callbackQuote\')';
         }
     }
 

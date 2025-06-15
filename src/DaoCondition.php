@@ -56,7 +56,7 @@ class DaoCondition
      */
     public $glueOp;
 
-    public function __construct($glueOp = 'AND', DaoCondition $parent = null)
+    public function __construct($glueOp = 'AND', ?DaoCondition $parent = null)
     {
         $this->parent = $parent;
         $this->glueOp = $glueOp;

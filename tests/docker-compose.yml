@@ -12,9 +12,8 @@ services:
     volumes:
       - jdao_pg_data:/var/lib/postgresql
   mysql:
-    image: mysql
+    image: mysql:8
     container_name: jdao_test_mysql
-    command: --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_ROOT_PASSWORD: mysqlpass
       MYSQL_DATABASE: jelixtests
@@ -22,6 +21,8 @@ services:
       MYSQL_PASSWORD: jelixpass
     ports:
       - "8532:3306"
+    volumes:
+      - jdao_mysql_data:/var/lib/mysql
   php:
     build:
       context: ./docker-conf/php
@@ -40,3 +41,5 @@ services:
 volumes:
   jdao_pg_data:
     name: jdao_test_pg_data
+  jdao_mysql_data:
+    name: jdao_test_mysql_data

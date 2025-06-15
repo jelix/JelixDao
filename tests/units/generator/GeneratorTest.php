@@ -74,6 +74,8 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals('\\Jelix\\Database\\Utilities::floatToStr($foo)',$this->_getProp('float','$foo', false));
         $this->assertEquals('\\Jelix\\Database\\Utilities::floatToStr($foo)',$this->_getProp('numeric','$foo', false));
         $this->assertEquals('\\Jelix\\Database\\Utilities::floatToStr($foo)',$this->_getProp('bigautoincrement','$foo', false));
+        $this->assertEquals('$this->_conn->quote(is_string($foo)?$foo:json_encode($foo))',$this->_getProp('json', '$foo', false));
+
 
         // with checknull 
         $this->assertEquals('($foo === null ? \'NULL\' : intval($foo))',$this->_getProp('integer','$foo', true));
@@ -83,6 +85,7 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals('($foo === null ? \'NULL\' : \\Jelix\\Database\\Utilities::floatToStr($foo))',$this->_getProp('float','$foo', true));
         $this->assertEquals('($foo === null ? \'NULL\' : \\Jelix\\Database\\Utilities::floatToStr($foo))',$this->_getProp('numeric','$foo', true));
         $this->assertEquals('($foo === null ? \'NULL\' : \\Jelix\\Database\\Utilities::floatToStr($foo))',$this->_getProp('bigautoincrement','$foo', true));
+        $this->assertEquals('($foo === null ? \'NULL\' : $this->_conn->quote(is_string($foo)?$foo:json_encode($foo)))',$this->_getProp('json','$foo', true));
 
         // with checknull and operator =
         $this->assertEquals('($foo === null ? \'IS NULL\' : \' = \'.intval($foo))',$this->_getProp('integer','$foo', true,'='));
@@ -92,6 +95,7 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals('($foo === null ? \'IS NULL\' : \' = \'.\\Jelix\\Database\\Utilities::floatToStr($foo))',$this->_getProp('float','$foo', true,'='));
         $this->assertEquals('($foo === null ? \'IS NULL\' : \' = \'.\\Jelix\\Database\\Utilities::floatToStr($foo))',$this->_getProp('numeric','$foo', true,'='));
         $this->assertEquals('($foo === null ? \'IS NULL\' : \' = \'.\\Jelix\\Database\\Utilities::floatToStr($foo))',$this->_getProp('bigautoincrement','$foo', true,'='));
+        $this->assertEquals('($foo === null ? \'IS NULL\' : \' = \'.$this->_conn->quote(is_string($foo)?$foo:json_encode($foo)))',$this->_getProp('json','$foo', true,'='));
 
         // with checknull with default value and operator =
         /*$prop->defaultValue=34;
