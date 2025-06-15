@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Next
+----
+
+- Native support of JSON fields: dao properties having the datatype `json`
+  are automatically encoded during insert/update, or decoded during a select.
 
 1.1.0 (2023-12-23)
 -------------------

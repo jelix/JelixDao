@@ -19,6 +19,7 @@ class jdao_main_api_sqlite3Test extends MainApiAbstract
         static::$productIdType = 'integer';
         static::$productPriceType = 'float';
         static::$productPromoType = 'integer';
+        $this->jsonSpace = '';
     }
 
     protected function getConnector()

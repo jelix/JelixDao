@@ -34,6 +34,8 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
     protected static $conn = array();
     protected $sqlType;
 
+    protected $jsonSpace = ' ';
+
     function setUp() : void
     {
         $tempPath = __DIR__.'/../tmp/mainapi/';
@@ -113,6 +115,7 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
         self::$prod1->name ='assiette';
         self::$prod1->price = 3.87;
         self::$prod1->promo = false;
+        self::$prod1->metadata = ['tears'=>'for fears'];
         $res = $dao->insert(self::$prod1);
 
         $this->assertEquals(1, $res, 'AbstractDaoFactory::insert does not return 1');
@@ -124,6 +127,7 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
         self::$prod2->price = 1.54;
         self::$prod2->promo = true;
         self::$prod2->dummy = 'started';
+        self::$prod2->metadata = ['simple'=>'mind'];
         $res = self::$prod2->save();
 
         $this->assertEquals(1, $res, 'AbstractDaoFactory::insert does not return 1');
@@ -142,17 +146,23 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
 
         $records = array(
             array('id'=>self::$prod1->id,
-            'name'=>'assiette',
-            'price'=>3.87,
-            'promo'=> static::$falseValue),
+                'name'=>'assiette',
+                'price'=>3.87,
+                'promo'=> static::$falseValue,
+                'metadata' => '{"tears":'.$this->jsonSpace.'"for fears"}',
+            ),
             array('id'=>self::$prod2->id,
-            'name'=>'fourchette',
-            'price'=>1.54,
-            'promo'=>static::$trueValue),
+                'name'=>'fourchette',
+                'price'=>1.54,
+                'promo'=>static::$trueValue,
+                'metadata' => '{"simple":'.$this->jsonSpace.'"mind"}',
+            ),
             array('id'=>self::$prod3->id,
-            'name'=>'verre',
-            'price'=>2.43,
-            'promo'=>static::$falseValue),
+                'name'=>'verre',
+                'price'=>2.43,
+                'promo'=>static::$falseValue,
+                'metadata' => null
+            ),
         );
         $this->assertTableContainsRecords('products', $records);
     }
@@ -169,6 +179,7 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
         $this->assertEquals('assiette', $prod->name,'DaoLoader::get : bad name property on record');
         $this->assertEquals(3.87, $prod->price,'DaoLoader::get : bad price property on record');
         $this->assertEquals(static::$falseValue, $prod->promo,'DaoLoader::get : bad promo property on record');
+        $this->assertEquals( ['tears'=>'for fears'], $prod->metadata);
     }
 
     /**

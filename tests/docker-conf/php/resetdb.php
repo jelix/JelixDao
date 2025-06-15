@@ -21,7 +21,8 @@ while($tryAgain) {
         price real NOT NULL,
         create_date time with time zone,
         promo boolean NOT NULL  default 'f',
-        dummy character varying (10) NULL CONSTRAINT dummy_check CHECK (dummy IN ('created','started','stopped'))
+        dummy character varying (10) NULL CONSTRAINT dummy_check CHECK (dummy IN ('created','started','stopped')),
+        metadata jsonb default null
     )");
 
     pg_query($cnx, "SELECT pg_catalog.setval(pg_catalog.pg_get_serial_sequence('products', 'id'), 1, false)");
@@ -77,7 +78,8 @@ while ($tryAgain) {
 `price` FLOAT NOT NULL,
 `create_date` datetime default NULL,
 `promo` BOOL NOT NULL default 0,
-`dummy` set('created','started','stopped') DEFAULT NULL
+`dummy` set('created','started','stopped') DEFAULT NULL,
+`metadata` JSON default NULL
 ) ENGINE = InnoDB");
 
     $cnx->query("CREATE TABLE IF NOT EXISTS `labels_test` (
@@ -119,7 +121,8 @@ $sqlite->exec("CREATE TABLE products (
     price FLOAT NOT NULL,
     create_date datetime default NULL,
     promo BOOL NOT NULL default 0,
-    dummy varchar(10) DEFAULT NULL
+    dummy varchar(10) DEFAULT NULL,
+    metadata TEXT DEFAULT NULL
 )");
 
 $sqlite->exec("CREATE TABLE labels_test (

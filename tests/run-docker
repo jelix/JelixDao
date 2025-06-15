@@ -8,8 +8,20 @@ export PHP_VERSION=${PHP_VERSION:-8.2}
 
 CMD=$1
 
+
+if [ "$CMD" == "reset" ]; then
+    # Stop/Remove containers
+    docker compose -p jdao-tests rm -sf || true
+
+    # Clean postgres volume
+    docker volume rm "jdao_test_pg_data" || true
+    docker volume rm "jdao_test_mysql_data" || true
+    exit 0
+fi
+
+
 if [ "$CMD" == "" ]; then
     CMD="up -d"
 fi
 
-docker-compose -p jdao-tests $CMD
+docker compose -p jdao-tests $CMD
