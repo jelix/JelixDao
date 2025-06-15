@@ -6,6 +6,10 @@ Next
 
 - Native support of JSON fields: dao properties having the datatype `json`
   are automatically encoded during insert/update, or decoded during a select.
+- new feature: possibility to indicate a base class for the generated factory class.
+  The classname should be indicated into the `extends` attribute of `<factory>`.
+  The class can be anywhere and should be autoloadable.
+  The class must inherit from `\Jelix\Dao\AbstractDaoFactory` and it must be abstract.
 - Fix deprecation warning with PHP 8.4
 - Fix generator: better generated joins
 
