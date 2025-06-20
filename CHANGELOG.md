@@ -10,6 +10,7 @@ Next
   The classname should be indicated into the `extends` attribute of `<factory>`.
   The class can be anywhere and should be autoloadable.
   The class must inherit from `\Jelix\Dao\AbstractDaoFactory` and it must be abstract.
+- Support of schema names into tables names.
 - Fix deprecation warning with PHP 8.4
 - Fix generator: better generated joins
 

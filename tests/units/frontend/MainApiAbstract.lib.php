@@ -9,10 +9,12 @@
 * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
 */
 
+use Jelix\Dao\DbMapper;
 use Jelix\Database\AccessParameters;
 use Jelix\Database\Connection;
 use Jelix\Dao\AbstractDaoRecord;
 use Jelix\Dao\DaoConditions;
+use Jelix\Database\Schema\SqlToolsInterface;
 
 /**
  * CAREFULL ! DON'T CHANGE THE ORDER OF METHODS
@@ -31,25 +33,27 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
 
     /** @var \Jelix\Dao\DaoLoader  */
     protected $daoLoader;
+    protected $daoContext;
     protected static $conn = array();
     protected $sqlType;
 
     protected $jsonSpace = ' ';
 
-    protected $article2TableName = 'article2';
-    protected $article2CatTableName = 'article2_category';
+    protected $article3TableName = 'article3';
+    protected $article3CatTableName = 'article3_category';
 
     function setUp() : void
     {
         $tempPath = __DIR__.'/../tmp/mainapi/';
         $daosDirectory = __DIR__.'/../lib/daos/';
+        $this->daoContext = new \Jelix\Dao\Context(
+            $this->getConnection(),
+            $tempPath,
+            $daosDirectory
+        );
 
         $this->daoLoader = new \Jelix\Dao\DaoLoader(
-            new \Jelix\Dao\Context(
-                $this->getConnection(),
-                $tempPath,
-                $daosDirectory
-            )
+            $this->daoContext,
         );
 
         $this->sqlType = ucfirst($this->getConnection()->getSQLType());
@@ -756,5 +760,53 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
     </object>
 </array>';
         $this->assertComplexIdenticalStr($list, $verif);
+    }
+
+    function testDbMapperCreate()
+    {
+        $cn = $this->getConnection();
+        $cn->exec('DROP TABLE IF EXISTS '.$this->article3TableName);
+        $cn->exec('DROP TABLE IF EXISTS '.$this->article3CatTableName);
+
+        $mapper = new DbMapper($this->daoContext);
+        $daoFile = $this->daoContext->resolveDaoPath('article3_category');
+        $mapper->createTableFromDao($daoFile);
+        $daoFile = $this->daoContext->resolveDaoPath('article3');
+        $mapper->createTableFromDao($daoFile);
+
+
+        $rs = $cn->query('SELECT * FROM '.$this->article3TableName);
+        $this->assertNotFalse($rs);
+        $rs = $cn->query('SELECT * FROM '.$this->article3CatTableName);
+        $this->assertNotFalse($rs);
+
+    }
+
+    /**
+     * @depends testDbMapperCreate
+     * @return void
+     */
+    function testDbMapperInsertDaoData()
+    {
+        $mapper = new DbMapper($this->daoContext);
+        $daoFile = $this->daoContext->resolveDaoPath('article3_category');
+
+        $properties = [ 'catid', 'label'];
+        $data = [
+            [ 1, 'first'],
+            [ 2, 'second'],
+            [ 3, 'third'],
+            [ 4, 'fourth'],
+        ];
+        $mapper->insertDaoData($daoFile, $properties, $data, SqlToolsInterface::IBD_EMPTY_TABLE_BEFORE);
+
+        $expected   = [
+            [ 'catid' => 1, 'label'=>'first'],
+            [ 'catid' => 2, 'label'=>'second'],
+            [ 'catid' => 3, 'label'=>'third'],
+            [ 'catid' => 4, 'label'=>'fourth'],
+        ];
+        $this->assertTableContainsRecords($this->article3CatTableName, $expected);
+
     }
 }

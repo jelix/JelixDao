@@ -59,6 +59,14 @@ class DaoTable
         $this->usageType = $usageType;
     }
 
+    public function getFullName()
+    {
+        if ($this->schema) {
+            return $this->schema.'.'.$this->realName;
+        }
+        return $this->realName;
+    }
+
     /**
      * Parse the xml fragment corresponding to a table from a dao file
      *

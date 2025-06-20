@@ -67,6 +67,15 @@ $list = $dao->myCustomMethod();
 //...
 ```
 
+## Requirements
+
+One of these database servers:
+
+- Postgresql 13+
+- Mysql 8+
+- Sqlite, SQLServer
+- Oracle (support not actively tested, help needed ;-))
+
 ## Documentation
 
 The documentation is available into [the docs directory](docs/index.md).

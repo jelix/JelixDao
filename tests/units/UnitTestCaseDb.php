@@ -19,14 +19,14 @@ abstract class UnitTestCaseDb extends TestCase
      */
     abstract protected function getConnection();
 
-
     /**
     *   erase all record in a table
     */
     public function emptyTable($table)
     {
         $db = $this->getConnection();
-        $db->exec('DELETE FROM '.$db->encloseName($table));
+        $tName = $db->createTableName($table);
+        $db->exec('DELETE FROM '.$tName->getEnclosedFullName());
     }
 
     public function insertRecordsIntoTable($table, $fields, $records, $emptyBefore=false)
@@ -35,7 +35,7 @@ abstract class UnitTestCaseDb extends TestCase
             $this->emptytable($table);
         }
         $db = $this->getConnection();
-        ;
+        $tName = $db->createTableName($table);
 
         $fieldsList = '';
         foreach ($fields as $f) {
@@ -45,7 +45,7 @@ abstract class UnitTestCaseDb extends TestCase
             $fieldsList .= $db->encloseName($f);
         }
 
-        $sql = 'INSERT INTO '.$db->encloseName($table).'  ('.$fieldsList.') VALUES (';
+        $sql = 'INSERT INTO '.$tName->getEnclosedFullName().'  ('.$fieldsList.') VALUES (';
 
         foreach ($records as $rec) {
             $ins='';
@@ -66,8 +66,8 @@ abstract class UnitTestCaseDb extends TestCase
     public function assertTableIsEmpty($table, $message="%s")
     {
         $db = $this->getConnection();
-
-        $rs = $db->query('SELECT count(*) as '.$db->encloseName('N').' FROM '.$db->encloseName($table));
+        $tName = $db->createTableName($table);
+        $rs = $db->query('SELECT count(*) as '.$db->encloseName('N').' FROM '.$tName->getEnclosedFullName());
         if ($r=$rs->fetch()) {
             $message = sprintf($message, $table. " table should be empty");
             if ($r->N == 0) {
@@ -89,7 +89,8 @@ abstract class UnitTestCaseDb extends TestCase
     public function assertTableIsNotEmpty($table, $message="%s")
     {
         $db = $this->getConnection();
-        $rs = $db->query('SELECT count(*) as '.$db->encloseName('N').'  FROM '.$db->encloseName($table));
+        $tName = $db->createTableName($table);
+        $rs = $db->query('SELECT count(*) as '.$db->encloseName('N').'  FROM '.$tName->getEnclosedFullName());
         if ($r=$rs->fetch()) {
             $message = sprintf($message, $table. " table shouldn't be empty");
             if ($r->N > 0) {
@@ -111,7 +112,8 @@ abstract class UnitTestCaseDb extends TestCase
     public function assertTableHasNRecords($table, $n, $message="%s")
     {
         $db = $this->getConnection();
-        $rs = $db->query('SELECT count(*) as '.$db->encloseName('N').'  FROM '.$db->encloseName($table));
+        $tName = $db->createTableName($table);
+        $rs = $db->query('SELECT count(*) as '.$db->encloseName('N').'  FROM '.$tName->getEnclosedFullName());
         if ($r=$rs->fetch()) {
             $message = sprintf($message, $table. " table should contains ".$n." records");
             if ($r->N == $n) {
@@ -133,10 +135,11 @@ abstract class UnitTestCaseDb extends TestCase
     public function assertTableContainsRecords($table, $records, $onlyThem = true, $message ="%s")
     {
         $db =$this->getConnection();
+        $tName = $db->createTableName($table);
 
         $message = sprintf($message, $table. " table should contains given records.");
 
-        $sql = 'SELECT * FROM '.$db->encloseName($table);
+        $sql = 'SELECT * FROM '.$tName->getEnclosedFullName();
         $rs = $db->query($sql);
         if (!$rs) {
             $this->fail($message.' ( no results set)');
@@ -202,6 +205,7 @@ abstract class UnitTestCaseDb extends TestCase
     public function assertTableContainsRecordsByKeys($table, $records, $keys, $onlyThem = true, $message ="%s")
     {
         $db = $this->getConnection();
+        $tName = $db->createTableName($table);
 
         if (is_string($keys)) {
             $keys = array($keys);
@@ -209,7 +213,7 @@ abstract class UnitTestCaseDb extends TestCase
 
         $message = sprintf($message, $table. " table should contains given records.");
 
-        $sql = 'SELECT * FROM '.$db->encloseName($table);
+        $sql = 'SELECT * FROM '.$tName->getEnclosedFullName();
         $rs = $db->query($sql);
         if (!$rs) {
             $this->fail($message.' ( no results set)');
@@ -277,6 +281,7 @@ abstract class UnitTestCaseDb extends TestCase
     public function getLastId($fieldName, $tableName)
     {
         $db = $this->getConnection();
-        return $db->lastIdInTable($fieldName, $tableName);
+        $tName = $db->createTableName($tableName);
+        return $db->lastIdInTable($fieldName, $tName->getEnclosedFullName());
     }
 }

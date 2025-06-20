@@ -18,6 +18,8 @@ while($tryAgain) {
     pg_query($cnx, "drop table if exists newspaper.article");
     pg_query($cnx, "drop table if exists newspaper.article2");
     pg_query($cnx, "drop table if exists newspaper2.article2_category");
+    pg_query($cnx, "drop table if exists newspaper.article3");
+    pg_query($cnx, "drop table if exists newspaper2.article3_category");
 
     pg_query($cnx, "CREATE TABLE products (
         id serial NOT NULL,
@@ -111,6 +113,8 @@ while ($tryAgain) {
     $cnx->query('drop table if exists article');
     $cnx->query('drop table if exists article2');
     $cnx->query('drop table if exists article2_category');
+    $cnx->query('drop table if exists article3');
+    $cnx->query('drop table if exists article3_category');
 
     $cnx->query("CREATE TABLE IF NOT EXISTS `products` (
 `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
