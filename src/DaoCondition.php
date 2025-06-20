@@ -20,7 +20,7 @@ namespace Jelix\Dao;
 /**
  * content a sub group of conditions.
  */
-class DaoCondition
+class DaoCondition extends \jDaoCondition
 {
     /**
      * the parent group if any.
