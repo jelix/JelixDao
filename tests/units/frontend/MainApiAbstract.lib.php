@@ -36,6 +36,9 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
 
     protected $jsonSpace = ' ';
 
+    protected $article2TableName = 'article2';
+    protected $article2CatTableName = 'article2_category';
+
     function setUp() : void
     {
         $tempPath = __DIR__.'/../tmp/mainapi/';
@@ -88,6 +91,9 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
         $dao = $this->daoLoader->create ('article');
         $this->assertInstanceOf('Article'.$this->sqlType.'Factory', $dao);
 
+        $dao = $this->daoLoader->create ('article2');
+        $this->assertInstanceOf('Article2'.$this->sqlType.'Factory', $dao);
+
     }
 
     /**
@@ -109,6 +115,8 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
     protected static $prod2;
     protected static $prod3;
     protected static $art;
+    protected static $art2;
+    protected static $art2cat;
 
     /**
      * @depends testFindAllEmpty
@@ -181,6 +189,24 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
         $this->assertEquals(1, $res, 'AbstractDaoFactory::insert does not return 1');
         $this->assertNotEquals('', self::$art->id, 'AbstractDaoFactory::insert : id not set');
 
+
+        $daocat = $this->daoLoader->create ('article2_category');
+        self::$art2cat = $this->daoLoader->createRecord ('article2_category');
+        self::$art2cat->label ='first cat';
+        $res = $daocat->insert(self::$art2cat);
+
+        $this->assertEquals(1, $res, 'AbstractDaoFactory::insert does not return 1');
+        $this->assertNotEquals('', self::$art2cat->catid, 'AbstractDaoFactory::insert : id not set');
+
+        $dao2 = $this->daoLoader->create ('article2');
+        self::$art2 = $this->daoLoader->createRecord ('article2');
+        self::$art2->title ='first news2';
+        self::$art2->category_id = self::$art2cat->catid;
+        self::$art2->content = 'lorem ipsum2';
+        $res = $dao2->insert(self::$art2);
+
+        $this->assertEquals(1, $res, 'AbstractDaoFactory::insert does not return 1');
+        $this->assertNotEquals('', self::$art2->id, 'AbstractDaoFactory::insert : id not set');
     }
 
     /**
@@ -202,6 +228,14 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
         $this->assertInstanceOf('\\Jelix\\Dao\\AbstractDaoRecord', $art,'DaoLoader::get doesn\'t return a AbstractDaoRecord object');
         $this->assertEquals(self::$art->id, $art->id, 'DaoLoader::get : bad id on record');
         $this->assertEquals('first news', $art->title, 'DaoLoader::get : bad name property on record');
+
+        $dao = $this->daoLoader->create ('article2');
+        $art = $dao->get(self::$art2->id);
+        $this->assertInstanceOf('\\Jelix\\Dao\\AbstractDaoRecord', $art,'DaoLoader::get doesn\'t return a AbstractDaoRecord object');
+        $this->assertEquals(self::$art2->id, $art->id, 'DaoLoader::get : bad id on record');
+        $this->assertEquals('first news2', $art->title, 'DaoLoader::get : bad name property on record');
+        $this->assertEquals('first cat', $art->catname, 'DaoLoader::get : bad name property on record');
+
     }
 
     /**
