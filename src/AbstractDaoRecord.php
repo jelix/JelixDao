@@ -22,7 +22,7 @@ namespace Jelix\Dao;
  * @package  jelix
  * @subpackage dao
  */
-abstract class AbstractDaoRecord extends \jDaoRecordBase implements DaoRecordInterface
+abstract class AbstractDaoRecord implements DaoRecordInterface
 {
     /**
      * @var DaoFactoryInterface

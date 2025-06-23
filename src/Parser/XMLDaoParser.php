@@ -80,7 +80,7 @@ class XMLDaoParser
     /**
      * @var string name of the class that should the dao factory should inherits from.
      */
-    private $parentFactoryClass = '\Jelix\Dao\AbstractDaoFactory';
+    private $parentFactoryClass = '\jDaoFactoryBase'; //'\Jelix\Dao\AbstractDaoFactory';
 
     /**
      * selector of the imported dao.

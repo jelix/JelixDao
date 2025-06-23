@@ -118,7 +118,8 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
             }
             $extendedObject = $customRecord->getClassName();
         } else {
-            $extendedObject = '\Jelix\Dao\AbstractDaoRecord';
+            // @deprecated it should be AbstractDaoRecord in futur next major release
+            $extendedObject = '\jDaoRecordBase';
         }
 
         $src[] = "\nclass ".$daoRecordClass.' extends '.$extendedObject.' {';
