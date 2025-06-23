@@ -4,6 +4,8 @@ Changelog
 2.0.0-pre
 ----------
 
+- Remove deprecated classes `jDaoConditions`, `jDaoFactoryBase`,
+  `jDaoRecordBase`, `jDaoXmlException`
 
 1.2.0
 ------

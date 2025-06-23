@@ -132,7 +132,7 @@ class DaoMethod
             return;
         }
 
-        $this->_conditions = new \jDaoConditions();
+        $this->_conditions = new DaoConditions();
         if (isset($method->conditions)) {
             $this->_parseConditions($method->conditions[0], false);
         }

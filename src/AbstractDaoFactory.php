@@ -366,7 +366,7 @@ abstract class AbstractDaoFactory implements DaoFactoryInterface
 
     /**
      * return the number of records corresponding to the conditions stored into the
-     * jDaoConditions object.
+     * DaoConditions object.
      *
      * @author Loic Mathaud
      * @contributor Steven Jehannet
@@ -417,7 +417,7 @@ abstract class AbstractDaoFactory implements DaoFactoryInterface
 
     /**
      * delete all record corresponding to the conditions stored into the
-     * jDaoConditions object.
+     * DaoConditions object.
      *
      * @param DaoConditions $searchcond
      *
