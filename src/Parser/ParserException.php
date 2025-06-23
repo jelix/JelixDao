@@ -17,7 +17,7 @@ use Jelix\Dao\DaoFileInterface;
  * Exception for Dao compiler.
  *
  */
-class ParserException extends \UnexpectedValueException
+class ParserException extends \jDaoXmlException
 {
     /**
      * @var DaoFileInterface

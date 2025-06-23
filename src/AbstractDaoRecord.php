@@ -34,10 +34,22 @@ abstract class AbstractDaoRecord implements DaoRecordInterface
         $this->_factory = $factory;
     }
 
+
     /**
      * @inheritDoc
      */
     abstract public function getDaoName();
+
+    /**
+     * Alias for getDaoName, to keep compatibility in Jelix 1.9
+     * @return string
+     * @deprecated use getDaoName() instead
+     */
+    public function getSelector()
+    {
+        return $this->getDaoName();
+    }
+
 
     /**
      * @inheritDoc

@@ -118,7 +118,8 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
             }
             $extendedObject = $customRecord->getClassName();
         } else {
-            $extendedObject = '\Jelix\Dao\AbstractDaoRecord';
+            // @deprecated it should be AbstractDaoRecord in futur next major release
+            $extendedObject = '\jDaoRecordBase';
         }
 
         $src[] = "\nclass ".$daoRecordClass.' extends '.$extendedObject.' {';
@@ -656,6 +657,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         $sqlFrom = $primarytable->escapedNameForPhpForFrom.$sqlFrom;
 
         foreach ($this->_dataParser->getInnerJoins() as $tablejoin) {
+            /** @var DaoTable $table */
             $table = $tables[$tablejoin];
 
             $sqlFrom .= ' INNER JOIN '.$table->escapedNameForPhpForFrom. ' ON (';
@@ -664,6 +666,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
                 $innerJoin[] = $primarytable->enclosedName.'.'.$this->_encloseName($fk).'='.
                     $table->enclosedName.'.'.$this->_encloseName($table->primaryKey[$k]);
             }
+
             $sqlFrom .= implode(' AND ', $innerJoin).')';
         }
 

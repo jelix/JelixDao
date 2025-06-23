@@ -16,6 +16,10 @@ while($tryAgain) {
     pg_query($cnx, "drop table if exists labels_test");
     pg_query($cnx, "drop table if exists jsessions");
     pg_query($cnx, "drop table if exists newspaper.article");
+    pg_query($cnx, "drop table if exists newspaper.article2");
+    pg_query($cnx, "drop table if exists newspaper2.article2_category");
+    pg_query($cnx, "drop table if exists newspaper.article3");
+    pg_query($cnx, "drop table if exists newspaper2.article3_category");
 
     pg_query($cnx, "CREATE TABLE products (
         id serial NOT NULL,
@@ -47,6 +51,7 @@ while($tryAgain) {
     data bytea NOT NULL
 )");
     pg_query($cnx, "CREATE SCHEMA IF NOT EXISTS newspaper");
+    pg_query($cnx, "CREATE SCHEMA IF NOT EXISTS newspaper2");
 
     pg_query($cnx, "CREATE TABLE newspaper.article (
         id serial NOT NULL,
@@ -54,6 +59,20 @@ while($tryAgain) {
         content TEXT NOT NULL
 )");
     pg_query($cnx, "SELECT pg_catalog.setval(pg_catalog.pg_get_serial_sequence('newspaper.article', 'id'), 1, false)");
+
+    pg_query($cnx, "CREATE TABLE newspaper.article2 (
+        id serial NOT NULL,
+        category_id integer NOT NULL,
+        title VARCHAR( 255 ) NOT NULL,
+        content TEXT NOT NULL
+)");
+    pg_query($cnx, "SELECT pg_catalog.setval(pg_catalog.pg_get_serial_sequence('newspaper.article2', 'id'), 1, false)");
+
+    pg_query($cnx, "CREATE TABLE newspaper2.article2_category (
+        catid serial NOT NULL,
+        label VARCHAR( 255 ) NOT NULL
+)");
+    pg_query($cnx, "SELECT pg_catalog.setval(pg_catalog.pg_get_serial_sequence('newspaper.article2', 'id'), 1, false)");
 
     pg_query($cnx, "SELECT pg_catalog.setval(pg_catalog.pg_get_serial_sequence('products', 'id'), 1, false)");
 
@@ -66,6 +85,10 @@ while($tryAgain) {
     pg_query($cnx, "ALTER TABLE ONLY products_tags ADD CONSTRAINT products_tags_pkey PRIMARY KEY (product_id, tag)");
 
     pg_query($cnx, "ALTER TABLE ONLY jsessions ADD CONSTRAINT jsession_pkey PRIMARY KEY (id)");
+    pg_query($cnx, "ALTER TABLE ONLY newspaper.article ADD CONSTRAINT article_pkey PRIMARY KEY (id)");
+    pg_query($cnx, "ALTER TABLE ONLY newspaper.article2 ADD CONSTRAINT article2_pkey PRIMARY KEY (id)");
+    pg_query($cnx, "ALTER TABLE ONLY newspaper2.article2_category ADD CONSTRAINT article2_category_pkey PRIMARY KEY (catid)");
+    pg_query($cnx, "ALTER TABLE ONLY newspaper.article2 ADD CONSTRAINT article2_cat_pkey FOREIGN KEY (category_id) REFERENCES newspaper2.article2_category(catid)");
 
     pg_close($cnx);
 }
@@ -87,6 +110,11 @@ while ($tryAgain) {
     $cnx->query('drop table if exists products_tags');
     $cnx->query('drop table if exists labels_test');
     $cnx->query('drop table if exists jsessions');
+    $cnx->query('drop table if exists article');
+    $cnx->query('drop table if exists article2');
+    $cnx->query('drop table if exists article2_category');
+    $cnx->query('drop table if exists article3');
+    $cnx->query('drop table if exists article3_category');
 
     $cnx->query("CREATE TABLE IF NOT EXISTS `products` (
 `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
@@ -126,6 +154,21 @@ UNIQUE (`keyalias`)
         title VARCHAR( 255 ) NOT NULL,
         content TEXT NOT NULL
 )  ENGINE=InnoDb");
+
+    $cnx->query("CREATE TABLE IF NOT EXISTS article2_category (
+        `catid` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+        label VARCHAR( 255 ) NOT NULL
+)  ENGINE=InnoDb");
+
+
+    $cnx->query("CREATE TABLE IF NOT EXISTS article2 (
+        `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+        category_id INT NOT NULL,
+        title VARCHAR( 255 ) NOT NULL,
+        content TEXT NOT NULL,
+        FOREIGN KEY (category_id) REFERENCES article2_category (catid)
+)  ENGINE=InnoDb");
+
     $cnx->close();
 }
 
@@ -170,6 +213,18 @@ $sqlite->exec("CREATE TABLE article (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title VARCHAR( 255 ) NOT NULL,
         content TEXT NOT NULL
+)");
+
+$sqlite->exec("CREATE TABLE article2 (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        category_id INTEGER NOT NULL,
+        title VARCHAR( 255 ) NOT NULL,
+        content TEXT NOT NULL
+)");
+
+$sqlite->exec("CREATE TABLE article2_category (
+        catid INTEGER PRIMARY KEY AUTOINCREMENT,
+        label VARCHAR( 255 ) NOT NULL
 )");
 
 $sqlite->exec("CREATE TABLE products_tags (

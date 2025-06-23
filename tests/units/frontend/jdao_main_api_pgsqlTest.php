@@ -16,6 +16,8 @@ class jdao_main_api_pgsqlTest extends MainApiAbstract
     static protected $trueValue = 't';
     static protected $falseValue = 'f';
 
+    protected $article3TableName = 'newspaper.article3';
+    protected $article3CatTableName = 'newspaper2.article3_category';
 
     protected function getConnector()
     {

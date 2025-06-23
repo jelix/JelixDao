@@ -9,10 +9,12 @@
 * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
 */
 
+use Jelix\Dao\DbMapper;
 use Jelix\Database\AccessParameters;
 use Jelix\Database\Connection;
 use Jelix\Dao\AbstractDaoRecord;
 use Jelix\Dao\DaoConditions;
+use Jelix\Database\Schema\SqlToolsInterface;
 
 /**
  * CAREFULL ! DON'T CHANGE THE ORDER OF METHODS
@@ -31,22 +33,27 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
 
     /** @var \Jelix\Dao\DaoLoader  */
     protected $daoLoader;
+    protected $daoContext;
     protected static $conn = array();
     protected $sqlType;
 
     protected $jsonSpace = ' ';
 
+    protected $article3TableName = 'article3';
+    protected $article3CatTableName = 'article3_category';
+
     function setUp() : void
     {
         $tempPath = __DIR__.'/../tmp/mainapi/';
         $daosDirectory = __DIR__.'/../lib/daos/';
+        $this->daoContext = new \Jelix\Dao\Context(
+            $this->getConnection(),
+            $tempPath,
+            $daosDirectory
+        );
 
         $this->daoLoader = new \Jelix\Dao\DaoLoader(
-            new \Jelix\Dao\Context(
-                $this->getConnection(),
-                $tempPath,
-                $daosDirectory
-            )
+            $this->daoContext,
         );
 
         $this->sqlType = ucfirst($this->getConnection()->getSQLType());
@@ -88,6 +95,8 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
         $dao = $this->daoLoader->create ('article');
         $this->assertInstanceOf('Article'.$this->sqlType.'Factory', $dao);
 
+        $dao = $this->daoLoader->create ('article2');
+        $this->assertInstanceOf('Article2'.$this->sqlType.'Factory', $dao);
     }
 
     /**
@@ -109,6 +118,8 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
     protected static $prod2;
     protected static $prod3;
     protected static $art;
+    protected static $art2;
+    protected static $art2cat;
 
     /**
      * @depends testFindAllEmpty
@@ -181,6 +192,23 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
         $this->assertEquals(1, $res, 'AbstractDaoFactory::insert does not return 1');
         $this->assertNotEquals('', self::$art->id, 'AbstractDaoFactory::insert : id not set');
 
+        $daocat = $this->daoLoader->create ('article2_category');
+        self::$art2cat = $this->daoLoader->createRecord ('article2_category');
+        self::$art2cat->label ='first cat';
+        $res = $daocat->insert(self::$art2cat);
+
+        $this->assertEquals(1, $res, 'AbstractDaoFactory::insert does not return 1');
+        $this->assertNotEquals('', self::$art2cat->catid, 'AbstractDaoFactory::insert : id not set');
+
+        $dao2 = $this->daoLoader->create ('article2');
+        self::$art2 = $this->daoLoader->createRecord ('article2');
+        self::$art2->title ='first news2';
+        self::$art2->category_id = self::$art2cat->catid;
+        self::$art2->content = 'lorem ipsum2';
+        $res = $dao2->insert(self::$art2);
+
+        $this->assertEquals(1, $res, 'AbstractDaoFactory::insert does not return 1');
+        $this->assertNotEquals('', self::$art2->id, 'AbstractDaoFactory::insert : id not set');
     }
 
     /**
@@ -202,6 +230,13 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
         $this->assertInstanceOf('\\Jelix\\Dao\\AbstractDaoRecord', $art,'DaoLoader::get doesn\'t return a AbstractDaoRecord object');
         $this->assertEquals(self::$art->id, $art->id, 'DaoLoader::get : bad id on record');
         $this->assertEquals('first news', $art->title, 'DaoLoader::get : bad name property on record');
+
+        $dao = $this->daoLoader->create ('article2');
+        $art = $dao->get(self::$art2->id);
+        $this->assertInstanceOf('\\Jelix\\Dao\\AbstractDaoRecord', $art,'DaoLoader::get doesn\'t return a AbstractDaoRecord object');
+        $this->assertEquals(self::$art2->id, $art->id, 'DaoLoader::get : bad id on record');
+        $this->assertEquals('first news2', $art->title, 'DaoLoader::get : bad name property on record');
+        $this->assertEquals('first cat', $art->catname, 'DaoLoader::get : bad name property on record');
     }
 
     /**
@@ -722,5 +757,53 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
     </object>
 </array>';
         $this->assertComplexIdenticalStr($list, $verif);
+    }
+
+    function testDbMapperCreate()
+    {
+        $cn = $this->getConnection();
+        $cn->exec('DROP TABLE IF EXISTS '.$this->article3TableName);
+        $cn->exec('DROP TABLE IF EXISTS '.$this->article3CatTableName);
+
+        $mapper = new DbMapper($this->daoContext);
+        $daoFile = $this->daoContext->resolveDaoPath('article3_category');
+        $mapper->createTableFromDao($daoFile);
+        $daoFile = $this->daoContext->resolveDaoPath('article3');
+        $mapper->createTableFromDao($daoFile);
+
+
+        $rs = $cn->query('SELECT * FROM '.$this->article3TableName);
+        $this->assertNotFalse($rs);
+        $rs = $cn->query('SELECT * FROM '.$this->article3CatTableName);
+        $this->assertNotFalse($rs);
+
+    }
+
+    /**
+     * @depends testDbMapperCreate
+     * @return void
+     */
+    function testDbMapperInsertDaoData()
+    {
+        $mapper = new DbMapper($this->daoContext);
+        $daoFile = $this->daoContext->resolveDaoPath('article3_category');
+
+        $properties = [ 'catid', 'label'];
+        $data = [
+            [ 1, 'first'],
+            [ 2, 'second'],
+            [ 3, 'third'],
+            [ 4, 'fourth'],
+        ];
+        $mapper->insertDaoData($daoFile, $properties, $data, SqlToolsInterface::IBD_EMPTY_TABLE_BEFORE);
+
+        $expected   = [
+            [ 'catid' => 1, 'label'=>'first'],
+            [ 'catid' => 2, 'label'=>'second'],
+            [ 'catid' => 3, 'label'=>'third'],
+            [ 'catid' => 4, 'label'=>'fourth'],
+        ];
+        $this->assertTableContainsRecords($this->article3CatTableName, $expected);
+
     }
 }
