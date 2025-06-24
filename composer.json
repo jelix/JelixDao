@@ -30,8 +30,7 @@
     "autoload": {
         "psr-4" : {
             "Jelix\\Dao\\" : "src/"
-        },
-       "classmap": [ "src/legacy/"]
+        }
     },
     "minimum-stability": "stable",
     "extra" : {
