@@ -349,8 +349,10 @@ abstract class AbstractDaoFactory implements DaoFactoryInterface
     {
         $query = $this->_selectClause.$this->_fromClause.$this->_whereClause;
         if ($searchcond->hasConditions()) {
-            $query .= ($this->_whereClause != '' ? ' AND ' : ' WHERE ');
-            $query .= $this->_createConditionsClause($searchcond);
+            $query .= $this->_createWhereClause($this->_createConditionsClause($searchcond));
+        }
+        else {
+            $query .= $this->_whereClause;
         }
         $query .= $this->_createOrderClause($searchcond);
 
@@ -394,18 +396,21 @@ abstract class AbstractDaoFactory implements DaoFactoryInterface
 
         if (!$sqlite) {
             if (!$oracle) {
-                $query = 'SELECT COUNT('.$count.') as c '.$this->_fromClause.$this->_whereClause;
+                $query = 'SELECT COUNT('.$count.') as c '.$this->_fromClause;
             } else {
-                $query = 'SELECT COUNT('.$count.') as "c" '.$this->_fromClause.$this->_whereClause;
+                $query = 'SELECT COUNT('.$count.') as "c" '.$this->_fromClause;
             }
         } else { // specific query for sqlite, which doesn't support COUNT+DISTINCT
-            $query = 'SELECT COUNT(*) as c FROM (SELECT '.$count.' '.$this->_fromClause.$this->_whereClause;
+            $query = 'SELECT COUNT(*) as c FROM (SELECT '.$count.' '.$this->_fromClause;
         }
 
         if ($searchcond->hasConditions()) {
-            $query .= ($this->_whereClause != '' ? ' AND ' : ' WHERE ');
-            $query .= $this->_createConditionsClause($searchcond);
+            $query .= $this->_createWhereClause($this->_createConditionsClause($searchcond));
         }
+        else {
+            $query .= $this->_whereClause;
+        }
+
         if ($sqlite) {
             $query .= ')';
         }
@@ -472,6 +477,20 @@ abstract class AbstractDaoFactory implements DaoFactoryInterface
     final protected function _createConditionsClause($daocond, $forSelect = true)
     {
         return $this->_generateCondition($daocond->condition, static::$_properties, $forSelect, true);
+    }
+
+    final protected function _createWhereClause($additionalWhere = '')
+    {
+        $where = $this->_whereClause;
+        if ($additionalWhere != '') {
+            if ($where != '') {
+                $where .= ' AND '.$additionalWhere;
+            }
+            else {
+                $where .= ' WHERE '.$additionalWhere;
+            }
+        }
+        return $where;
     }
 
     /**
