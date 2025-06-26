@@ -9,6 +9,7 @@
         <property name="creation" fieldname="creation" datatype="datetime" required="true"/>
         <property name="access" fieldname="access" datatype="datetime" required="true"/>
         <property name="data" fieldname="data" datatype="varbinary" required="true"/>
+        <property name="metadata" fieldname="metadata" datatype="json" required="true"/>
     </record>
 
     <factory>
