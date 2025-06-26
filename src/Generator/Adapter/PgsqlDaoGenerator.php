@@ -50,26 +50,15 @@ class PgsqlDaoGenerator extends \Jelix\Dao\Generator\AbstractDaoGenerator
         return null;
     }
 
-    protected function buildEndOfClass()
+    protected function buildRecordModifierFunctionBody()
     {
-        $fields = $this->_getPropertiesBy('BinaryField');
-        if (count($fields)) {
-            $src = '    protected function finishInitResultSet($rs) {
-        parent::finishInitResultSet($rs);
-        $rs->addModifier(array($this, \'unescapeRecord\'));
-    }'."\n";
-
-            // we build the callback function for the resultset, to unescape
-            // binary fields.
-            $src .= 'public function unescapeRecord($record, $resultSet) {'."\n";
-            foreach ($fields as $f) {
-                $src .= '$record->'.$f->name.' = $resultSet->unescapeBin($record->'.$f->name.");\n";
+        $bodySrc = parent::buildRecordModifierFunctionBody();
+        $binFields = $this->_getPropertiesBy('BinaryField');
+        if ($binFields) {
+            foreach ($binFields as $field) {
+                $bodySrc[] = '    if ($record->'.$field->name.' !== null) { $record->'.$field->name.' = $rs->unescapeBin($record->'.$field->name.');}';
             }
-            $src .= '}';
-
-            return $src;
         }
-
-        return '';
+        return $bodySrc;
     }
 }

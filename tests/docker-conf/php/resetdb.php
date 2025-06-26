@@ -48,7 +48,8 @@ while($tryAgain) {
     id character varying(64) NOT NULL,
     creation timestamp NOT NULL,
     \"access\" timestamp NOT NULL,
-    data bytea NOT NULL
+    data bytea NOT NULL,
+    metadata jsonb DEFAULT NULL
 )");
     pg_query($cnx, "CREATE SCHEMA IF NOT EXISTS newspaper");
     pg_query($cnx, "CREATE SCHEMA IF NOT EXISTS newspaper2");
@@ -146,6 +147,7 @@ UNIQUE (`keyalias`)
   `creation` datetime NOT NULL,
   `access` datetime NOT NULL,
   `data` longblob NOT NULL,
+  `metadata` JSON DEFAULT NULL,
   PRIMARY KEY  (`id`)
 ) DEFAULT CHARSET=utf8;");
 
@@ -206,6 +208,7 @@ $sqlite->exec("CREATE TABLE jsessions (
   creation datetime NOT NULL,
   access datetime NOT NULL,
   data blob NOT NULL,
+  metadata TEXT DEFAULT NULL,
   PRIMARY KEY  (id)
 );");
 

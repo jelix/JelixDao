@@ -684,11 +684,14 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
 
         $dao = $this->daoLoader->create ('jsession');
 
+        $metadataValue = array('foo'=>'bar');
+
         $sess1 = $dao->createRecord();
         $sess1->id ='sess_02939873A32B';
         $sess1->creation = '2010-02-09 10:28';
         $sess1->access = '2010-02-09 11:00';
         $sess1->data = chr(0).chr(254).chr(1);
+        $sess1->metadata = (object)$metadataValue;
 
         $res = $dao->insert($sess1);
         $this->assertEquals(1, $res, 'AbstractDaoFactory::insert does not return 1');
@@ -696,6 +699,8 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
         $sess2 = $dao->get('sess_02939873A32B');
         $this->assertEquals($sess1->id, $sess2->id, 'DaoLoader::get : bad id on record');
         $this->assertEquals(bin2hex($sess1->data), bin2hex($sess2->data), 'DaoLoader::get : bad binary value on record');
+        $this->assertEquals($sess1->metadata, (object)$sess2->metadata, 'DaoLoader::get : bad metadata value on record');
+        $this->assertEquals($metadataValue, $sess2->metadata, 'DaoLoader::get : bad creation value on record');
     }
 
     function testFindAllWithJoin()

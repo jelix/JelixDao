@@ -758,22 +758,30 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
 
     protected function buildFinishResultSet()
     {
-        $jsonFields = $this->_getPropertiesBy('JsonField');
+
         $src = [];
-        if ($jsonFields) {
+        $bodySrc = $this->buildRecordModifierFunctionBody();
+        if ($bodySrc) {
             $src[] = 'protected function finishInitResultSet($rs) {';
             $src[] = '   parent::finishInitResultSet($rs);';
             $src[] = '   $rs->addModifier(function ($record, $rs) {';
-
-            foreach ($jsonFields as $field) {
-                $src[] = '    if ($record->'.$field->name.' !== null) { $record->'.$field->name.' = json_decode($record->'.$field->name.', true); }';
-            }
-
+            $src[] = implode("\n", $bodySrc);
             $src[] = '   });';
             $src[] = '}';
         }
-
         return implode("\n", $src);
+    }
+
+    protected function buildRecordModifierFunctionBody()
+    {
+        $bodySrc = [];
+        $jsonFields = $this->_getPropertiesBy('JsonField');
+        if ($jsonFields) {
+            foreach ($jsonFields as $field) {
+                $bodySrc[] = '    if ($record->'.$field->name.' !== null) { $record->'.$field->name.' = json_decode($record->'.$field->name.', true); }';
+            }
+        }
+        return $bodySrc;
     }
 
     protected function buildEndOfClass()
