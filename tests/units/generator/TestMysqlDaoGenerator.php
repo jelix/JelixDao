@@ -1,4 +1,7 @@
 <?php
+
+use Jelix\Dao\Parser\DaoProperty;
+
 /**
  * @author      Laurent Jouanneau
  * @contributor
@@ -9,11 +12,17 @@
 
 
 
-class testDaoProperty {
+class testDaoProperty extends DaoProperty {
     public $datatype;
     public $unifiedType;
     public $defaultValue=null;
     public $autoIncrement = false;
+
+    public function __construct() {
+
+        $this->attributes['jsonEncoder'] = 'json_encode(%VALUE%)';
+        $this->attributes['jsonDecoder'] = 'json_decode(%FIELD%, true)';
+    }
 }
 
 class TestMysqlDaoGenerator extends \Jelix\Dao\Generator\Adapter\MysqlDaoGenerator {

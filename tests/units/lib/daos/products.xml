@@ -11,6 +11,12 @@
       <property name="promo" fieldname="promo" datatype="boolean" required="true" default="false"/>
       <property name="dummy" fieldname="dummy" datatype="string" />
       <property name="metadata" fieldname="metadata" datatype="json" />
+      <property name="metadata2" fieldname="metadata2" datatype="json" jsontype="raw" />
+      <property name="metadata3" fieldname="metadata3" datatype="json" jsonobjectclass="\Jelix\DaoTests\MyJsonObject" />
+      <property name="metadata4" fieldname="metadata4" datatype="json" jsonobjectclass="\Jelix\DaoTests\MyJsonObject" jsonencoder="::staticToJsonString" jsondecoder="::createFromJson"/>
+      <property name="metadata5" fieldname="metadata5" datatype="json" jsonobjectclass="\Jelix\DaoTests\MyJsonObject" jsonencoder="\Jelix\DaoTests\MyJsonSerializer::toJsonString" jsondecoder="\Jelix\DaoTests\MyJsonSerializer::createFromJson"/>
+      <property name="metadata6" fieldname="metadata6" datatype="json" jsonobjectclass="\Jelix\DaoTests\MyJsonObject" jsonencoder="\Jelix\DaoTests\MyJsonSerializer->toJsonString" jsondecoder="\Jelix\DaoTests\MyJsonSerializer::createFromJson"/>
+      <property name="metadata7" fieldname="metadata7" datatype="json" jsontype="array" />
    </record>
    <factory>
       <method name="findByMaxId" type="select">

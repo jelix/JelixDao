@@ -252,7 +252,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
 
             $src[] = implode(',', $fields);
             $src[] = ') VALUES (';
-            $src[] = implode(', ', $values);
+            $src[] = implode(",\n   ", $values);
             $src[] = ")';";
 
             $src[] = '}else{';
@@ -278,7 +278,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
 
         $src[] = implode(',', $fields);
         $src[] = ') VALUES (';
-        $src[] = implode(', ', $values);
+        $src[] = implode(",\n   ", $values);
         $src[] = ")';";
 
         if ($pkai !== null) {
@@ -350,7 +350,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
             $src[] = '   $query = \'UPDATE '.$this->tableRealNameEsc.' SET ';
             $sqlSet = '';
             foreach ($fields as $k => $fname) {
-                $sqlSet .= ', '.$fname.'= '.$values[$k];
+                $sqlSet .= ",\n   ".$fname.'= '.$values[$k];
             }
             $src[] = substr($sqlSet, 1);
 
@@ -778,7 +778,10 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         $jsonFields = $this->_getPropertiesBy('JsonField');
         if ($jsonFields) {
             foreach ($jsonFields as $field) {
-                $bodySrc[] = '    if ($record->'.$field->name.' !== null) { $record->'.$field->name.' = json_decode($record->'.$field->name.', true); }';
+                if ($field->attributes['jsonDecoder'] ) {
+                    $decoder = str_replace('%FIELD%','$record->'.$field->name, $field->attributes['jsonDecoder']);
+                    $bodySrc[] = '    if ($record->'.$field->name.' !== null) { $record->'.$field->name.' = '.$decoder.'; }';
+                }
             }
         }
         return $bodySrc;
@@ -1228,7 +1231,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
      * @param string $forCondition
      * @return string the PHP expression to insert into the generated class
      */
-    protected function _preparePHPExpr($expr, $field, $checknull = true, $forCondition = '')
+    protected function _preparePHPExpr($expr, DaoProperty $field, $checknull = true, $forCondition = '')
     {
         $opnull = '';
         if ($checknull && $forCondition != '') {
@@ -1278,10 +1281,19 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
 
                 break;
             case 'json':
+                $encoder = $field->attributes['jsonEncoder'];
+                if ($encoder != '') {
+                    $encoder = str_replace('%VALUE%', $expr, $encoder);
+                    $exprEncode = $forCondition.'$this->_conn->quote(is_string('.$expr.')?'.$expr.':'.$encoder.')';
+                }
+                else {
+                    $exprEncode = $forCondition.'$this->_conn->quote('.$expr.')';
+                }
+
                 if ($checknull) {
-                    $expr = '('.$expr.' === null ? \''.$opnull.'NULL\' : '.$forCondition.'$this->_conn->quote(is_string('.$expr.')?'.$expr.':json_encode('.$expr.')))';
+                    $expr = '('.$expr.' === null ? \''.$opnull.'NULL\' : '.$exprEncode.')';
                 } else {
-                    $expr = $forCondition.'$this->_conn->quote(is_string('.$expr.')?'.$expr.':json_encode('.$expr.'))';
+                    $expr = $exprEncode;
                 }
                 break;
             default:
@@ -1315,7 +1327,13 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
             case 'boolean':
                 return 'array($this, \'_callbackBool\')';
             case 'json':
-                return 'array($this, \'_callbackJson\')';
+                if ($field->attributes['jsonEncoder'] != '') {
+                    $encoder = str_replace('%VALUE%', '$__e', $field->attributes['jsonEncoder']);
+                    return 'function($__e){return '.$encoder.';}';
+                }
+                else {
+                    return 'function($__e){return $__e;}';
+                }
             default:
                 if ($type == 'varbinary' || $type == 'binary') {
                     return 'array($this, \'_callbackQuoteBin\')';

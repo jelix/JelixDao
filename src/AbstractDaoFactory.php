@@ -721,16 +721,4 @@ abstract class AbstractDaoFactory implements DaoFactoryInterface
         return $this->falseValue;
     }
 
-    /**
-     * a callback function for some array_map call in generated methods.
-     *
-     * @param mixed $value
-     */
-    protected function _callbackJson($value)
-    {
-        if (!is_string($value)) {
-            $value = json_encode($value);
-        }
-        return $this->_conn->quote2($value);
-    }
 }

@@ -4,14 +4,13 @@
  * @contributor Laurent Jouanneau
  * @contributor Philippe Villiers
  *
- * @copyright   2001-2005 CopixTeam, 2005-2023 Laurent Jouanneau
+ * @copyright   2001-2005 CopixTeam, 2005-2025 Laurent Jouanneau
  *
  * @see        https://jelix.org
  * @licence  http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
  */
 namespace Jelix\Dao\Parser;
 
-use Jelix\Database\Schema\AbstractSqlTools;
 
 /**
  * Container for properties of a dao property.
@@ -95,6 +94,8 @@ class DaoProperty
      */
     public $comment = '';
 
+    public $attributes = array();
+
     /**
      * constructor.
      *
@@ -113,7 +114,8 @@ class DaoProperty
         // Allowed attributes names
         $allowed = array('name', 'fieldname', 'table', 'datatype', 'required',
             'minlength', 'maxlength', 'regexp', 'sequence', 'default', 'autoincrement',
-            'updatepattern', 'insertpattern', 'selectpattern', 'comment', );
+            'updatepattern', 'insertpattern', 'selectpattern', 'comment',
+            'jsontype', 'jsonobjectclass', 'jsonencoder', 'jsondecoder');
 
         foreach ($aAttributes as $attributeName => $attributeValue) {
             if (!in_array($attributeName, $allowed)) {
@@ -170,6 +172,8 @@ class DaoProperty
             }
         } elseif ($this->autoIncrement) {
             throw new ParserException($parser->getDaoFile(), 'property "'.$this->fieldName.'" non numeric cannot be auto incremented', 535);
+        } else if ($this->unifiedType == 'json') {
+            $this->_parseJsonAttributes($aAttributes, $parser);
         }
 
         $pkeys = array_map('strtolower', $tables[$this->table]->primaryKey);
@@ -239,5 +243,121 @@ class DaoProperty
         if (isset($aAttributes['comment'])) {
             $this->comment = (string) $aAttributes['comment'];
         }
+    }
+
+    protected function _parseJsonAttributes(\SimpleXMLElement $aAttributes, XMLDaoParser $parser)
+    {
+        $jsonClass = '';
+        if (isset($aAttributes['jsontype'])) {
+            $jsonType = (string) $aAttributes['jsontype'];
+        }
+        else {
+            $jsonType = 'natural';
+        }
+        if (isset($aAttributes['jsonobjectclass'])) {
+            $jsonClass = (string) $aAttributes['jsonobjectclass'];
+            if ($jsonClass != '') {
+                $jsonType="object";
+            }
+        }
+
+        if ($jsonType != 'object' && $jsonClass != '') {
+            throw new ParserException($parser->getDaoFile(), 'property "'.$this->fieldName.'" indicate a json class although json type is '.$jsonType, 536);
+        }
+
+        if ($jsonType == 'raw') {
+            $this->attributes['jsonEncoder'] = '';
+            $this->attributes['jsonDecoder'] = '';
+            $this->attributes['jsonClass'] = '';
+            return;
+        }
+
+        $jsonEncoder = '';
+        $jsonDecoder = '';
+
+        if (isset($aAttributes['jsonencoder'])) {
+            $jsonEncoder = (string)$aAttributes['jsonencoder'];
+        }
+        if (isset($aAttributes['jsondecoder'])) {
+            $jsonDecoder = (string)$aAttributes['jsondecoder'];
+        }
+
+        if ($jsonEncoder != '') {
+            if (preg_match("/^([\w\\\\]+)?(\\-\\>|\\:\\:)(\w*)$/", $jsonEncoder, $matches)) {
+                $encoderClass = $matches[1];
+                if ($encoderClass == '') {
+                    if ($jsonClass == '') {
+                        throw new ParserException($parser->getDaoFile(), 'property "'.$this->fieldName.'": class name is missing into jsonencoder', 537);
+                    }
+                    $encoderClass = $jsonClass;
+                    $jsonEncoder = $jsonClass.$jsonEncoder;
+                }
+
+                if ($matches[2] == '::') {
+                    $jsonEncoder = 'call_user_func(\'' . $jsonEncoder . '\',%VALUE%)';
+                } else {
+                    if ($encoderClass == $jsonClass) {
+                        // encoder cannot be an instance of $jsonClass, because the expression given
+                        // to the encoder may be a complex expression (not a simple $record->jsonfield)
+                        throw new ParserException($parser->getDaoFile(), 'property "'.$this->fieldName.'": encoder cannot be an instance of '.$jsonClass, 538);
+                    }
+                    else {
+                        $jsonEncoder = '\\Jelix\\Dao\\Json\\JsonUtilities::encodeUsingExternalObjectMethod(\'' . $encoderClass . '\', \'' . $matches[3] . '\', %VALUE%)';
+                    }
+                }
+            } else {
+                // this is a simple function
+                $jsonEncoder = $jsonEncoder . '(%VALUE%)';
+            }
+        } else {
+            if ($jsonType == 'object') {
+                $jsonEncoder = 'json_encode(%VALUE%, JSON_FORCE_OBJECT)';
+            }
+            else {
+                $jsonEncoder = 'json_encode(%VALUE%)';
+            }
+        }
+
+        if ($jsonDecoder != '') {
+            if (preg_match("/^([\w\\\\]+)?(\\-\\>|\\:\\:)(\w*)$/", $jsonDecoder, $matches)) {
+                $decoderClass = $matches[1];
+                if ($decoderClass == '') {
+                    if ($jsonClass == '') {
+                        throw new ParserException($parser->getDaoFile(), 'property "'.$this->fieldName.'": class name is missing into jsonencoder', 537);
+                    }
+                    $decoderClass = $jsonClass;
+                    $jsonDecoder = $jsonClass.$jsonDecoder;
+                }
+                if ($matches[2] == '::') {
+                    $jsonDecoder = 'call_user_func(\'' . $jsonDecoder . '\',%FIELD%)';
+                } else {
+                    if ($decoderClass == $jsonClass) {
+                        $jsonDecoder = '%FIELD%->' . $matches[3] . '(%FIELD%)';
+                    } else {
+                        $jsonDecoder = '\\Jelix\\Dao\\Json\\JsonUtilities::decodeToNewObjectUsingMethod(\'' . $decoderClass . '\', \'' . $matches[3] . '\', %FIELD%)';
+                    }
+                }
+            } else {
+                // this is a simple function
+                $jsonDecoder = $jsonDecoder . '(%FIELD%)';
+            }
+        } else {
+            if ($jsonType == 'object') {
+                if ($jsonClass == '') {
+                    $jsonDecoder = 'json_decode(%FIELD%, false, 512, JSON_FORCE_OBJECT)';
+                }
+                else {
+                    $jsonDecoder = '\\Jelix\\Dao\\Json\\JsonUtilities::decodeToNewObject(\'' . $jsonClass . '\', %FIELD%)';
+                }
+            } else if ($jsonType == 'array') {
+                $jsonDecoder = 'json_decode(%FIELD%, true)';
+            } else {
+                $jsonDecoder = 'json_decode(%FIELD%)';
+            }
+        }
+
+        $this->attributes['jsonEncoder'] = $jsonEncoder;
+        $this->attributes['jsonDecoder'] = $jsonDecoder;
+        $this->attributes['jsonClass'] = $jsonClass;
     }
 }

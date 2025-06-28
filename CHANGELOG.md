@@ -6,17 +6,18 @@ Changelog
 
 - Native support of JSON fields: dao properties having the datatype `json`
   are automatically encoded during insert/update, or decoded during a select.
+  Optionally, they can be decoded/encoded to/from a specific class.
 - new feature: possibility to indicate a base class for the generated factory class.
-  The classname should be indicated into the `extends` attribute of `<factory>`.
-  The class can be anywhere and should be autoloadable.
-  The class must inherit from `\Jelix\Dao\AbstractDaoFactory` and it must be abstract.
+  - The classname should be indicated into the `extends` attribute of `<factory>`.
+  - The class can be anywhere and should be autoloadable.
+  - The class must inherit from `\Jelix\Dao\AbstractDaoFactory` and it must be abstract.
 - Support of schema names into tables names.
 - Fix deprecation warning with PHP 8.4
 - Fix generator: better generated joins
 - Introduce compatibility with applications that are using jDao API of Jelix 1.8 
   and lower: classes of JelixDao inherit from some empty classes or empty interfaces
   having the name of old implementation, so objects can be passed to functions that
-  have parameters typed with theses classes (`jDaoConditions`, `jDaoFactoryBase`, 
+  have parameters typed with these classes (`jDaoConditions`, `jDaoFactoryBase`, 
   `jDaoRecordBase`, `jDaoXmlException`). This feature will be removed into the
   next major version of JelixDao.
 

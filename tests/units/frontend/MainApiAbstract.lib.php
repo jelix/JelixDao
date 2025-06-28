@@ -132,7 +132,25 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
         self::$prod1->name ='assiette';
         self::$prod1->price = 3.87;
         self::$prod1->promo = false;
-        self::$prod1->metadata = ['tears'=>'for fears'];
+        self::$prod1->metadata = (object)['tears'=>'for fears'];
+        self::$prod1->metadata2 ='{"type":"this is raw json value"}';
+        $jsonValue3 = new \Jelix\DaoTests\MyJsonObject();
+        $jsonValue3->id = '3';
+        $jsonValue3->name = 'Hello World3';
+        self::$prod1->metadata3 = $jsonValue3;
+        $jsonValue4 = new \Jelix\DaoTests\MyJsonObject();
+        $jsonValue4->id = '4';
+        $jsonValue4->name = 'Hello World4';
+        self::$prod1->metadata4 = $jsonValue4;
+        $jsonValue5 = new \Jelix\DaoTests\MyJsonObject();
+        $jsonValue5->id = '5';
+        $jsonValue5->name = 'Hello World5';
+        self::$prod1->metadata5 = $jsonValue5;
+        $jsonValue6 = new \Jelix\DaoTests\MyJsonObject();
+        $jsonValue6->id = '6';
+        $jsonValue6->name = 'Hello World6';
+        self::$prod1->metadata6 = $jsonValue6;
+        self::$prod1->metadata7 = array('this is an array');
         $res = $dao->insert(self::$prod1);
 
         $this->assertEquals(1, $res, 'AbstractDaoFactory::insert does not return 1');
@@ -144,7 +162,7 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
         self::$prod2->price = 1.54;
         self::$prod2->promo = true;
         self::$prod2->dummy = 'started';
-        self::$prod2->metadata = ['simple'=>'mind'];
+        self::$prod2->metadata = (object)['simple'=>'mind'];
         $res = self::$prod2->save();
 
         $this->assertEquals(1, $res, 'AbstractDaoFactory::insert does not return 1');
@@ -167,18 +185,36 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
                 'price'=>3.87,
                 'promo'=> static::$falseValue,
                 'metadata' => '{"tears":'.$this->jsonSpace.'"for fears"}',
+                'metadata2' => '{"type":'.$this->jsonSpace.'"this is raw json value"}',
+                'metadata3' => '{"id":'.$this->jsonSpace.'"3",'.$this->jsonSpace.'"name":'.$this->jsonSpace.'"Hello World3"}',
+                'metadata4' => '{"theid":'.$this->jsonSpace.'"4",'.$this->jsonSpace.'"thename":'.$this->jsonSpace.'"Hello World4"}',
+                'metadata5' => '{"theid2":'.$this->jsonSpace.'"5",'.$this->jsonSpace.'"thename2":'.$this->jsonSpace.'"Hello World5"}',
+                'metadata6' => '{"theid2":'.$this->jsonSpace.'"6",'.$this->jsonSpace.'"thename2":'.$this->jsonSpace.'"Hello World6"}',
+                'metadata7' => '["this is an array"]',
             ),
             array('id'=>self::$prod2->id,
                 'name'=>'fourchette',
                 'price'=>1.54,
                 'promo'=>static::$trueValue,
                 'metadata' => '{"simple":'.$this->jsonSpace.'"mind"}',
+                'metadata2' => null,
+                'metadata3' => null,
+                'metadata4' => null,
+                'metadata5' => null,
+                'metadata6' => null,
+                'metadata7' => null,
             ),
             array('id'=>self::$prod3->id,
                 'name'=>'verre',
                 'price'=>2.43,
                 'promo'=>static::$falseValue,
-                'metadata' => null
+                'metadata' => null,
+                'metadata2' => null,
+                'metadata3' => null,
+                'metadata4' => null,
+                'metadata5' => null,
+                'metadata6' => null,
+                'metadata7' => null,
             ),
         );
         $this->assertTableContainsRecords('products', $records);
@@ -225,7 +261,26 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
         $this->assertEquals('assiette', $prod->name,'DaoLoader::get : bad name property on record');
         $this->assertEquals(3.87, $prod->price,'DaoLoader::get : bad price property on record');
         $this->assertEquals(static::$falseValue, $prod->promo,'DaoLoader::get : bad promo property on record');
-        $this->assertEquals( ['tears'=>'for fears'], $prod->metadata);
+        $this->assertEquals( (object)['tears'=>'for fears'], $prod->metadata);
+
+        $this->assertEquals('{"type":'.$this->jsonSpace.'"this is raw json value"}', $prod->metadata2);
+        $jsonValue3 = new \Jelix\DaoTests\MyJsonObject();
+        $jsonValue3->id = '3';
+        $jsonValue3->name = 'Hello World3';
+        $this->assertEquals($jsonValue3, $prod->metadata3);
+        $jsonValue4 = new \Jelix\DaoTests\MyJsonObject();
+        $jsonValue4->id = '4';
+        $jsonValue4->name = 'Hello World4';
+        $this->assertEquals($jsonValue4, $prod->metadata4);
+        $jsonValue5 = new \Jelix\DaoTests\MyJsonObject();
+        $jsonValue5->id = '5';
+        $jsonValue5->name = 'Hello World5';
+        $this->assertEquals($jsonValue5, $prod->metadata5);
+        $jsonValue6 = new \Jelix\DaoTests\MyJsonObject();
+        $jsonValue6->id = '6';
+        $jsonValue6->name = 'Hello World6';
+        $this->assertEquals($jsonValue6, $prod->metadata6);
+        $this->assertEquals(array('this is an array'), $prod->metadata7);
 
         $dao = $this->daoLoader->create ('article');
         $art = $dao->get(self::$art->id);
@@ -245,23 +300,31 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
     /**
      * @depends testGet
      */
-    function testUpdate(){
-        $dao = $this->daoLoader->create ('products');
-        $prod = $this->daoLoader->createRecord ('products');
-        $prod->name ='assiette nouvelle';
+    function testUpdateWithCreatedRecord()
+    {
+        $dao = $this->daoLoader->create('products');
+        $prod = $this->daoLoader->createRecord('products');
+        $prod->name = 'assiette nouvelle';
         $prod->price = 5.90;
         $prod->promo = true;
         $prod->id = self::$prod1->id;
 
         $dao->update($prod);
-
         $prod2 = $dao->get(self::$prod1->id);
         $this->assertInstanceOf('\\Jelix\\Dao\\AbstractDaoRecord', $prod2,'DaoLoader::get doesn\'t return a AbstractDaoRecord object');
         $this->assertEquals(self::$prod1->id, $prod2->id, 'DaoLoader::get : bad id on record');
         $this->assertEquals('assiette nouvelle', $prod2->name,'DaoLoader::get : bad name property on record');
         $this->assertEquals(5.90, $prod2->price,'DaoLoader::get : bad price property on record');
         $this->assertEquals(static::$trueValue, $prod2->promo,'DaoLoader::get : bad promo property on record');
-        
+
+    }
+
+    /**
+     * @depends testUpdateWithCreatedRecord
+     */
+    function testUpdate(){
+        $dao = $this->daoLoader->create ('products');
+        $prod = $dao->get(self::$prod1->id);
         $prod->promo = 't';
         $prod->save();
         $prod2 = $dao->get(self::$prod1->id);
@@ -311,6 +374,14 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
         $dao->update($prod);
         $prod2 = $dao->get(self::$prod1->id);
         $this->assertEquals(static::$trueValue, $prod2->promo,'$this->daoLoader->get : bad promo property on record : %');
+
+        $jsonValue4 = new \Jelix\DaoTests\MyJsonObject();
+        $jsonValue4->id = '4';
+        $jsonValue4->name = 'Hello Super World4';
+        $prod->metadata4 = $jsonValue4;
+        $dao->update($prod);
+        $prod2 = $dao->get(self::$prod1->id);
+        $this->assertEquals($jsonValue4, $prod2->metadata4);
 
     }
 
@@ -684,14 +755,14 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
 
         $dao = $this->daoLoader->create ('jsession');
 
-        $metadataValue = array('foo'=>'bar');
+        $metadataValue = (object)array('foo'=>'bar');
 
         $sess1 = $dao->createRecord();
         $sess1->id ='sess_02939873A32B';
         $sess1->creation = '2010-02-09 10:28';
         $sess1->access = '2010-02-09 11:00';
         $sess1->data = chr(0).chr(254).chr(1);
-        $sess1->metadata = (object)$metadataValue;
+        $sess1->metadata = $metadataValue;
 
         $res = $dao->insert($sess1);
         $this->assertEquals(1, $res, 'AbstractDaoFactory::insert does not return 1');
@@ -699,7 +770,7 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
         $sess2 = $dao->get('sess_02939873A32B');
         $this->assertEquals($sess1->id, $sess2->id, 'DaoLoader::get : bad id on record');
         $this->assertEquals(bin2hex($sess1->data), bin2hex($sess2->data), 'DaoLoader::get : bad binary value on record');
-        $this->assertEquals($sess1->metadata, (object)$sess2->metadata, 'DaoLoader::get : bad metadata value on record');
+        $this->assertEquals($sess1->metadata, $sess2->metadata, 'DaoLoader::get : bad metadata value on record');
         $this->assertEquals($metadataValue, $sess2->metadata, 'DaoLoader::get : bad creation value on record');
     }
 
