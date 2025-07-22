@@ -28,7 +28,13 @@ while($tryAgain) {
         create_date time with time zone,
         promo boolean NOT NULL  default 'f',
         dummy character varying (10) NULL CONSTRAINT dummy_check CHECK (dummy IN ('created','started','stopped')),
-        metadata jsonb default null
+        metadata jsonb default null,
+        metadata2 jsonb default null,
+        metadata3 jsonb default null,
+        metadata4 jsonb default null,
+        metadata5 jsonb default null,
+        metadata6 jsonb default null,
+        metadata7 jsonb default null
     )");
 
     pg_query($cnx, "CREATE TABLE products_tags (
@@ -124,7 +130,13 @@ while ($tryAgain) {
 `create_date` datetime default NULL,
 `promo` BOOL NOT NULL default 0,
 `dummy` set('created','started','stopped') DEFAULT NULL,
-`metadata` JSON default NULL
+`metadata` JSON default NULL,
+`metadata2` JSON default NULL,
+`metadata3` JSON default NULL,
+`metadata4` JSON default NULL,
+`metadata5` JSON default NULL,
+`metadata6` JSON default NULL,
+`metadata7` JSON default NULL
 ) ENGINE = InnoDB");
 
     $cnx->query("CREATE TABLE `products_tags` (
@@ -194,7 +206,13 @@ $sqlite->exec("CREATE TABLE products (
     create_date datetime default NULL,
     promo BOOL NOT NULL default 0,
     dummy varchar(10) DEFAULT NULL,
-    metadata TEXT DEFAULT NULL
+    metadata TEXT DEFAULT NULL,
+    metadata2 TEXT DEFAULT NULL,
+    metadata3 TEXT DEFAULT NULL,
+    metadata4 TEXT DEFAULT NULL,
+    metadata5 TEXT DEFAULT NULL,
+    metadata6 TEXT DEFAULT NULL,
+    metadata7 TEXT DEFAULT NULL
 )");
 
 $sqlite->exec("CREATE TABLE labels_test (

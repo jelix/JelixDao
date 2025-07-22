@@ -14,7 +14,23 @@ composer require "jelix/dao"
 
 ## Usage
 
-Quick start:
+First create a file `article.xml` describing the mapping:
+
+```xml
+<?xml version="1.0"?>
+<dao xmlns="http://jelix.org/ns/dao/1.0">
+   <datasources>
+      <primarytable name="art" realname="newspaper.article" primarykey="id" />
+   </datasources>
+   <record>
+      <property name="id"   fieldname="id" datatype="autoincrement"/>
+      <property name="title" fieldname="title" datatype="string"  required="true"/>
+      <property name="content" fieldname="content" datatype="text" required="true"/>
+   </record>
+</dao>
+```
+
+Then use the JelixDao API to manipulate objects:
 
 ```php
 
@@ -48,24 +64,60 @@ $loader = new DaoLoader(
     )
 );
 
-$daoFile = 'myDao';
+$daoName = 'article'; // this the filename without path and extension
 
-$dao = $loader->get($daoFile);
+$dao = $loader->get($daoName);
 
-// we can now use methods to query records
 
+// Storing a new object
+
+$article = $dao->createRecord();
+$article->title = "My title";
+$article->content = "Lorem Ipsum";
+$dao->insert($article);
+
+echo "id of the new article: ".$article->id."\n";
+
+
+// Query all records from the article table
 $list = $dao->findAll();
 foreach($list as $record) {
-    echo $record->aField;
+    echo $record->title;
 }
 
-$record = $dao->get($primaryKey);
-echo $record->aField;
+// retrieve a single record
+$artId = 1;
+$article = $dao->get($artId);
+echo $article->title;
 
-$list = $dao->myCustomMethod();
+// updating the record
+$article->title = 'New title';
+$dao->update($article);
+
+// deleting a record
+$dao->delete($article->id);
 
 //...
 ```
+
+## Main features
+
+* Database type abstraction
+* support of schema into table names (ignored in database that don't support schemas)
+* Generate PHP classes for record, and for factories. Factory classes implement
+  SQL queries that are mostly generated during compilation time, so they are
+  not generated each time you call factories API.
+* Generated factory classes have some common methods, but can also have
+  custom methods (so custom queries) declared into the dao file
+* Generated factory classes and record classes can inherits from your own
+  classes.
+* A dao file can import the definition of an other dao file
+* support of json types: json content can be decoded/encoded dynamically, to/from
+  anonymous object or your own classes.
+* support of events: generated methods can dispatch an event before or after
+  the query
+* support of a listener class (hooks)
+* support of automatic encoding/decoding for json fields
 
 ## Requirements
 

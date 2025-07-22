@@ -100,8 +100,7 @@ The attribute `default` allows you to specify a default value which will be
 stored in the property.
 
 The attribute `datatype` indicates the type of the field. Here is the list
-of recognized types. You can see that there are many more types than in previous
-jelix version:
+of recognized types. 
 
 * `varchar`, `varchar2`, `nvarchar2`, `character`, `character varying`, `char`, `nchar`, `name`, `longvarchar`, `string` (deprecated),
 * `int`, `integer`, `tinyint`, `smallint`, `mediumint`, `bigint`,
@@ -114,6 +113,7 @@ jelix version:
 * `tinyblob`, `blob`, `mediumblob`, `longblob`, `bfile`,
 * `varbinary`, `bytea`, `binary`, `raw`, `long raw`
 * `enum`, `set`, `xmltype`, `point`, `line`, `lsed`, `box`, `path`, `polygon`, `circle`, `cidr`, `inet`, `macaddr`, `bit varyong`, `arrays`, `complex types`
+* `json` and `jsonb` (see section below)
 
 Of course, some database doesn't recognize all of these types. Don't worry, JelixDao
 will use the corresponding type in the selected database. For example, `bytea`
@@ -158,7 +158,7 @@ that is the result of a SQL expression. In this case, you must disable the
 inserting and updating.
 
 ```xml
-   <property Name="identite" datatype="string" selectpattern="CONCAT(name,' ',firstname)" insertpattern="" updatepattern="" />
+   <property name="identite" datatype="string" selectpattern="CONCAT(name,' ',firstname)" insertpattern="" updatepattern="" />
 ```
 
 Carefull about the content of `selectpattern`:
@@ -172,6 +172,104 @@ Carefull about the content of `selectpattern`:
   `table` attribute on the `<property>` element, with the name or
   alias of the table B, as a value.
 
+### Support of JSON fields
+
+When you indicate `json` (or `jsonb`) as datatype, content of the property
+is automatically encoded (during insert/update) or decoded (during selects).
+
+```xml
+   <property name="configuration" datatype="json" />
+```
+
+You can disable this feature if you want to manage the json content by yourself.
+Especially if the json content is huge, and you don't want to decode it 
+systematically, because it could cause performance issues.
+
+```xml
+   <property name="configuration" datatype="json" jsontype="raw" />
+```
+
+You can force the type, by indicating `object` or `array`
+
+```xml
+   <property name="configuration" datatype="json" jsontype="array" />
+```
+
+If you want to map the json content to an object having a specific class,
+indicate the class name into the `jsonobjectclass` attribute. In this case, `jsontype="object"` is
+not required.
+
+
+```xml
+   <property name="configuration" datatype="json" jsonclass="\MyProject\Configuration" />
+```
+
+The constructor of the class should not require parameters. And properties
+corresponding to the json object properties must be public.
+
+If the constructor requires parameters and/or properties are not public, 
+you can indicate your own json encoder/decoder.
+
+The encoder must accept an object as parameter, and return a string (the json content).
+The decoder must accept a string (the json content) and return an object of the given class.
+
+Encoder/Decoder can be static methods of the class. Note the `::` operator.
+
+```xml
+   <property name="configuration" datatype="json" 
+             jsonclass="\MyProject\Configuration"
+             jsonencoder="::toJson"
+             jsondecoder="::createFromJson"
+/>
+```
+
+An example of the implementation of these methods into the `\MyProject\Configuration` class:
+
+```php
+namespace MyProject;
+
+class Configuration
+{
+    public function __construct(
+        protected string $parameter1,
+        protected string $parameter2
+    ) 
+    {   
+    }
+
+    public static function toJson(Configuration $object)
+    {
+        return json_encode(['p1'=>$object->parameter1, 'p2'=>$object->parameter2], JSON_FORCE_OBJECT);
+    }
+
+    public static function createFromJson($json)
+    {
+        $obj = json_decode($json);
+        return new Configuration($obj->p1, $obj->p2);
+    }
+}
+
+```
+
+You can indicate static methods of another class :
+
+```xml
+   <property name="configuration" datatype="json" 
+             jsonclass="\MyProject\Configuration"
+             jsonencoder="MyJsonSerializer::toJson"
+             jsondecoder="MyJsonSerializer::createFromJson"
+/>
+```
+
+Or some functions:
+
+```xml
+   <property name="configuration" datatype="json" 
+             jsonclass="\MyProject\Configuration"
+             jsonencoder="myJsonEncoder"
+             jsondecoder="myJsonDecoder"
+/>
+```
 
 ## Mapping on several tables
 

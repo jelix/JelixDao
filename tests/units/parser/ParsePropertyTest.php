@@ -285,6 +285,167 @@ class ParsePropertyTest extends \PHPUnit\Framework\TestCase {
             <boolean p="ofPrimaryTable" value="false" />
         </object>'
         ),
+        array(
+            '<?xml version="1.0"?>
+        <property name="metadata" datatype="json" />',
+            '<?xml version="1.0"?>
+        <object>
+            <string p="name" value="metadata"/>
+            <string p="fieldName" value="metadata"/>
+            <string p="table" value="news"/>
+            <string p="datatype" value="json"/>
+            <string p="unifiedType" value="json"/>
+            <boolean p="autoIncrement" value="false" />
+            <null p="regExp"/>
+            <boolean p="required" value="false"/>
+            <boolean p="requiredInConditions" value="false"/>
+            <boolean p="isPK" value="false" />
+            <boolean p="isFK" value="false" />
+            <string p="updatePattern" value="%s" />
+            <string p="insertPattern" value="%s" />
+            <string p="selectPattern" value="%s" />
+            <string p="sequenceName" value="" />
+            <null p="maxlength"/>
+            <null p="minlength"/>
+            <null p="defaultValue" />
+            <boolean p="ofPrimaryTable" value="true" />
+            <array p="attributes">{"jsonEncoder":"json_encode(%VALUE%)","jsonDecoder":"json_decode(%FIELD%)","jsonClass":""}</array>
+        </object>'
+        ),
+        array(
+            '<?xml version="1.0"?>
+        <property name="metadata" datatype="json" jsontype="object" />',
+            '<?xml version="1.0"?>
+        <object>
+            <string p="name" value="metadata"/>
+            <string p="fieldName" value="metadata"/>
+            <string p="table" value="news"/>
+            <string p="datatype" value="json"/>
+            <string p="unifiedType" value="json"/>
+            <boolean p="autoIncrement" value="false" />
+            <null p="regExp"/>
+            <boolean p="required" value="false"/>
+            <boolean p="requiredInConditions" value="false"/>
+            <boolean p="isPK" value="false" />
+            <boolean p="isFK" value="false" />
+            <string p="updatePattern" value="%s" />
+            <string p="insertPattern" value="%s" />
+            <string p="selectPattern" value="%s" />
+            <string p="sequenceName" value="" />
+            <null p="maxlength"/>
+            <null p="minlength"/>
+            <null p="defaultValue" />
+            <boolean p="ofPrimaryTable" value="true" />
+            <array p="attributes">{"jsonEncoder":"json_encode(%VALUE%, JSON_FORCE_OBJECT)","jsonDecoder":"json_decode(%FIELD%, false, 512, JSON_FORCE_OBJECT)","jsonClass":""}</array>
+        </object>'),
+        array(
+            '<?xml version="1.0"?>
+        <property name="metadata" datatype="json" jsontype="array" />',
+            '<?xml version="1.0"?>
+        <object>
+            <string p="name" value="metadata"/>
+            <string p="fieldName" value="metadata"/>
+            <string p="table" value="news"/>
+            <string p="datatype" value="json"/>
+            <string p="unifiedType" value="json"/>
+            <boolean p="autoIncrement" value="false" />
+            <null p="regExp"/>
+            <boolean p="required" value="false"/>
+            <boolean p="requiredInConditions" value="false"/>
+            <boolean p="isPK" value="false" />
+            <boolean p="isFK" value="false" />
+            <string p="updatePattern" value="%s" />
+            <string p="insertPattern" value="%s" />
+            <string p="selectPattern" value="%s" />
+            <string p="sequenceName" value="" />
+            <null p="maxlength"/>
+            <null p="minlength"/>
+            <null p="defaultValue" />
+            <boolean p="ofPrimaryTable" value="true" />
+            <array p="attributes">{"jsonEncoder":"json_encode(%VALUE%)","jsonDecoder":"json_decode(%FIELD%, true)","jsonClass":""}</array>
+        </object>'
+        ),
+        array(
+            '<?xml version="1.0"?>
+        <property name="metadata" datatype="json" jsonobjectclass="JSonClass" />',
+            '<?xml version="1.0"?>
+        <object>
+            <string p="name" value="metadata"/>
+            <string p="fieldName" value="metadata"/>
+            <string p="table" value="news"/>
+            <string p="datatype" value="json"/>
+            <string p="unifiedType" value="json"/>
+            <boolean p="autoIncrement" value="false" />
+            <null p="regExp"/>
+            <boolean p="required" value="false"/>
+            <boolean p="requiredInConditions" value="false"/>
+            <boolean p="isPK" value="false" />
+            <boolean p="isFK" value="false" />
+            <string p="updatePattern" value="%s" />
+            <string p="insertPattern" value="%s" />
+            <string p="selectPattern" value="%s" />
+            <string p="sequenceName" value="" />
+            <null p="maxlength"/>
+            <null p="minlength"/>
+            <null p="defaultValue" />
+            <boolean p="ofPrimaryTable" value="true" />
+            <array p="attributes">{"jsonEncoder":"json_encode(%VALUE%, JSON_FORCE_OBJECT)","jsonDecoder":"\\\\Jelix\\\\Dao\\\\Json\\\\JsonUtilities::decodeToNewObject(\'JSonClass\', %FIELD%)","jsonClass":"JSonClass"}</array>
+        </object>'
+        ),
+        array(
+            '<?xml version="1.0"?>
+        <property name="metadata" datatype="json" jsonobjectclass="JSonClass" jsonencoder="::encode" jsondecoder="::decode"/>',
+            '<?xml version="1.0"?>
+        <object>
+            <string p="name" value="metadata"/>
+            <string p="fieldName" value="metadata"/>
+            <string p="table" value="news"/>
+            <string p="datatype" value="json"/>
+            <string p="unifiedType" value="json"/>
+            <boolean p="autoIncrement" value="false" />
+            <null p="regExp"/>
+            <boolean p="required" value="false"/>
+            <boolean p="requiredInConditions" value="false"/>
+            <boolean p="isPK" value="false" />
+            <boolean p="isFK" value="false" />
+            <string p="updatePattern" value="%s" />
+            <string p="insertPattern" value="%s" />
+            <string p="selectPattern" value="%s" />
+            <string p="sequenceName" value="" />
+            <null p="maxlength"/>
+            <null p="minlength"/>
+            <null p="defaultValue" />
+            <boolean p="ofPrimaryTable" value="true" />
+            <array p="attributes">{"jsonEncoder":"call_user_func(\'JSonClass::encode\',%VALUE%)","jsonDecoder":"call_user_func(\'JSonClass::decode\',%FIELD%)","jsonClass":"JSonClass"}</array>
+        </object>'
+        ),
+        array(
+            '<?xml version="1.0"?>
+        <property name="metadata" datatype="json" jsonobjectclass="JSonClass" jsonencoder="MySerializer->encode" jsondecoder="MySerializer->decode"/>',
+            '<?xml version="1.0"?>
+        <object>
+            <string p="name" value="metadata"/>
+            <string p="fieldName" value="metadata"/>
+            <string p="table" value="news"/>
+            <string p="datatype" value="json"/>
+            <string p="unifiedType" value="json"/>
+            <boolean p="autoIncrement" value="false" />
+            <null p="regExp"/>
+            <boolean p="required" value="false"/>
+            <boolean p="requiredInConditions" value="false"/>
+            <boolean p="isPK" value="false" />
+            <boolean p="isFK" value="false" />
+            <string p="updatePattern" value="%s" />
+            <string p="insertPattern" value="%s" />
+            <string p="selectPattern" value="%s" />
+            <string p="sequenceName" value="" />
+            <null p="maxlength"/>
+            <null p="minlength"/>
+            <null p="defaultValue" />
+            <boolean p="ofPrimaryTable" value="true" />
+            <array p="attributes">{"jsonEncoder":"\\\\Jelix\\\\Dao\\\\Json\\\\JsonUtilities::encodeUsingExternalObjectMethod(\'MySerializer\', \'encode\', %VALUE%)","jsonDecoder":"\\\\Jelix\\\\Dao\\\\Json\\\\JsonUtilities::decodeToNewObjectUsingMethod(\'MySerializer\', \'decode\', %FIELD%)","jsonClass":"JSonClass"}</array>
+        </object>'
+        ),
     );
 
     function testProperties() {
