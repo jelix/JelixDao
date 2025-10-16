@@ -241,8 +241,11 @@ abstract class AbstractDaoFactory implements DaoFactoryInterface
         /** @var DaoRecordInterface $rec */
         $rec = new $c();
         $rec->setFactory($this);
+        $this->initCreatedObject($rec);
         return $rec;
     }
+
+    protected abstract function initCreatedObject($record);
 
     /**
      * @inheritDoc

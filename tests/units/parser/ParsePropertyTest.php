@@ -309,7 +309,7 @@ class ParsePropertyTest extends \PHPUnit\Framework\TestCase {
             <null p="minlength"/>
             <null p="defaultValue" />
             <boolean p="ofPrimaryTable" value="true" />
-            <array p="attributes">{"jsonEncoder":"json_encode(%VALUE%)","jsonDecoder":"json_decode(%FIELD%)","jsonClass":""}</array>
+            <array p="attributes">{"jsonEncoder":"json_encode(%VALUE%)","jsonDecoder":"json_decode(%FIELDVALUE%)","jsonClass":""}</array>
         </object>'
         ),
         array(
@@ -336,7 +336,7 @@ class ParsePropertyTest extends \PHPUnit\Framework\TestCase {
             <null p="minlength"/>
             <null p="defaultValue" />
             <boolean p="ofPrimaryTable" value="true" />
-            <array p="attributes">{"jsonEncoder":"json_encode(%VALUE%, JSON_FORCE_OBJECT)","jsonDecoder":"json_decode(%FIELD%, false, 512, JSON_FORCE_OBJECT)","jsonClass":""}</array>
+            <array p="attributes">{"jsonEncoder":"json_encode(%VALUE%, JSON_FORCE_OBJECT)","jsonDecoder":"json_decode(%FIELDVALUE%, false, 512, JSON_FORCE_OBJECT)","jsonClass":""}</array>
         </object>'),
         array(
             '<?xml version="1.0"?>
@@ -362,7 +362,7 @@ class ParsePropertyTest extends \PHPUnit\Framework\TestCase {
             <null p="minlength"/>
             <null p="defaultValue" />
             <boolean p="ofPrimaryTable" value="true" />
-            <array p="attributes">{"jsonEncoder":"json_encode(%VALUE%)","jsonDecoder":"json_decode(%FIELD%, true)","jsonClass":""}</array>
+            <array p="attributes">{"jsonEncoder":"json_encode(%VALUE%)","jsonDecoder":"json_decode(%FIELDVALUE%, true)","jsonClass":""}</array>
         </object>'
         ),
         array(
@@ -389,7 +389,7 @@ class ParsePropertyTest extends \PHPUnit\Framework\TestCase {
             <null p="minlength"/>
             <null p="defaultValue" />
             <boolean p="ofPrimaryTable" value="true" />
-            <array p="attributes">{"jsonEncoder":"json_encode(%VALUE%, JSON_FORCE_OBJECT)","jsonDecoder":"\\\\Jelix\\\\Dao\\\\Json\\\\JsonUtilities::decodeToNewObject(\'JSonClass\', %FIELD%)","jsonClass":"JSonClass"}</array>
+            <array p="attributes">{"jsonEncoder":"json_encode(%VALUE%, JSON_FORCE_OBJECT)","jsonDecoder":"\\\\Jelix\\\\Dao\\\\Json\\\\JsonUtilities::decodeToNewObject(\'JSonClass\', %FIELDVALUE%)","jsonClass":"JSonClass"}</array>
         </object>'
         ),
         array(
@@ -416,7 +416,7 @@ class ParsePropertyTest extends \PHPUnit\Framework\TestCase {
             <null p="minlength"/>
             <null p="defaultValue" />
             <boolean p="ofPrimaryTable" value="true" />
-            <array p="attributes">{"jsonEncoder":"call_user_func(\'JSonClass::encode\',%VALUE%)","jsonDecoder":"call_user_func(\'JSonClass::decode\',%FIELD%)","jsonClass":"JSonClass"}</array>
+            <array p="attributes">{"jsonEncoder":"call_user_func(\'JSonClass::encode\',%VALUE%)","jsonDecoder":"call_user_func(\'JSonClass::decode\',%FIELDVALUE%)","jsonClass":"JSonClass"}</array>
         </object>'
         ),
         array(
@@ -443,7 +443,7 @@ class ParsePropertyTest extends \PHPUnit\Framework\TestCase {
             <null p="minlength"/>
             <null p="defaultValue" />
             <boolean p="ofPrimaryTable" value="true" />
-            <array p="attributes">{"jsonEncoder":"\\\\Jelix\\\\Dao\\\\Json\\\\JsonUtilities::encodeUsingExternalObjectMethod(\'MySerializer\', \'encode\', %VALUE%)","jsonDecoder":"\\\\Jelix\\\\Dao\\\\Json\\\\JsonUtilities::decodeToNewObjectUsingMethod(\'MySerializer\', \'decode\', %FIELD%)","jsonClass":"JSonClass"}</array>
+            <array p="attributes">{"jsonEncoder":"\\\\Jelix\\\\Dao\\\\Json\\\\JsonUtilities::encodeUsingExternalObjectMethod(\'MySerializer\', \'encode\', %VALUE%)","jsonDecoder":"\\\\Jelix\\\\Dao\\\\Json\\\\JsonUtilities::decodeToNewObjectUsingMethod(\'MySerializer\', \'decode\', %FIELDVALUE%)","jsonClass":"JSonClass"}</array>
         </object>'
         ),
     );

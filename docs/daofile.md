@@ -271,6 +271,22 @@ Or some functions:
 />
 ```
 
+You can specify a default value for json properties. It should be a JSON value
+that will be decoded by the decoder you indicate. Some examples: 
+
+
+```xml
+<property name="configuration" datatype="json" 
+         jsonclass="\MyProject\Configuration"
+         jsonencoder="::toJson"
+         jsondecoder="::createFromJson"
+         defaultValue='{"p1":"aaa","p2":"bbb"}'
+/>
+<property name="configuration" datatype="json" defaultValue='{"p1":"aaa","p2":"bbb"}'/>
+```
+
+
+
 ## Mapping on several tables
 
 We can declare a table, but also additional tables which are linked to the main

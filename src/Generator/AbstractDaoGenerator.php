@@ -207,6 +207,8 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         $src[] = '   return \' where '.$this->buildSimpleConditions($pkFields, '', false).'\';';
         $src[] = '}';
 
+        $src[] = $this->buildInitCreatedObject();
+
         $src[] = $this->buildFinishResultSet();
 
         //----- Insert method
@@ -756,6 +758,31 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         return $field;
     }
 
+    protected function buildInitCreatedObject()
+    {
+        $src = [];
+        $src[] = 'protected function initCreatedObject($record) {';
+        $src[] = implode("\n", $this->buildInitCreatedObjectBody());
+        $src[] = '}';
+        return implode("\n", $src);
+    }
+
+    protected function buildInitCreatedObjectBody()
+    {
+        $bodySrc = [];
+        $jsonFields = $this->_getPropertiesBy('JsonField');
+        if ($jsonFields) {
+            foreach ($jsonFields as $field) {
+                if ($field->attributes['jsonDecoder'] && is_string($field->defaultValue) && $field->defaultValue != '') {
+                    $defaultValue = "'".str_replace("'", "\\'", $field->defaultValue)."'";
+                    $decoder = str_replace(['%FIELD%','%FIELDVALUE%'],['$record->'.$field->name, $defaultValue], $field->attributes['jsonDecoder']);
+                    $bodySrc[] = '    $record->'.$field->name.' = '.$decoder.';';
+                }
+            }
+        }
+        return $bodySrc;
+    }
+
     protected function buildFinishResultSet()
     {
 
@@ -779,7 +806,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         if ($jsonFields) {
             foreach ($jsonFields as $field) {
                 if ($field->attributes['jsonDecoder'] ) {
-                    $decoder = str_replace('%FIELD%','$record->'.$field->name, $field->attributes['jsonDecoder']);
+                    $decoder = str_replace(['%FIELD%','%FIELDVALUE%'],'$record->'.$field->name, $field->attributes['jsonDecoder']);
                     $bodySrc[] = '    if ($record->'.$field->name.' !== null) { $record->'.$field->name.' = '.$decoder.'; }';
                 }
             }

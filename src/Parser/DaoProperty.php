@@ -329,30 +329,30 @@ class DaoProperty
                     $jsonDecoder = $jsonClass.$jsonDecoder;
                 }
                 if ($matches[2] == '::') {
-                    $jsonDecoder = 'call_user_func(\'' . $jsonDecoder . '\',%FIELD%)';
+                    $jsonDecoder = 'call_user_func(\'' . $jsonDecoder . '\',%FIELDVALUE%)';
                 } else {
                     if ($decoderClass == $jsonClass) {
-                        $jsonDecoder = '%FIELD%->' . $matches[3] . '(%FIELD%)';
+                        $jsonDecoder = '%FIELD%->' . $matches[3] . '(%FIELDVALUE%)';
                     } else {
-                        $jsonDecoder = '\\Jelix\\Dao\\Json\\JsonUtilities::decodeToNewObjectUsingMethod(\'' . $decoderClass . '\', \'' . $matches[3] . '\', %FIELD%)';
+                        $jsonDecoder = '\\Jelix\\Dao\\Json\\JsonUtilities::decodeToNewObjectUsingMethod(\'' . $decoderClass . '\', \'' . $matches[3] . '\', %FIELDVALUE%)';
                     }
                 }
             } else {
                 // this is a simple function
-                $jsonDecoder = $jsonDecoder . '(%FIELD%)';
+                $jsonDecoder = $jsonDecoder . '(%FIELDVALUE%)';
             }
         } else {
             if ($jsonType == 'object') {
                 if ($jsonClass == '') {
-                    $jsonDecoder = 'json_decode(%FIELD%, false, 512, JSON_FORCE_OBJECT)';
+                    $jsonDecoder = 'json_decode(%FIELDVALUE%, false, 512, JSON_FORCE_OBJECT)';
                 }
                 else {
-                    $jsonDecoder = '\\Jelix\\Dao\\Json\\JsonUtilities::decodeToNewObject(\'' . $jsonClass . '\', %FIELD%)';
+                    $jsonDecoder = '\\Jelix\\Dao\\Json\\JsonUtilities::decodeToNewObject(\'' . $jsonClass . '\', %FIELDVALUE%)';
                 }
             } else if ($jsonType == 'array') {
-                $jsonDecoder = 'json_decode(%FIELD%, true)';
+                $jsonDecoder = 'json_decode(%FIELDVALUE%, true)';
             } else {
-                $jsonDecoder = 'json_decode(%FIELD%)';
+                $jsonDecoder = 'json_decode(%FIELDVALUE%)';
             }
         }
 
