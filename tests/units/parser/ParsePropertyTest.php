@@ -309,7 +309,7 @@ class ParsePropertyTest extends \PHPUnit\Framework\TestCase {
             <null p="minlength"/>
             <null p="defaultValue" />
             <boolean p="ofPrimaryTable" value="true" />
-            <array p="attributes">{"jsonEncoder":"json_encode(%VALUE%)","jsonDecoder":"json_decode(%FIELDVALUE%)","jsonClass":""}</array>
+            <array p="attributes">{"jsonEncoder":"","jsonDecoder":"","jsonClass":""}</array>
         </object>'
         ),
         array(

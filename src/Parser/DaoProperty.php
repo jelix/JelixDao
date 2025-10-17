@@ -252,8 +252,9 @@ class DaoProperty
             $jsonType = (string) $aAttributes['jsontype'];
         }
         else {
-            $jsonType = 'natural';
+            $jsonType = 'raw';
         }
+
         if (isset($aAttributes['jsonobjectclass'])) {
             $jsonClass = (string) $aAttributes['jsonobjectclass'];
             if ($jsonClass != '') {

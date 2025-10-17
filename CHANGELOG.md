@@ -5,7 +5,7 @@ Changelog
 ------
 
 - Native support of JSON fields: dao properties having the datatype `json`
-  are automatically encoded during insert/update, or decoded during a select.
+  can be automatically encoded during insert/update, or decoded during a select.
   Optionally, they can be decoded/encoded to/from a specific class.
 - new feature: possibility to indicate a base class for the generated factory class.
   - The classname should be indicated into the `extends` attribute of `<factory>`.

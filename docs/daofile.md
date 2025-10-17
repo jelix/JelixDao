@@ -174,30 +174,29 @@ Carefull about the content of `selectpattern`:
 
 ### Support of JSON fields
 
-When you indicate `json` (or `jsonb`) as datatype, content of the property
-is automatically encoded (during insert/update) or decoded (during selects).
+You can declare a property of type `json` or `jsonb`. By default, the content
+is kept as a JSON string.
 
 ```xml
    <property name="configuration" datatype="json" />
 ```
 
-You can disable this feature if you want to manage the json content by yourself.
-Especially if the json content is huge, and you don't want to decode it 
-systematically, because it could cause performance issues.
+The content can be decoded (during a `select`) or encoded (for `insert`/`update`) 
+automatically, if you indicate it in some specific attributes.
+
+The first attribute you can use is `jsontype`. Possible values are `object` or `array`.
 
 ```xml
-   <property name="configuration" datatype="json" jsontype="raw" />
+    <property name="configuration" datatype="json" jsontype="object"/>
+<!-- or -->
+    <property name="configuration" datatype="json" jsontype="array" />
 ```
 
-You can force the type, by indicating `object` or `array`
-
-```xml
-   <property name="configuration" datatype="json" jsontype="array" />
-```
+Other value is `raw`, which means no encoding and no decoding (this is the default value).
 
 If you want to map the json content to an object having a specific class,
-indicate the class name into the `jsonobjectclass` attribute. In this case, `jsontype="object"` is
-not required.
+indicate the class name into the `jsonobjectclass` attribute. In this case, 
+`jsontype="object"` is not required.
 
 
 ```xml
