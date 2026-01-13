@@ -11,7 +11,7 @@ actually define two objects:
 * a dao record object, inheriting form `Jelix\Dao\AbstractDaoRecord`, representing a
   database record whose properties are described in the xml file.
 
-Now you should store this dao file somewhere, and tell JelixDao to use it.
+Now you should store this dao file somewhere and tell JelixDao to use it.
 
 ## Setting a context
 
@@ -92,12 +92,12 @@ You can now use factories and records.
 
 `\Jelix\Dao\DaoLoader` proposes several methods:
 
-* `get()`: allows to get a factory. Always return the same instance (use a singleton)
-* `create()`: allows to get a new instance of a factory. Rarely useful.
-* `createRecord()`: allows to get an empty dao record object.
+* `get()`: allows getting a factory. Always return the same instance (use a singleton)
+* `create()`: allows getting a new instance of a factory. Rarely useful.
+* `createRecord()`: allows getting an empty dao record object.
 
 All of these methods take an identifiant (which can be a filename, depending on the context object)
-of a dao file as parameter.
+of a dao file as a parameter.
 
 If the database connector used a profile specifying a table prefix, then all tables in the
 dao file will be prefixed.
