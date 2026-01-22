@@ -1,7 +1,7 @@
 <?php
 /**
  * @author      Laurent Jouanneau
- * @copyright   2005-2021 Laurent Jouanneau
+ * @copyright   2005-2026 Laurent Jouanneau
  *
  * @see        https://jelix.org
  * @licence  http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
@@ -10,7 +10,9 @@
 namespace Jelix\Dao\Generator;
 
 use Jelix\Dao\ContextInterface;
+use Jelix\Dao\ContextInterface2;
 use Jelix\Dao\DaoFileInterface;
+use Jelix\Dao\DeprecatedContextProxy;
 use Jelix\Dao\Parser\XMLDaoParser;
 use Jelix\FileUtilities\File;
 
@@ -20,7 +22,6 @@ use Jelix\FileUtilities\File;
 class Compiler
 {
     const XML_NAMESPACE = 'http://jelix.org/ns/dao/1.0';
-
 
     /**
      * compile the content of the given DAO XML file to a PHP class
@@ -32,16 +33,19 @@ class Compiler
      */
     public function compile(DaoFileInterface $daoFile, ContextInterface $context)
     {
+        if (! ($context instanceof ContextInterface2::class)) {
+            $context = new DeprecatedContextProxy($context);
+        }
+
         $parser = $this->parse($daoFile, $context);
 
-        $sqlTools = $context->getDbTools();
-        $dbType = ucfirst($sqlTools->getConnection()->getSQLType());
+        $dbType = ucfirst($context->getSQLType());
         $class = '\\Jelix\\Dao\\Generator\\Adapter\\'.$dbType.'DaoGenerator';
         if (!class_exists($class)) {
             throw new Exception('Dao adapter for "'.$dbType.'" is not found', 505);
         }
         /** @var AbstractDaoGenerator $generator */
-        $generator = new $class($sqlTools, $parser);
+        $generator = new $class($context->getSqlSyntaxHelpers(), $parser);
 
         // generation of PHP classes corresponding to the DAO definition
         $compiled = '<?php ';
@@ -75,6 +79,10 @@ class Compiler
      */
     public function parse(DaoFileInterface $daoFile, ContextInterface $context)
     {
+        if (! ($context instanceof ContextInterface2::class)) {
+            $context = new DeprecatedContextProxy($context);
+        }
+
         // load the XML file
         $doc = new \DOMDocument();
 

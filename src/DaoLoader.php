@@ -2,7 +2,7 @@
 
 /**
  * @author      Laurent Jouanneau
- * @copyright   2021-2022 Laurent Jouanneau
+ * @copyright   2021-2026 Laurent Jouanneau
  *
  * @see         https://jelix.org
  * @licence     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
@@ -10,12 +10,19 @@
 
 namespace Jelix\Dao;
 
+use Jelix\Database\ConnectionInterface;
+
 class DaoLoader
 {
     /**
      * @var Context
      */
     protected $context;
+
+    /**
+     * @var ConnectionInterface
+     */
+    protected $connector;
 
     /**
      * @var  DaoFactoryInterface[]
@@ -28,13 +35,21 @@ class DaoLoader
     protected $commonHook;
 
     /**
-     * @param Context $connector
-     * @param string $tempPath
-     * @param string $daosDirectory
+     * Constructor.
+     *
+     * As Context::getConnector() is deprecated, you must pass the connector as
+     * a second parameter.
+     *
+     * @param Context $context
+     * @param ConnectionInterface|null $connector
      */
-    public function __construct(Context $context)
+    public function __construct(Context $context, $connector = null)
     {
         $this->context = $context;
+        $this->connector = $connector ?: $context->getConnector();
+        if ($this->connector == null) {
+            throw new \LogicException('No connector given to DaoLoader.');
+        }
     }
 
     /**
@@ -57,7 +72,7 @@ class DaoLoader
         require_once($daoFile->getCompiledFilePath());
         $class = $daoFile->getCompiledFactoryClass();
         /** @var DaoFactoryInterface $dao */
-        $dao = new $class($this->context->getConnector());
+        $dao = new $class($this->connector);
         if ($this->commonHook) {
             $dao->setHook($this->commonHook);
         }
@@ -74,7 +89,7 @@ class DaoLoader
      */
     public function get($daoXmlFile)
     {
-        $daoId = $daoXmlFile.'#'.$this->context->getConnector()->getSQLType();
+        $daoId = $daoXmlFile.'#'.$this->connector->getSQLType();
         if (!isset($this->daoSingleton[$daoId])) {
             $this->daoSingleton[$daoId] = $this->create($daoXmlFile);
         }

@@ -19,19 +19,19 @@ JelixDao is designed to be integrated in any application or even any framework.
 
 It needs three things to work:
 - a database connection from JelixDatabase
-- a cache/temporary directory where to store classes it generates on the fly. This
+- the type of the database (mysql, pgsql etc)
+- a cache/temporary directory where to store classes generated on the fly. This
   directory may be anywhere.
 - the path to the dao file you want to use. The location of Dao files is not predetermined. 
   The name of dao files you give to JelixDao (or indicate into DAO files like import) 
   can be a kind of identifiant, it may not be the real name of a file.
 
-All this information is given by a specific object, implementing the interface `Jelix\Dao\ContextInterface`.
+Except the database connection, this information is given by a specific object, implementing the interface `Jelix\Dao\ContextInterface`.
 Each framework or application can have their own implementation of the context, allowing JelixDao
 to be integrated easily into them.
 
 JelixDao provides a basic implementation for the case where there is not an existing one: the `Jelix\Dao\Context` object.
 
-- it uses a database connection object you instantiate yourself
 - it will read dao file from a directory you indicate
 - it will use the temporary directory you indicate
 - it will resolve all dao name `thename` as `thename.xml` file, and all custom PHP record files
@@ -63,11 +63,14 @@ $tempPath = '...';
 $daosDirectory = '...';
 
 $context = new \Jelix\Dao\Context(
-    $connector,
+    $connector->getSQLType(),
     $tempPath,
     $daosDirectory
 );
 ```
+Note: prior to version 1.2.0, the connection object was passed as first parameter 
+of the `Jelix\Dao\Context` constructor. But it is deprecated, and the connection object 
+should be given directly to objects that are using the context.
 
 
 ## Getting a dao loader
@@ -75,13 +78,12 @@ $context = new \Jelix\Dao\Context(
 In order to retrieve factories and records, you need a `Jelix\Dao\DaoLoader` object. Note that a framework 
 or a library may have already instantiated a Dao loader.
 
-If you need to instantiate yourself a dao loader, you need also a context object, and give it to its constructor.
+If you need to instantiate yourself a dao loader, you need to give it the context
+object and the database connector. Here is an example:
 
 ```php
 
-$context = ...; // here a \Jelix\Dao\ContextInterface object
-
-$loader = new \Jelix\Dao\DaoLoader($context);
+$loader = new \Jelix\Dao\DaoLoader($context, $connector);
 
 ```
 

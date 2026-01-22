@@ -46,7 +46,7 @@ class GeneratorSelectTest extends \PHPUnit\Framework\TestCase {
 
         $parser = new XMLDaoParser($this->_selector, $this->_context);
         $parser->parse(simplexml_load_string($doc));
-        $sqlTools = $this->_context->getDbTools();
+        $sqlTools = $this->_context->getSqlSyntaxHelpers();
         $generator = new testMysqlDaoGenerator($sqlTools, $parser);
 
         $result = $generator->GetSelectClause();
@@ -69,7 +69,7 @@ class GeneratorSelectTest extends \PHPUnit\Framework\TestCase {
 
         $parser = new XMLDaoParser($this->_selector, $this->_context);
         $parser->parse(simplexml_load_string($doc));
-        $sqlTools = $this->_context->getDbTools();
+        $sqlTools = $this->_context->getSqlSyntaxHelpers();
         $generator = new testMysqlDaoGenerator($sqlTools, $parser);
 
         $result = $generator->GetSelectClause();
@@ -95,7 +95,7 @@ class GeneratorSelectTest extends \PHPUnit\Framework\TestCase {
 
         $parser = new XMLDaoParser($this->_selector, $this->_context);
         $parser->parse(simplexml_load_string($doc));
-        $sqlTools = $this->_context->getDbTools();
+        $sqlTools = $this->_context->getSqlSyntaxHelpers();
         $generator = new testMysqlDaoGenerator($sqlTools, $parser);
 
         $result = $generator->GetSelectClause();
@@ -120,7 +120,7 @@ class GeneratorSelectTest extends \PHPUnit\Framework\TestCase {
 </dao>';
         $parser = new XMLDaoParser($this->_selector, $this->_context);
         $parser->parse(simplexml_load_string($doc));
-        $sqlTools = $this->_context->getDbTools();
+        $sqlTools = $this->_context->getSqlSyntaxHelpers();
         $generator = new testMysqlDaoGenerator($sqlTools, $parser);
 
         $result = $generator->GetSelectClause();
@@ -145,7 +145,7 @@ class GeneratorSelectTest extends \PHPUnit\Framework\TestCase {
 </dao>';
         $parser = new XMLDaoParser($this->_selector, $this->_context);
         $parser->parse(simplexml_load_string($doc));
-        $sqlTools = $this->_context->getDbTools();
+        $sqlTools = $this->_context->getSqlSyntaxHelpers();
         $generator = new testMysqlDaoGenerator($sqlTools, $parser);
         $result = $generator->GetSelectClause();
         $this->assertEquals('SELECT `p`.`id`, `p`.`name`, `p`.`price`, `c`.`cat_id`, `c`.`name` as `category`',$result);
@@ -172,7 +172,7 @@ class GeneratorSelectTest extends \PHPUnit\Framework\TestCase {
 </dao>';
         $parser = new XMLDaoParser($this->_selector, $this->_context);
         $parser->parse(simplexml_load_string($doc));
-        $sqlTools = $this->_context->getDbTools();
+        $sqlTools = $this->_context->getSqlSyntaxHelpers();
         $generator = new testMysqlDaoGenerator($sqlTools, $parser);
         $result = $generator->GetSelectClause();
         $this->assertEquals('SELECT `p`.`id`, `p`.`name`, `p`.`price`, `c`.`cat_id`, `c`.`name` as `category`, `c2`.`cat_id2`, `c2`.`name` as `category2`',$result);
@@ -197,7 +197,7 @@ class GeneratorSelectTest extends \PHPUnit\Framework\TestCase {
 </dao>';
         $parser = new XMLDaoParser($this->_selector, $this->_context);
         $parser->parse(simplexml_load_string($doc));
-        $sqlTools = $this->_context->getDbTools();
+        $sqlTools = $this->_context->getSqlSyntaxHelpers();
         $generator = new testMysqlDaoGenerator($sqlTools, $parser);
         $result = $generator->GetSelectClause();
         $this->assertEquals('SELECT `product_test`.`id`, `product_test`.`name`, `product_test`.`price`',$result);
@@ -215,7 +215,7 @@ class GeneratorSelectTest extends \PHPUnit\Framework\TestCase {
 </dao>';
         $parser = new XMLDaoParser($this->_selector, $this->_context);
         $parser->parse(simplexml_load_string($doc));
-        $sqlTools = $this->_context->getDbTools();
+        $sqlTools = $this->_context->getSqlSyntaxHelpers();
         $generator = new testMysqlDaoGenerator($sqlTools, $parser);
         $result = $generator->GetSelectClause();
         $this->assertEquals('SELECT `product_test`.`id`, TOUPPER(`product_test`.`name`) as `name`, `product_test`.`price`',$result);
@@ -233,7 +233,7 @@ class GeneratorSelectTest extends \PHPUnit\Framework\TestCase {
 </dao>';
         $parser = new XMLDaoParser($this->_selector, $this->_context);
         $parser->parse(simplexml_load_string($doc));
-        $sqlTools = $this->_context->getDbTools();
+        $sqlTools = $this->_context->getSqlSyntaxHelpers();
         $generator = new testMysqlDaoGenerator($sqlTools, $parser);
         $result = $generator->GetSelectClause();
         $this->assertEquals('SELECT `p`.`id`, TOUPPER(`p`.`name`) as `name`, `p`.`price`',$result);
@@ -252,7 +252,7 @@ class GeneratorSelectTest extends \PHPUnit\Framework\TestCase {
 </dao>';
         $parser = new XMLDaoParser($this->_selector, $this->_context);
         $parser->parse(simplexml_load_string($doc));
-        $sqlTools = $this->_context->getDbTools();
+        $sqlTools = $this->_context->getSqlSyntaxHelpers();
         $generator = new testMysqlDaoGenerator($sqlTools, $parser);
         $result = $generator->GetSelectClause();
         $this->assertEquals('SELECT `product_test`.`id`, TOUPPER(name) as `name`, `product_test`.`price`',$result);
@@ -271,7 +271,7 @@ class GeneratorSelectTest extends \PHPUnit\Framework\TestCase {
 </dao>';
         $parser = new XMLDaoParser($this->_selector, $this->_context);
         $parser->parse(simplexml_load_string($doc));
-        $sqlTools = $this->_context->getDbTools();
+        $sqlTools = $this->_context->getSqlSyntaxHelpers();
         $generator = new testMysqlDaoGenerator($sqlTools, $parser);
         $result = $generator->GetSelectClause();
         $this->assertEquals('SELECT `product_test`.`id`, CONCAT(name,\\\' \\\',price) as `name`, `product_test`.`price`',$result);
@@ -303,7 +303,7 @@ class GeneratorSelectTest extends \PHPUnit\Framework\TestCase {
 </dao>';
         $parser = new XMLDaoParser($this->_selector, $this->_context);
         $parser->parse(simplexml_load_string($doc));
-        $sqlTools = $this->_context->getDbTools();
+        $sqlTools = $this->_context->getSqlSyntaxHelpers();
         $generator = new testMysqlDaoGenerator($sqlTools, $parser);
 
         $methods = $parser->getMethods();
@@ -339,7 +339,7 @@ $__query .=\' WHERE  `product_test`.`price` = 1\';',$result);
 </dao>';
         $parser = new XMLDaoParser($this->_selector, $this->_context);
         $parser->parse(simplexml_load_string($doc));
-        $sqlTools = $this->_context->getDbTools();
+        $sqlTools = $this->_context->getSqlSyntaxHelpers();
         $generator = new testMysqlDaoGenerator($sqlTools, $parser);
         $methods = $parser->getMethods();
         $result = $generator->GetBuildCountUserQuery($methods['method1']);

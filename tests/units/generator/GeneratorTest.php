@@ -28,7 +28,7 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase {
 </dao>';
         $parser = new \Jelix\Dao\Parser\XMLDaoParser($this->_selector, $this->_context);
         $parser->parse(simplexml_load_string($doc));
-        $sqlTools = $this->_context->getDbTools();
+        $sqlTools = $this->_context->getSqlSyntaxHelpers();
         return new testMysqlDaoGenerator($sqlTools, $parser);
     }
 
@@ -53,7 +53,7 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase {
 
     protected $_generator;
     protected function _getProp($type, $expr, $checknull, $op='') {
-        $u = $this->_context->getDbTools()->getTypeInfo($type);
+        $u = $this->_context->getSqlSyntaxHelpers()->getTypeInfo($type);
         $prop = new testDaoProperty();
         $prop->datatype = $type;
         $prop->unifiedType = $u[1];
@@ -293,7 +293,7 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase {
 
         $parser = new \Jelix\Dao\Parser\XMLDaoParser($this->_selector, $this->_context);
         $parser->parse(simplexml_load_string($doc));
-        $sqlTools = $this->_context->getDbTools();
+        $sqlTools = $this->_context->getSqlSyntaxHelpers();
         $generator = new testMysqlDaoGenerator($sqlTools, $parser);
 
         $methods = $parser->getMethods();
@@ -457,7 +457,7 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase {
 </dao>';
         $parser = new \Jelix\Dao\Parser\XMLDaoParser($this->_selector, $this->_context);
         $parser->parse(simplexml_load_string($doc));
-        $sqlTools = $this->_context->getDbTools();
+        $sqlTools = $this->_context->getSqlSyntaxHelpers();
         $generator = new testMysqlDaoGenerator($sqlTools, $parser);
 
         $methods=$parser->getMethods();
@@ -536,7 +536,7 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase {
         $context = new \Jelix\DaoTests\ContextForTest("pgsql");
         $parser = new \Jelix\Dao\Parser\XMLDaoParser($this->_selector, $context);
         $parser->parse(simplexml_load_string($doc));
-        $sqlTools = $context->getDbTools();
+        $sqlTools = $context->getSqlSyntaxHelpers();
         $generator = new testMysqlDaoGenerator($sqlTools, $parser);
 
         $methods = $parser->getMethods();
@@ -569,7 +569,7 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase {
 
         $parser = new \Jelix\Dao\Parser\XMLDaoParser($this->_selector, $this->_context);
         $parser->parse(simplexml_load_string($doc));
-        $sqlTools = $this->_context->getDbTools();
+        $sqlTools = $this->_context->getSqlSyntaxHelpers();
         $generator = new testMysqlDaoGenerator($sqlTools, $parser);
 
         $pkFields=$generator->GetPkFields();
@@ -623,7 +623,7 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase {
 </dao>';
         $parser = new \Jelix\Dao\Parser\XMLDaoParser($this->_selector, $this->_context);
         $parser->parse(simplexml_load_string($doc));
-        $sqlTools = $this->_context->getDbTools();
+        $sqlTools = $this->_context->getSqlSyntaxHelpers();
         $generator = new testMysqlDaoGenerator($sqlTools, $parser);
 
         $methods = $parser->getMethods();
@@ -692,7 +692,7 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase {
 </dao>';
      $parser = new \Jelix\Dao\Parser\XMLDaoParser($this->_selector, $this->_context);
      $parser->parse(simplexml_load_string($doc));
-     $sqlTools = $this->_context->getDbTools();
+     $sqlTools = $this->_context->getSqlSyntaxHelpers();
      $generator = new testMysqlDaoGenerator($sqlTools, $parser);
 
 
@@ -743,7 +743,7 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase {
 </dao>';
         $parser = new \Jelix\Dao\Parser\XMLDaoParser($this->_selector, $this->_context);
         $parser->parse(simplexml_load_string($doc));
-        $sqlTools = $this->_context->getDbTools();
+        $sqlTools = $this->_context->getSqlSyntaxHelpers();
         $generator = new testMysqlDaoGenerator($sqlTools, $parser);
 
         $fieldList = $generator->GetPropertiesBy('PrimaryTable');
@@ -763,7 +763,7 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase {
 </dao>';
         $parser = new \Jelix\Dao\Parser\XMLDaoParser($this->_selector, $this->_context);
         $parser->parse(simplexml_load_string($doc));
-        $sqlTools = $this->_context->getDbTools();
+        $sqlTools = $this->_context->getSqlSyntaxHelpers();
         $generator = new testMysqlDaoGenerator($sqlTools, $parser);
 
         $fieldList = $generator->GetPropertiesBy('PrimaryTable');
@@ -799,7 +799,7 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase {
 </dao>';
         $parser = new \Jelix\Dao\Parser\XMLDaoParser($this->_selector, $this->_context);
         $parser->parse(simplexml_load_string($doc));
-        $sqlTools = $this->_context->getDbTools();
+        $sqlTools = $this->_context->getSqlSyntaxHelpers();
         $generator = new testMysqlDaoGenerator($sqlTools, $parser);
         $primaryFields = $generator->GetPropertiesBy('PrimaryTable');
         $methods = $parser->getMethods();

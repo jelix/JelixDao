@@ -6,7 +6,7 @@
  * @contributor Julien Issler, Guillaume Dugas
  * @contributor Philippe Villiers
  *
- * @copyright  2001-2005 CopixTeam, 2005-2025 Laurent Jouanneau
+ * @copyright  2001-2005 CopixTeam, 2005-2026 Laurent Jouanneau
  * @copyright  2007-2008 Julien Issler
  *
  * @see        https://jelix.org
@@ -20,7 +20,7 @@ use Jelix\Dao\Parser\DaoMethod;
 use Jelix\Dao\Parser\DaoProperty;
 use Jelix\Dao\Parser\DaoTable;
 use Jelix\Dao\Parser\XMLDaoParser;
-use Jelix\Database\Schema\SqlToolsInterface;
+use Jelix\Database\Schema\SQLSyntaxHelpersInterface;
 
 /**
  * This is a generator which creates php class from dao xml file.
@@ -43,9 +43,9 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
     protected $aliasWord = ' AS ';
 
     /**
-     * @var SqlToolsInterface
+     * @var SQLSyntaxHelpersInterface
      */
-    protected $tools;
+    protected $syntax;
 
     /**
      * the real name of the main table.
@@ -67,16 +67,16 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
     /**
      * constructor.
      *
-     * @param SqlToolsInterface     $tools
+     * @param SQLSyntaxHelpersInterface     $syntax
      * @param XMLDaoParser   $daoParser
      */
     public function __construct(
-        SqlToolsInterface $tools,
+        SQLSyntaxHelpersInterface $syntax,
         XMLDaoParser $daoParser
     )
     {
         $this->_dataParser = $daoParser;
-        $this->tools = $tools;
+        $this->syntax = $syntax;
     }
 
     /**
@@ -167,9 +167,9 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         $src[] = '   protected $_DaoRecordClassName=\''.$daoRecordClass.'\';';
         $src[] = '   protected $_daoName = \''.$daoFile->getName().'\';';
 
-        if ($this->tools->trueValue != '1') {
-            $src[] = '   protected $trueValue ='.var_export($this->tools->trueValue, true).';';
-            $src[] = '   protected $falseValue ='.var_export($this->tools->falseValue, true).';';
+        if ($this->syntax::trueValue != '1') {
+            $src[] = '   protected $trueValue ='.var_export($this->syntax::trueValue, true).';';
+            $src[] = '   protected $falseValue ='.var_export($this->syntax::falseValue, true).';';
         }
 
         if ($this->_dataParser->hasEvent('deletebefore') || $this->_dataParser->hasEvent('delete')) {
@@ -573,7 +573,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
             } else {
                 // value is a simple value
                 $sqlSet .= ', '.$this->_encloseName($updatefields[$propname]->fieldName).'= '.
-                    $this->tools->escapeValue($updatefields[$propname]->unifiedType, $value[0], false, true);
+                    $this->syntax->escapeValueAsPHPSource($updatefields[$propname]->unifiedType, $value[0], false);
             }
         }
         $src[] = substr($sqlSet, 1).'\';';
@@ -1163,7 +1163,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         //direct conditions for the group
         $first = true;
         foreach ($condition->conditions as $cond) {
-            if (isset($cond['dbType']) && $cond['dbType'] != '' && $cond['dbType'] != $this->tools->getConnection()->getSQLType()) {
+            if (isset($cond['dbType']) && $cond['dbType'] != '' && $cond['dbType'] != $this->syntax->getSQLType()) {
                 continue;
             }
 
@@ -1226,9 +1226,9 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
                 } else {
                     $value = $cond['operator'].' ';
                     if ($cond['operator'] == 'LIKE' || $cond['operator'] == 'NOT LIKE') {
-                        $value .= $this->tools->escapeValue('varchar', $cond['value'], false, true);
+                        $value .= $this->syntax->escapeValueAsPHPSource('varchar', $cond['value'], false);
                     } else {
-                        $value .= $this->tools->escapeValue($prop->unifiedType, $cond['value'], false, true);
+                        $value .= $this->syntax->escapeValueAsPHPSource($prop->unifiedType, $cond['value'], false);
                     }
                 }
                 $r .= $value;
@@ -1389,7 +1389,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
 
     protected function _encloseName($name)
     {
-        return $this->tools->encloseName($name);
+        return $this->syntax->encloseName($name);
     }
 
     protected function buildUpdateAutoIncrementPK($pkai)
@@ -1399,6 +1399,6 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
 
     protected function parseSQLFunction($expression)
     {
-        return $this->tools->parseSQLFunctionAndConvert($expression);
+        return $this->syntax->parseSQLFunctionAndConvert($expression);
     }
 }

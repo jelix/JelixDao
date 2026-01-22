@@ -29,7 +29,7 @@ class ContextTest extends \PHPUnit\Framework\TestCase
         $tempPath = __DIR__.'/../tmp';
         $daosDirectory = __DIR__.'/../lib/daos/';
         $context = new \Jelix\Dao\Context(
-            $this->getConnection(),
+            $this->getConnection()->getSQLType(),
             $tempPath,
             $daosDirectory
         );
@@ -65,10 +65,9 @@ class ContextTest extends \PHPUnit\Framework\TestCase
         $tempPath = __DIR__.'/../tmp';
         $daosDirectory = __DIR__.'/../lib/daos/';
         $context = new \Jelix\Dao\JelixModuleContext(
-            $this->getConnection(),
+            $this->getConnection()->getSQLType(),
             $tempPath,
-            $daosDirectory,
-            true
+            $daosDirectory
         );
 
         $daoFilePath = realpath(__DIR__.'/../lib/daos/posts.dao.xml');

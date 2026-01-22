@@ -4,7 +4,7 @@
  * @contributor Laurent Jouanneau
  * @contributor Philippe Villiers
  *
- * @copyright   2001-2005 CopixTeam, 2005-2025 Laurent Jouanneau
+ * @copyright   2001-2005 CopixTeam, 2005-2026 Laurent Jouanneau
  *
  * @see        https://jelix.org
  * @licence  http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
@@ -159,7 +159,7 @@ class DaoProperty
         }
         $this->datatype = strtolower($params['datatype']);
 
-        $ti = $parser->getContext()->getDbTools()->getTypeInfo($this->datatype);
+        $ti = $parser->getContext()->getSqlSyntaxHelpers()->getTypeInfo($this->datatype);
         $this->unifiedType = $ti[1];
         if (!$this->autoIncrement) {
             $this->autoIncrement = $ti[6];
@@ -203,7 +203,7 @@ class DaoProperty
         }
 
         if ($params['default'] !== null) {
-            $this->defaultValue = $parser->getContext()->getDbTools()->stringToPhpValue($this->unifiedType, $params['default']);
+            $this->defaultValue = $parser->getContext()->getSqlSyntaxHelpers()->stringToPhpValue($this->unifiedType, $params['default']);
         }
 
         // insertpattern is allowed on primary keys noy autoincremented

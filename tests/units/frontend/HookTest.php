@@ -35,10 +35,11 @@ class HookTest extends \Jelix\UnitTests\UnitTestCaseDb
         $daosDirectory = __DIR__.'/../lib/daos/';
         $daoLoader = new \Jelix\Dao\DaoLoader(
             new Context(
-                $this->getConnection(),
+                $this->getConnection()->getSQLType(),
                 $tempPath,
                 $daosDirectory
-            )
+            ),
+            $this->getConnection()
         );
         $this->emptyTable('products');
         $dao = $daoLoader->create ('products_events');
