@@ -30,7 +30,7 @@ class DeprecatedContextProxy implements ContextInterface, ContextInterface2
     {
         $this->deprecatedContext = $deprecatedContext;
 
-        if ($deprecatedContext instanceof ContextInterface2::class) {
+        if ($deprecatedContext instanceof ContextInterface2) {
             $this->sqlType = ucfirst($deprecatedContext->getSQLType());
             $this->syntaxHelpers = $deprecatedContext->getSqlSyntaxHelpers();
         }

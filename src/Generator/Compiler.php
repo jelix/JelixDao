@@ -33,7 +33,7 @@ class Compiler
      */
     public function compile(DaoFileInterface $daoFile, ContextInterface $context)
     {
-        if (! ($context instanceof ContextInterface2::class)) {
+        if (! ($context instanceof ContextInterface2)) {
             $context = new DeprecatedContextProxy($context);
         }
 
@@ -79,7 +79,7 @@ class Compiler
      */
     public function parse(DaoFileInterface $daoFile, ContextInterface $context)
     {
-        if (! ($context instanceof ContextInterface2::class)) {
+        if (! ($context instanceof ContextInterface2)) {
             $context = new DeprecatedContextProxy($context);
         }
 
