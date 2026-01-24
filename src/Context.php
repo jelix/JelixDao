@@ -15,7 +15,7 @@ use Jelix\Database\ConnectionInterface;
 use Jelix\Database\Schema\SQLSyntaxHelpersInterface;
 use Jelix\FileUtilities\Path;
 
-class Context implements ContextInterface, ContextInterface2
+class Context implements ContextInterface2
 {
     /**
      * @var ConnectionInterface|null

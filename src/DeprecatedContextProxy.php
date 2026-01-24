@@ -12,7 +12,7 @@ namespace Jelix\Dao;
 
 use Jelix\Database\Schema\SQLSyntaxHelpersInterface;
 
-class DeprecatedContextProxy implements ContextInterface, ContextInterface2
+class DeprecatedContextProxy implements ContextInterface2
 {
     protected ContextInterface $deprecatedContext;
 

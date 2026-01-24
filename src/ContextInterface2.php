@@ -16,9 +16,9 @@ use Jelix\Database\Schema\SQLSyntaxHelpersInterface;
 /**
  * Add new methods to a context object.
  *
- * This interface will be merged to ContextInterface in a future major version.
+ * This interface will be merged with ContextInterface in a future major version.
  */
-interface ContextInterface2
+interface ContextInterface2 extends ContextInterface
 {
     /**
      * @return string the SQL type
