@@ -80,11 +80,16 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
     }
 
     /**
-     * build all classes.
+     * Build all classes.
+     *
+     * return an array with two elements :
+     * - the source of the factory class
+     * - the source of the record class
+     *
+     * @return array
      */
     public function buildClasses()
     {
-        $src = array();
 
         // prepare some values to generate properties and methods
 
@@ -109,6 +114,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         //-----------------------
         // Build the record class
         //-----------------------
+        $src = array();
         $customRecord = $this->_dataParser->getCustomRecord();
         if ($customRecord) {
             $customRecordPath = $customRecord->getPath();
@@ -118,7 +124,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
             }
             $extendedObject = $customRecord->getClassName();
         } else {
-            // @deprecated it should be AbstractDaoRecord in futur next major release
+            // @deprecated it should be AbstractDaoRecord in future next major release
             $extendedObject = '\jDaoRecordBase';
         }
 
@@ -141,10 +147,12 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         $src[] = '   public function getPrimaryKeyNames() { return '.$daoFactoryClass.'::$_pkFields; }';
         $src[] = '}';
 
+        $recordClassSources = implode("\n", $src);
+
         //----------------------------
         // Build the dao factory class
         //----------------------------
-
+        $src = array();
         $serializedTables = array();
         foreach($tables as $name =>$table) {
             $serializedTables[$name] = array(
@@ -226,8 +234,9 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         $src[] = $this->buildEndOfClass();
 
         $src[] = '}'; //end of class
+        $factoryClassSources = implode("\n", $src);
 
-        return implode("\n", $src);
+        return [$factoryClassSources, $recordClassSources];
     }
 
     /**

@@ -64,12 +64,23 @@ class DaoLoader
     {
         $daoFile = $this->context->resolveDaoPath($daoXmlFile);
 
-        if (!file_exists($daoFile->getCompiledFilePath())) {
-            // the class corresponding to the dao does not exist, let's create it.
+        if ($daoFile instanceof DaoFileInterface2) {
+            $classFile = $daoFile->getCompiledFactoryFilePath();
+            $recordClassFile = $daoFile->getCompiledRecordFilePath();
+        }
+        else {
+            $classFile = $daoFile->getCompiledFilePath();
+            $recordClassFile = '';
+        }
+        if (!file_exists($classFile)) {
+            // the factory class corresponding to the dao does not exist, let's create it.
             $compiler = new \Jelix\Dao\Generator\Compiler();
             $compiler->compile($daoFile, $this->context);
         }
-        require_once($daoFile->getCompiledFilePath());
+        require_once($classFile);
+        if ($recordClassFile) {
+            require_once($recordClassFile);
+        }
         $class = $daoFile->getCompiledFactoryClass();
         /** @var DaoFactoryInterface $dao */
         $dao = new $class($this->connector);

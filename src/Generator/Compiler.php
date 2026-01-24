@@ -12,6 +12,7 @@ namespace Jelix\Dao\Generator;
 use Jelix\Dao\ContextInterface;
 use Jelix\Dao\ContextInterface2;
 use Jelix\Dao\DaoFileInterface;
+use Jelix\Dao\DaoFileInterface2;
 use Jelix\Dao\DeprecatedContextProxy;
 use Jelix\Dao\Parser\XMLDaoParser;
 use Jelix\FileUtilities\File;
@@ -48,24 +49,32 @@ class Compiler
         $generator = new $class($context->getSqlSyntaxHelpers(), $parser);
 
         // generation of PHP classes corresponding to the DAO definition
-        $compiled = '<?php ';
+        $compiledHeader = '<?php '."\n";
         if ($context->shouldCheckCompiledClassCache()) {
-            $compiled .= "\nif (\n";
-            $compiled .= "\n filemtime('".$daoFile->getPath().'\') > '.filemtime($daoFile->getPath());
+            $compiledHeader .= "if (\n";
+            $compiledHeader .= "\n filemtime('".$daoFile->getPath().'\') > '.filemtime($daoFile->getPath());
             $importedDao = $parser->getImportedDao();
             if ($importedDao) {
                 foreach ($importedDao as $selimpdao) {
                     $path = $selimpdao->getPath();
-                    $compiled .= "\n|| filemtime('".$path.'\') > '.filemtime($path);
+                    $compiledHeader .= "\n|| filemtime('".$path.'\') > '.filemtime($path);
                 }
             }
-            $compiled .= "){ return false;\n}\nelse {\n";
-            $compiled .= $generator->buildClasses()."\n return true; }";
+            $compiledHeader .= "){ return false;\n}\nelse {\n";
+            $compiledFooter ="\n return true; }";
         } else {
-            $compiled .= $generator->buildClasses()."\n return true;";
+            $compiledFooter = "\n return true;";
         }
 
-        File::write($daoFile->getCompiledFilePath(), $compiled);
+        list($factorySources, $recordSources) = $generator->buildClasses();
+
+        if ($daoFile instanceof DaoFileInterface2) {
+            File::write($daoFile->getCompiledFactoryFilePath(), $compiledHeader.$factorySources.$compiledFooter);
+            File::write($daoFile->getCompiledRecordFilePath(), $compiledHeader.$recordSources.$compiledFooter);
+        }
+        else {
+            File::write($daoFile->getCompiledFilePath(), $compiledHeader.$recordSources."\n".$factorySources.$compiledFooter);
+        }
 
         return true;
     }

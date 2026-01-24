@@ -3,7 +3,7 @@
 
 /**
  * @author      Laurent Jouanneau
- * @copyright   2021-2023 Laurent Jouanneau
+ * @copyright   2021-2026 Laurent Jouanneau
  *
  * @see         https://jelix.org
  * @licence     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
@@ -11,7 +11,7 @@
 
 namespace Jelix\Dao;
 
-class DaoSimpleFile implements DaoFileInterface
+class DaoSimpleFile implements DaoFileInterface2
 {
     protected $daoName;
 
@@ -21,7 +21,15 @@ class DaoSimpleFile implements DaoFileInterface
 
     protected $sqlType;
 
+    /**
+     * @var string
+     * @deprecated
+     */
     protected $suffix;
+
+    protected $factoryClass = '';
+
+    protected $recordClass = '';
 
     /**
      * DaoSimpleFile constructor.
@@ -37,6 +45,9 @@ class DaoSimpleFile implements DaoFileInterface
         $this->tempPath = $tempPath;
         $this->sqlType = ucfirst($sqlType);
         $this->suffix = $suffix;
+        $prefix = ucfirst(str_replace(array('/', $suffix), '', $daoName)).$this->sqlType;
+        $this->factoryClass = $prefix.'Factory';
+        $this->recordClass = $prefix.'Record';
     }
 
     /**
@@ -59,6 +70,7 @@ class DaoSimpleFile implements DaoFileInterface
 
     /**
      * @return string path of a file where to store generated classes
+     * @deprecated
      */
     public function getCompiledFilePath()
     {
@@ -66,11 +78,27 @@ class DaoSimpleFile implements DaoFileInterface
     }
 
     /**
+     * @return string path of a file where to store the generated factory class
+     */
+    public function getCompiledFactoryFilePath()
+    {
+        return $this->tempPath.'/'.$this->factoryClass.'.php';
+    }
+
+    /**
+     * @return string path of a file where to store the generated factory class
+     */
+    public function getCompiledRecordFilePath()
+    {
+        return $this->tempPath.'/'.$this->recordClass.'.php';
+    }
+
+    /**
      * @return string name of the factory class that should be used by the generator
      */
     public function getCompiledFactoryClass()
     {
-        return ucfirst(str_replace(array('/', $this->suffix), '', $this->getName())).$this->sqlType.'Factory';
+        return $this->factoryClass;
     }
 
     /**
@@ -78,6 +106,6 @@ class DaoSimpleFile implements DaoFileInterface
      */
     public function getCompiledRecordClass()
     {
-        return ucfirst(str_replace(array('/', $this->suffix), '', $this->getName())).$this->sqlType.'Record';
+        return $this->recordClass;
     }
 }
