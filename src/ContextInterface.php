@@ -62,7 +62,7 @@ interface ContextInterface
      *
      * @param string $path
      *
-     * @return CustomRecordClassFileInterface
+     * @return CustomRecordClassFileInterface|CustomClassFileInterface
      */
     public function resolveCustomRecordClassPath($path);
 

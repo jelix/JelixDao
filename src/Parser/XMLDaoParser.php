@@ -11,7 +11,8 @@
 namespace Jelix\Dao\Parser;
 
 use Jelix\Dao\ContextInterface;
-use Jelix\Dao\CustomRecordClassFileInterface;
+use Jelix\Dao\CustomClassFile;
+use Jelix\Dao\CustomClassFileInterface;
 use Jelix\Dao\DaoFileInterface;
 
 /**
@@ -73,7 +74,7 @@ class XMLDaoParser
     /**
      * selector of the user record class.
      *
-     * @var CustomRecordClassFileInterface
+     * @var CustomClassFileInterface
      */
     private $_customRecord;
 
@@ -435,7 +436,7 @@ class XMLDaoParser
     /**
      * selector of the user record class.
      *
-     * @return CustomRecordClassFileInterface
+     * @return CustomClassFileInterface
      */
     public function getCustomRecord()
     {

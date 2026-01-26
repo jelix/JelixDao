@@ -12,9 +12,11 @@ Changelog
   - The class can be anywhere and should be autoloadable.
   - The class must inherit from `\Jelix\Dao\AbstractDaoFactory` and it must be abstract.
 - **Support of schema names** into tables names.
-- **New interface ContextInterface2** for context that will be merged to ContextInterface in 
+- **New interface `ContextInterface2`** for context that will be merged to `ContextInterface` in 
   the next major version. It allows to the compiler to have some objects of JelixDatabase 1.4+
   without the need to have a connection object.
+- **New interface `CustomClassFileInterface`** that is replacing `CustomRecordClassFileInterface` (which is now deprecated)
+- **New class `CustomClassFile`** that is replacing `CustomRecordClassFile` (which is now deprecated)
 - Fix deprecation warning with PHP 8.4
 - Fix generator: better generated joins
 - Introduce compatibility with applications that are using jDao API of Jelix 1.8 

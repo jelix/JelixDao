@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @author      Laurent Jouanneau
  * @copyright   2020-2026 Laurent Jouanneau
@@ -11,14 +10,26 @@
 namespace Jelix\Dao;
 
 /**
- * Interface for objects representing an custom record class
+ * Interface for objects representing a custom record or factory class
  *
  * Depending of the framework which is integrate JelixDao, the implementation
  * should know where to read the content
  *
  * @package Jelix\Dao
- * @deprecated use CustomClassFileInterface instead
  */
-interface CustomRecordClassFileInterface extends CustomClassFileInterface
+interface CustomClassFileInterface
 {
+    /**
+     * The class name
+     * @return string
+     */
+    public function getClassName();
+
+    /**
+     * Path of the PHP file containing the class. It can be empty if the class
+     * can be autoloaded
+     *
+     * @return string
+     */
+    public function getPath();
 }
