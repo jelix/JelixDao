@@ -11,7 +11,6 @@ namespace Jelix\Dao\Generator;
 
 use Jelix\Dao\ContextInterface;
 use Jelix\Dao\DaoFileInterface;
-use Jelix\Dao\DaoFileInterface2;
 use Jelix\Dao\Parser\XMLDaoParser;
 use Jelix\FileUtilities\File;
 
@@ -62,13 +61,8 @@ class Compiler
 
         list($factorySources, $recordSources) = $generator->buildClasses();
 
-        if ($daoFile instanceof DaoFileInterface2) {
-            File::write($daoFile->getCompiledFactoryFilePath(), $compiledHeader.$factorySources.$compiledFooter);
-            File::write($daoFile->getCompiledRecordFilePath(), $compiledHeader.$recordSources.$compiledFooter);
-        }
-        else {
-            File::write($daoFile->getCompiledFilePath(), $compiledHeader.$recordSources."\n".$factorySources.$compiledFooter);
-        }
+        File::write($daoFile->getCompiledFactoryFilePath(), $compiledHeader.$factorySources.$compiledFooter);
+        File::write($daoFile->getCompiledRecordFilePath(), $compiledHeader.$recordSources.$compiledFooter);
 
         return true;
     }

@@ -36,11 +36,6 @@ class DaoFileForTest implements DaoFileInterface
         return $this->path;
     }
 
-    public function getCompiledFilePath()
-    {
-        return $this->compilPath;
-    }
-
     public function getCompiledFactoryClass()
     {
         // TODO: Implement getCompiledFactoryClass() method.
@@ -49,6 +44,16 @@ class DaoFileForTest implements DaoFileInterface
     public function getCompiledRecordClass()
     {
         // TODO: Implement getCompiledRecordClass() method.
+    }
+
+    public function getCompiledFactoryFilePath()
+    {
+        // TODO: Implement getCompiledFactoryFilePath() method.
+    }
+
+    public function getCompiledRecordFilePath()
+    {
+        // TODO: Implement getCompiledRecordFilePath() method.
     }
 }
 

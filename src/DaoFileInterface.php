@@ -3,7 +3,7 @@
 
 /**
  * @author      Laurent Jouanneau
- * @copyright   2020 Laurent Jouanneau
+ * @copyright   2020-2026 Laurent Jouanneau
  *
  * @see         https://jelix.org
  * @licence     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
@@ -35,12 +35,6 @@ interface DaoFileInterface
     public function getPath();
 
     /**
-     * @return string path of a file where to store generated classes
-     * @deprecated
-     */
-    public function getCompiledFilePath();
-
-    /**
      * @return string name of the factory class that should be used by the generator
      */
     public function getCompiledFactoryClass();
@@ -49,4 +43,14 @@ interface DaoFileInterface
      * @return string name of the record class that should be used by the generator
      */
     public function getCompiledRecordClass();
+
+    /**
+     * @return string path of a file where to store the generated factory class
+     */
+    public function getCompiledFactoryFilePath();
+
+    /**
+     * @return string path of a file where to store the generated factory class
+     */
+    public function getCompiledRecordFilePath();
 }

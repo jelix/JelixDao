@@ -12,16 +12,9 @@ namespace Jelix\Dao;
 /**
  * Adds new methods
  * @package Jelix\Dao
+ * @deprecated
  */
 interface DaoFileInterface2 extends DaoFileInterface
 {
-    /**
-     * @return string path of a file where to store the generated factory class
-     */
-    public function getCompiledFactoryFilePath();
 
-    /**
-     * @return string path of a file where to store the generated factory class
-     */
-    public function getCompiledRecordFilePath();
 }

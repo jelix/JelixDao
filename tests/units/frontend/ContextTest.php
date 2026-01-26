@@ -49,8 +49,6 @@ class ContextTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('products.xml', $daoFile->getName());
         $this->assertEquals(__DIR__.'/../lib/daos/products.xml', $daoFile->getPath());
 
-        $daoCompiledClassPath = __DIR__.'/../tmp/products.xml.Sqlite.php';
-        $this->assertEquals($daoCompiledClassPath, $daoFile->getCompiledFilePath());
         $this->assertEquals('ProductsSqliteFactory', $daoFile->getCompiledFactoryClass());
         $this->assertEquals('ProductsSqliteRecord', $daoFile->getCompiledRecordClass());
 
@@ -85,8 +83,6 @@ class ContextTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('posts.dao.xml', $daoFile->getName());
         $this->assertEquals(__DIR__.'/../lib/daos/posts.dao.xml', $daoFile->getPath());
 
-        $daoCompiledClassPath = __DIR__.'/../tmp/posts.dao.xml.Sqlite.php';
-        $this->assertEquals($daoCompiledClassPath, $daoFile->getCompiledFilePath());
         $this->assertEquals('PostsSqliteFactory', $daoFile->getCompiledFactoryClass());
         $this->assertEquals('PostsSqliteRecord', $daoFile->getCompiledRecordClass());
 

@@ -9,7 +9,11 @@ Changelog
   - `DeprecatedContextProxy`.
   - `CustomRecordClassFileInterface`, `CustomRecordClassFile`
 - Methods of `ContextInterface2` have been moved to `ContextInterface`. `ContextInterface2` is deprecated.
+  So all classes implementing `ContextInterface` should implement these methods.
 - Deprecated Methods `ContextInterface::getConnector()` and `ContextInterface::getDbTools()` have been removed.
+- Methods of `DaoFileInterface2` have been moved to `DaoFileInterface`. `DaoFileInterface2` is deprecated.
+  So all classes implementing `DaoFileInterface` should implement these methods.
+- Deprecated method `DaoFileInterface::getCompiledFilePath()` has been removed
 
 1.2.0-pre
 ---------

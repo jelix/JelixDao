@@ -11,7 +11,7 @@
 
 namespace Jelix\Dao;
 
-class DaoSimpleFile implements DaoFileInterface2
+class DaoSimpleFile implements DaoFileInterface
 {
     protected $daoName;
 
@@ -66,15 +66,6 @@ class DaoSimpleFile implements DaoFileInterface2
     public function getPath()
     {
         return $this->daoFile;
-    }
-
-    /**
-     * @return string path of a file where to store generated classes
-     * @deprecated
-     */
-    public function getCompiledFilePath()
-    {
-        return $this->tempPath.'/'.$this->getName().'.'.$this->sqlType.'.php';
     }
 
     /**
