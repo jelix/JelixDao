@@ -9,6 +9,7 @@ namespace Jelix\DaoTests;
 
 use Jelix\Dao\ContextInterface;
 use Jelix\Dao\ContextInterface2;
+use Jelix\Dao\CustomClassFile;
 use Jelix\Database\AccessParameters;
 use Jelix\Database\Connection;
 use Jelix\Database\ConnectionInterface;
@@ -121,6 +122,18 @@ class ContextForTest implements ContextInterface, ContextInterface2
     public function resolveCustomRecordClassPath($path)
     {
         return new RecordClassForTest($path,
+            __DIR__.'/daos/'.$path.'.php'
+        );
+    }
+
+    public function resolveCustomFactoryClassPath($path)
+    {
+        if ($path[0] == '\\') {
+            // the given path is a full class name with a namespace, so we make the assumption that the
+            // class can be autoloaded, and we don't have to forge a path
+            return new CustomClassFile($path);
+        }
+        return new CustomClassFile($path,
             __DIR__.'/daos/'.$path.'.php'
         );
     }

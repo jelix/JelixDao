@@ -11,6 +11,7 @@
 namespace Jelix\Dao\Parser;
 
 use Jelix\Dao\ContextInterface;
+use Jelix\Dao\ContextInterface2;
 use Jelix\Dao\CustomClassFile;
 use Jelix\Dao\CustomClassFileInterface;
 use Jelix\Dao\DaoFileInterface;
@@ -79,9 +80,11 @@ class XMLDaoParser
     private $_customRecord;
 
     /**
-     * @var string name of the class that should the dao factory should inherits from.
+     * selector of the user factory class.
+     *
+     * @var CustomClassFileInterface
      */
-    private $parentFactoryClass = '\jDaoFactoryBase'; //'\Jelix\Dao\AbstractDaoFactory';
+    private $_customFactory;
 
     /**
      * selector of the imported dao.
@@ -277,7 +280,12 @@ class XMLDaoParser
         if (isset($xml->factory)) {
 
             if (isset($xml->factory[0]['extends'])) {
-                $this->parentFactoryClass = (string) $xml->factory[0]['extends'];
+                if ($this->context instanceof ContextInterface2) {
+                    $this->_customFactory =  $this->context->resolveCustomFactoryClassPath((string) $xml->factory[0]['extends']);
+                }
+                else {
+                    $this->_customFactory = new CustomClassFile((string) $xml->factory[0]['extends']);
+                }
             }
 
             if (isset($xml->factory[0]['events'])) {
@@ -443,9 +451,14 @@ class XMLDaoParser
         return $this->_customRecord;
     }
 
-    public function getParentFactoryClass()
+    /**
+     * selector of the user record class.
+     *
+     * @return CustomClassFileInterface
+     */
+    public function getCustomFactory()
     {
-        return $this->parentFactoryClass;
+        return $this->_customFactory;
     }
 
     /**

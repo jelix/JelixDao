@@ -42,6 +42,10 @@ class Context implements ContextInterface2
     protected $daoPhpSuffix = '.php';
     protected $daoPhpSuffixRe = '/\\.php$/';
 
+    protected $daoFactPhpSuffix = '.php';
+
+    protected $daoFactPhpSuffixRe = '/\\.php$/';
+
     /**
      * @param ConnectionInterface|string $connection  Connector (deprecated)
      * or the type of the database (mysql, pgsql, ...)
@@ -148,6 +152,29 @@ class Context implements ContextInterface2
         $class = ucfirst(str_replace($this->daoPhpSuffix, '', basename($path)));
 
         return new CustomRecordClassFile($class, $path);
+    }
+    /**
+     * @inheritDoc
+     */
+    public function resolveCustomFactoryClassPath($path)
+    {
+        if ($path[0] == '\\') {
+            // the given path is a full class name with a namespace, so we make the assumption that the
+            // class can be autoloaded, and we don't have to forge a path
+            return new CustomClassFile($path);
+        }
+
+        if (!Path::isAbsolute($path)) {
+            $path = Path::normalizePath($this->basePath.'/'.$path);
+        }
+
+        if (!preg_match($this->daoFactPhpSuffixRe, $path)) {
+            $path .= $this->daoFactPhpSuffix;
+        }
+
+        $class = ucfirst(str_replace($this->daoFactPhpSuffix, '', basename($path)));
+
+        return new CustomClassFile($class, $path);
     }
 
     /**

@@ -66,6 +66,11 @@ class DeprecatedContextProxy implements ContextInterface2
         return $this->deprecatedContext->resolveCustomRecordClassPath($path);
     }
 
+    public function resolveCustomFactoryClassPath($path)
+    {
+        return $this->deprecatedContext->resolveCustomFactoryClassPath($path);
+    }
+
     public function shouldCheckCompiledClassCache()
     {
         return $this->deprecatedContext->shouldCheckCompiledClassCache();

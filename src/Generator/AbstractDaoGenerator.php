@@ -166,7 +166,20 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
             );
         }
 
-        $src[] = "\nclass ".$daoFactoryClass.' extends '.$this->_dataParser->getParentFactoryClass().' {';
+        $customFactory = $this->_dataParser->getCustomFactory();
+        if ($customFactory) {
+            $customFactoryPath = $customFactory->getPath();
+            // if the path is empty, it means the class can be autoloaded
+            if ($customFactoryPath) {
+                $src[] = ' require_once (\''.$customFactoryPath.'\');';
+            }
+            $extendedObject = $customFactory->getClassName();
+        } else {
+            // @deprecated it should be AbstractDaoFactory in future next major release
+            $extendedObject = '\jDaoFactoryBase';
+        }
+
+        $src[] = "\nclass ".$daoFactoryClass.' extends '.$extendedObject.' {';
         $src[] = '   protected $_tables = '.var_export($serializedTables, true).';';
         $src[] = '   protected $_primaryTable = \''.$this->_dataParser->getPrimaryTable().'\';';
         $src[] = '   protected $_selectClause=\''.$this->sqlSelectClause.'\';';
