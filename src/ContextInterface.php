@@ -11,8 +11,7 @@
 
 namespace Jelix\Dao;
 
-use Jelix\Database\ConnectionInterface;
-use Jelix\Database\Schema\SqlToolsInterface;
+use Jelix\Database\Schema\SQLSyntaxHelpersInterface;
 
 /**
  * It allows to abstract the environment or framework where JelixDao is used.
@@ -26,17 +25,28 @@ use Jelix\Database\Schema\SqlToolsInterface;
 interface ContextInterface
 {
     /**
-     * @return ConnectionInterface
-     * @deprecated
+     * @return string the SQL type
      */
-    public function getConnector();
-
+    public function getSqlType() : string;
 
     /**
-     * @return SqlToolsInterface
-     * @deprecated
+     * @return SQLSyntaxHelpersInterface the SQL syntax helpers corresponding to the SQL type returned by getSqlType()
      */
-    public function getDbTools();
+    public function getSqlSyntaxHelpers() : SQLSyntaxHelpersInterface;
+
+    /**
+     * Convert the given path, representing a PHP class implementing a factory,
+     * to the corresponding CustomClassFileInterface object.
+     *
+     * The path can be a system file path, or an URI, or any other structured
+     * name representing the class file. The path type depends on the framework
+     * or the environment where JelixDao is used.
+     *
+     * @param string $path
+     *
+     * @return CustomClassFileInterface
+     */
+    public function resolveCustomFactoryClassPath($path);
 
     /**
      * Convert the given path, representing an XML DAO file, to the corresponding

@@ -32,18 +32,15 @@ class DbMapper
     protected $profile;
 
     /**
-     * Constructor.
-     *
-     * As Context::getConnector() is deprecated, you must pass the connector as
-     * a second parameter.
+     * Constructor
      *
      * @param ContextInterface $context
-     * @param ConnectionInterface|null $connector
+     * @param ConnectionInterface $connector
      */
-    public function __construct(ContextInterface $context, $connector = null)
+    public function __construct(ContextInterface $context, $connector)
     {
         $this->context = $context;
-        $this->connector = $connector ?: $context->getConnector();
+        $this->connector = $connector;
     }
 
     /**

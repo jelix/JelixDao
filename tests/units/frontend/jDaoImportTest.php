@@ -29,10 +29,11 @@ class jDaoImportTest extends \Jelix\UnitTests\UnitTestCaseDb {
 
         $this->daoLoader = new \Jelix\Dao\DaoLoader(
             new \Jelix\Dao\Context(
-                $this->getConnection(),
+                $this->getConnection()->getSQLType(),
                 $this->tempPath,
                 $this->daosDirectory
-            )
+            ),
+            $this->getConnection(),
         );
     }
 

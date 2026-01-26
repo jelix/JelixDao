@@ -16,10 +16,11 @@ class jdao_factory_Test extends \Jelix\UnitTests\UnitTestCaseDb
 
         $daoLoader = new \Jelix\Dao\DaoLoader(
             new \Jelix\Dao\Context(
-                self::getConnector(),
+                self::getConnector()->getSQLType(),
                 $tempPath,
                 $daosDirectory
-            )
+            ),
+            self::getConnector()
         );
         // to load factory classes
         $daoLoader->create ('products');

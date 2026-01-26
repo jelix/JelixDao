@@ -47,13 +47,14 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
         $tempPath = __DIR__.'/../tmp/mainapi/';
         $daosDirectory = __DIR__.'/../lib/daos/';
         $this->daoContext = new \Jelix\Dao\Context(
-            $this->getConnection(),
+            $this->getConnection()->getSQLType(),
             $tempPath,
             $daosDirectory
         );
 
         $this->daoLoader = new \Jelix\Dao\DaoLoader(
             $this->daoContext,
+            $this->getConnection()
         );
 
         $this->sqlType = ucfirst($this->getConnection()->getSQLType());
@@ -862,7 +863,7 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
         $cn->exec('DROP TABLE IF EXISTS '.$this->article3TableName);
         $cn->exec('DROP TABLE IF EXISTS '.$this->article3CatTableName);
 
-        $mapper = new DbMapper($this->daoContext);
+        $mapper = new DbMapper($this->daoContext, $cn);
         $daoFile = $this->daoContext->resolveDaoPath('article3_category');
         $mapper->createTableFromDao($daoFile);
         $daoFile = $this->daoContext->resolveDaoPath('article3');
@@ -882,7 +883,7 @@ abstract class MainApiAbstract extends \Jelix\UnitTests\UnitTestCaseDb
      */
     function testDbMapperInsertDaoData()
     {
-        $mapper = new DbMapper($this->daoContext);
+        $mapper = new DbMapper($this->daoContext, $this->getConnection());
         $daoFile = $this->daoContext->resolveDaoPath('article3_category');
 
         $properties = [ 'catid', 'label'];

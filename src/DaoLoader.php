@@ -37,19 +37,13 @@ class DaoLoader
     /**
      * Constructor.
      *
-     * As Context::getConnector() is deprecated, you must pass the connector as
-     * a second parameter.
-     *
      * @param Context $context
-     * @param ConnectionInterface|null $connector
+     * @param ConnectionInterface $connector
      */
-    public function __construct(Context $context, $connector = null)
+    public function __construct(Context $context, $connector)
     {
         $this->context = $context;
-        $this->connector = $connector ?: $context->getConnector();
-        if ($this->connector == null) {
-            throw new \LogicException('No connector given to DaoLoader.');
-        }
+        $this->connector = $connector;
     }
 
     /**

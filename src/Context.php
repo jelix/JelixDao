@@ -11,18 +11,11 @@
 namespace Jelix\Dao;
 
 use Jelix\Database\Connection;
-use Jelix\Database\ConnectionInterface;
 use Jelix\Database\Schema\SQLSyntaxHelpersInterface;
 use Jelix\FileUtilities\Path;
 
 class Context implements ContextInterface2
 {
-    /**
-     * @var ConnectionInterface|null
-     * @deprecated
-     */
-    protected $connection;
-
     /**
      * SQL type
      */
@@ -47,51 +40,22 @@ class Context implements ContextInterface2
     protected $daoFactPhpSuffixRe = '/\\.php$/';
 
     /**
-     * @param ConnectionInterface|string $connection  Connector (deprecated)
-     * or the type of the database (mysql, pgsql, ...)
+     * @param string $sqlType the type of the database (mysql, pgsql, ...)
      *
      * The connection should be passed to other classes that are using the context.
      *
      * @param string $tempPath
      * @param string $daosDirectory
      */
-    public function __construct($connection, $tempPath, $daosDirectory = '')
+    public function __construct(string $sqlType, $tempPath, $daosDirectory = '')
     {
-        if (is_string($connection)) {
-            $this->sqlType = $connection;
-            $connection = null;
-        }
-        else {
-            $this->sqlType = $connection->getSQLType();
-        }
+        $this->sqlType = $sqlType;
 
         $this->syntaxHelpers = Connection::getSqlSyntaxHelpers($this->sqlType);
 
-        $this->connection = $connection;
         $this->tempPath = $tempPath;
         $this->basePath = $daosDirectory;
 
-    }
-
-    /**
-     * @return ConnectionInterface|null
-     * @deprecated
-     */
-    public function getConnector()
-    {
-        return $this->connection;
-    }
-
-    /**
-     * @return \Jelix\Database\Schema\SqlToolsInterface|null
-     * @deprecated
-     */
-    public function getDbTools()
-    {
-        if ($this->connection === null) {
-            return null;
-        }
-        return $this->connection->tools();
     }
 
     /**

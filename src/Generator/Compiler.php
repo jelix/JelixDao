@@ -10,10 +10,8 @@
 namespace Jelix\Dao\Generator;
 
 use Jelix\Dao\ContextInterface;
-use Jelix\Dao\ContextInterface2;
 use Jelix\Dao\DaoFileInterface;
 use Jelix\Dao\DaoFileInterface2;
-use Jelix\Dao\DeprecatedContextProxy;
 use Jelix\Dao\Parser\XMLDaoParser;
 use Jelix\FileUtilities\File;
 
@@ -34,10 +32,6 @@ class Compiler
      */
     public function compile(DaoFileInterface $daoFile, ContextInterface $context)
     {
-        if (! ($context instanceof ContextInterface2)) {
-            $context = new DeprecatedContextProxy($context);
-        }
-
         $parser = $this->parse($daoFile, $context);
 
         $dbType = ucfirst($context->getSQLType());
@@ -88,10 +82,6 @@ class Compiler
      */
     public function parse(DaoFileInterface $daoFile, ContextInterface $context)
     {
-        if (! ($context instanceof ContextInterface2)) {
-            $context = new DeprecatedContextProxy($context);
-        }
-
         // load the XML file
         $doc = new \DOMDocument();
 

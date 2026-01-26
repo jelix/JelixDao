@@ -5,7 +5,9 @@ Changelog
 ----------
 
 - Remove deprecated classes `jDaoConditions`, `jDaoFactoryBase`,
-  `jDaoRecordBase`, `jDaoXmlException`
+  `jDaoRecordBase`, `jDaoXmlException`, `DeprecatedContextProxy`.
+- Methods of `ContextInterface2` have been moved to `ContextInterface`. `ContextInterface2` is deprecated.
+- Deprecated Methods `ContextInterface::getConnector()` and `ContextInterface::getDbTools()` have been removed.
 
 1.2.0-pre
 ---------
