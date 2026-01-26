@@ -7,11 +7,11 @@
  */
 namespace Jelix\DaoTests;
 
-use Jelix\Dao\CustomRecordClassFileInterface;
+use Jelix\Dao\CustomClassFileInterface;
 
 
 
-class RecordClassForTest implements CustomRecordClassFileInterface
+class RecordClassForTest implements CustomClassFileInterface
 {
     protected $name;
 

@@ -102,7 +102,7 @@ class Context implements ContextInterface2
         if ($path[0] == '\\') {
             // the given path is a full class name with a namespace, so we make the assumption that the
             // class can be autoloaded, and we don't have to forge a path
-            return new CustomRecordClassFile($path);
+            return new CustomClassFile($path);
         }
 
         if (!Path::isAbsolute($path)) {
@@ -115,7 +115,7 @@ class Context implements ContextInterface2
 
         $class = ucfirst(str_replace($this->daoPhpSuffix, '', basename($path)));
 
-        return new CustomRecordClassFile($class, $path);
+        return new CustomClassFile($class, $path);
     }
     /**
      * @inheritDoc

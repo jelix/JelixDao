@@ -64,7 +64,7 @@ interface ContextInterface
 
     /**
      * Convert the given path, representing a PHP class implementing a record,
-     * to the corresponding CustomRecordClassFileInterface object.
+     * to the corresponding CustomClassFileInterface object.
      *
      * The path can be a system file path, or an URI, or any other structured
      * name representing the class file. The path type depends on the framework
@@ -72,7 +72,7 @@ interface ContextInterface
      *
      * @param string $path
      *
-     * @return CustomRecordClassFileInterface|CustomClassFileInterface
+     * @return CustomClassFileInterface
      */
     public function resolveCustomRecordClassPath($path);
 
