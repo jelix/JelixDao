@@ -3,7 +3,7 @@
 
 /**
  * @author      Laurent Jouanneau
- * @copyright   2020 Laurent Jouanneau
+ * @copyright   2020-2026 Laurent Jouanneau
  *
  * @see         https://jelix.org
  * @licence     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
@@ -27,12 +27,14 @@ interface ContextInterface
 {
     /**
      * @return ConnectionInterface
+     * @deprecated
      */
     public function getConnector();
 
 
     /**
      * @return SqlToolsInterface
+     * @deprecated
      */
     public function getDbTools();
 
@@ -60,7 +62,7 @@ interface ContextInterface
      *
      * @param string $path
      *
-     * @return CustomRecordClassFileInterface
+     * @return CustomRecordClassFileInterface|CustomClassFileInterface
      */
     public function resolveCustomRecordClassPath($path);
 

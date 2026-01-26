@@ -7,18 +7,23 @@ Changelog
 - Remove deprecated classes `jDaoConditions`, `jDaoFactoryBase`,
   `jDaoRecordBase`, `jDaoXmlException`
 
-1.2.0
-------
+1.2.0-pre
+---------
 
-
-- Native support of JSON fields: dao properties having the datatype `json`
-  are automatically encoded during insert/update, or decoded during a select.
+- Native **support of JSON fields**: dao properties having the datatype `json`
+  can be automatically encoded during insert/update, or decoded during a select.
   Optionally, they can be decoded/encoded to/from a specific class.
-- new feature: possibility to indicate a base class for the generated factory class.
+- new feature: **possibility to indicate a base class for the generated factory class**.
   - The classname should be indicated into the `extends` attribute of `<factory>`.
-  - The class can be anywhere and should be autoloadable.
+  - It can be a real class name or a kind of alias that will be resolved by the context object.
+  - If it is a real class name, the class can be anywhere and should be autoloadable.
   - The class must inherit from `\Jelix\Dao\AbstractDaoFactory` and it must be abstract.
-- Support of schema names into tables names.
+- **Support of schema names** into tables names.
+- **New interface `ContextInterface2`** for context that will be merged to `ContextInterface` in 
+  the next major version. It allows to the compiler to have some objects of JelixDatabase 1.4+
+  without the need to have a connection object.
+- **New interface `CustomClassFileInterface`** that is replacing `CustomRecordClassFileInterface` (which is now deprecated)
+- **New class `CustomClassFile`** that is replacing `CustomRecordClassFile` (which is now deprecated)
 - Fix deprecation warning with PHP 8.4
 - Fix generator: better generated joins
 - Introduce compatibility with applications that are using jDao API of Jelix 1.8 

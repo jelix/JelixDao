@@ -36,6 +36,7 @@ interface DaoFileInterface
 
     /**
      * @return string path of a file where to store generated classes
+     * @deprecated
      */
     public function getCompiledFilePath();
 

@@ -66,11 +66,11 @@ Then we should declare the mapping between the record fields and the object prop
 
 The `<record>` section declares the properties of an object `record`. Each
 property corresponds to a field in the primary table, or one of those foreign
-tables as you will see later. Of course, you are not obliged to declare a
+ tables, as you will see later. Of course, you are not obliged to declare a
 property for all existing fields. We can make several DAO working on the same
-table but which are intended for different uses. For example make a specific DAO
+table but which are intended for different uses. For example, make a specific DAO
 to recover slight registration lists (so the mapping is made on the essential
-properties), and an other to manage full datas (so the mapping is made on all
+properties), and another to manage full datas (so the mapping is made on all
 fields).
 
 The `<record>` section must contain one or more `<property>` element.
@@ -115,28 +115,28 @@ of recognized types.
 * `enum`, `set`, `xmltype`, `point`, `line`, `lsed`, `box`, `path`, `polygon`, `circle`, `cidr`, `inet`, `macaddr`, `bit varyong`, `arrays`, `complex types`
 * `json` and `jsonb` (see section below)
 
-Of course, some database doesn't recognize all of these types. Don't worry, JelixDao
+Of course, some databases do not recognize all of these types. Don't worry, JelixDao
 will use the corresponding type in the selected database. For example, `bytea`
 is a postgresql type. If you use a mysql database, JelixDao will use `longblob`.
 
-Values of fields will be converted in the corresponding PHP type, most of time,
+Values of fields will be converted in the corresponding PHP type, most time,
 in a string.
 
 For auto-incremented fields, you can indicate `serial` or `autoincrement` as
 a type. But for some case, it is better to indicate one of integer types, and to
-set a `autoincrement` attribute to `true`. On some databases, an auto
-incremented field can be associated with a sequence. Then the attribute
+set a `autoincrement` attribute to `true`. On some databases, an auto-incremented 
+field can be associated with a sequence. Then the attribute
 `sequence` should contain the sequence name.
 
 The attribute `comment` allow to indicate a comment on the property. This comment
-can be used as label for form field, with the createform command.
+can be used as a label for the form field, with the createform command.
 
 The attributes `updatepattern`, `insertpattern` and `selectpattern`
 lets you specify a pattern to be applied during the update, the insert or the
 read of the field value. This pattern should really be a SQL expression, and can
 contain the string `%s`, which will be replaced by the value or the name of the
 field. Default values of patterns is `%s`. If it indicates an empty value, this
-corresponds to a null operation (so the field is not readed, inserted or
+corresponds to a null operation (so the field is not read, inserted or
 updated). On primary keys you can use `insertpattern` and
 `selectpattern` , but not `updatepattern`.
 
@@ -174,30 +174,29 @@ Carefull about the content of `selectpattern`:
 
 ### Support of JSON fields
 
-When you indicate `json` (or `jsonb`) as datatype, content of the property
-is automatically encoded (during insert/update) or decoded (during selects).
+You can declare a property of type `json` or `jsonb`. By default, the content
+is kept as a JSON string.
 
 ```xml
    <property name="configuration" datatype="json" />
 ```
 
-You can disable this feature if you want to manage the json content by yourself.
-Especially if the json content is huge, and you don't want to decode it 
-systematically, because it could cause performance issues.
+The content can be decoded (during a `select`) or encoded (for `insert`/`update`) 
+automatically, if you indicate it in some specific attributes.
+
+The first attribute you can use is `jsontype`. Possible values are `object` or `array`.
 
 ```xml
-   <property name="configuration" datatype="json" jsontype="raw" />
+    <property name="configuration" datatype="json" jsontype="object"/>
+<!-- or -->
+    <property name="configuration" datatype="json" jsontype="array" />
 ```
 
-You can force the type, by indicating `object` or `array`
-
-```xml
-   <property name="configuration" datatype="json" jsontype="array" />
-```
+Other value is `raw`, which means no encoding and no decoding (this is the default value).
 
 If you want to map the json content to an object having a specific class,
-indicate the class name into the `jsonobjectclass` attribute. In this case, `jsontype="object"` is
-not required.
+indicate the class name into the `jsonobjectclass` attribute. In this case, 
+`jsontype="object"` is not required.
 
 
 ```xml
@@ -210,7 +209,7 @@ corresponding to the json object properties must be public.
 If the constructor requires parameters and/or properties are not public, 
 you can indicate your own json encoder/decoder.
 
-The encoder must accept an object as parameter, and return a string (the json content).
+The encoder must accept an object as a parameter and return a string (the json content).
 The decoder must accept a string (the json content) and return an object of the given class.
 
 Encoder/Decoder can be static methods of the class. Note the `::` operator.
@@ -271,9 +270,25 @@ Or some functions:
 />
 ```
 
+You can specify a default value for json properties. It should be a JSON value
+that will be decoded by the decoder you indicate. Some examples: 
+
+
+```xml
+<property name="configuration" datatype="json" 
+         jsonclass="\MyProject\Configuration"
+         jsonencoder="::toJson"
+         jsondecoder="::createFromJson"
+         defaultValue='{"p1":"aaa","p2":"bbb"}'
+/>
+<property name="configuration" datatype="json" defaultValue='{"p1":"aaa","p2":"bbb"}'/>
+```
+
+
+
 ## Mapping on several tables
 
-We can declare a table, but also additional tables which are linked to the main
+We can declare a table but also additional tables which are linked to the main
 table by joins. It is useful when you want to retrieve simultaneously a record
 and information of other tables. For example, if you want to retrieve a product
 of the "products" table, and at the same time the name of its category from the
@@ -284,7 +299,7 @@ insert a record.
 To declare such foreign tables, which are logically related to the main table by
 foreign keys, you should use:
 
-* `<foreigntable>` to indicate a foreign table  linked by a normal join.
+* `<foreigntable>` to indicate a foreign table linked by a normal join.
 * `<optionalforeigntable>` to indicate a foreign table linked by an outer join.
 
 Example:
@@ -326,14 +341,14 @@ in which the field belongs to.
 
 ## Using a PHP class for records
 
-You would want to have methods and additionnal properties on the
+You would want to have methods and additional properties on the
 record object generated by JelixDao. This is possible by providing your
-own class, which will inherits from `Jelix\Dao\AbstractDaoRecord`, and will be inherited
+own class, which will inherit from `Jelix\Dao\AbstractDaoRecord`, and will be inherited
 by the generated class.
 
 **Warning**: this class does not suppose to do SQL request on the table of the DAO.
-Your methods should only do some calculation, verify some business rules etc.. If you want
-to do SQL request, see "XML or PHP methods" on the DAO factory..
+Your methods should only do some calculation, verify some business rules etc. If you want
+to do an SQL request, see "XML or PHP methods" on the DAO factory.
 
 Your class have the name you want, and it should be stored into the same directory of other dao files, 
 in a file named `<classname>.php`.
@@ -369,7 +384,7 @@ class news extends \Jelix\Dao\AbstractDaoRecord {
 ```
 
 
-Then you can call this method on each records:
+Then you can call this method on each record:
 
 ```php
 
@@ -386,11 +401,11 @@ foreach ($list as $row) {
 
 ## Importing an other dao
 
-In your project, you'll need sometime to create a dao that have the same
+In your project, you'll sometimes need to create a dao that has the same
 content as another one, with additional properties or methods.
 
-To avoid to rewrite all datasources/properties/methods, you can //import//
-a dao, and write only new properties or methods. You do that by adding
+To avoid rewriting all datasources/properties/methods, you can //import//
+a dao and write only new properties or methods. You do that by adding
 an attribute `import` on the `dao` element.
 
 How it works: 

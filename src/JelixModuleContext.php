@@ -2,7 +2,7 @@
 
 /**
  * @author      Laurent Jouanneau
- * @copyright   2023 Laurent Jouanneau
+ * @copyright   2023-2026 Laurent Jouanneau
  *
  * @see         https://jelix.org
  * @licence     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
@@ -22,4 +22,7 @@ class JelixModuleContext extends Context
     protected $daoXmlSuffixRe = '/\\.dao\\.xml$/';
     protected $daoPhpSuffix = '.daorecord.php';
     protected $daoPhpSuffixRe = '/\\.daorecord\\.php$/';
+
+    protected $daoFactPhpSuffix = '.daofactory.php';
+    protected $daoFactPhpSuffixRe = '/\\.daofactory\\.php$/';
 }

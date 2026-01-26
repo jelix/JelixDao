@@ -8,11 +8,14 @@
 namespace Jelix\DaoTests;
 
 use Jelix\Dao\ContextInterface;
+use Jelix\Dao\ContextInterface2;
+use Jelix\Dao\CustomClassFile;
 use Jelix\Database\AccessParameters;
 use Jelix\Database\Connection;
 use Jelix\Database\ConnectionInterface;
+use Jelix\Database\Schema\SQLSyntaxHelpersInterface;
 
-class ContextForTest implements ContextInterface
+class ContextForTest implements ContextInterface, ContextInterface2
 {
     /**
      * @var \Jelix\Database\ConnectionInterface
@@ -26,6 +29,16 @@ class ContextForTest implements ContextInterface
 
 
     protected $checkCompiledCache = true;
+
+    /**
+     * SQL type
+     */
+    protected $sqlType;
+
+    /**
+     * @var SQLSyntaxHelpersInterface
+     */
+    protected $syntaxHelpers;
 
     /**
      * ContextTest constructor.
@@ -42,7 +55,6 @@ class ContextForTest implements ContextInterface
                 'password'=>'jelixpass',
                 'database'=> 'jelixtests'
             );
-            $toolsClass = '\Jelix\Database\Schema\Mysql\SQLTools';
         }
         else if ($databaseType == 'pgsql') {
             $parameters = array(
@@ -53,7 +65,6 @@ class ContextForTest implements ContextInterface
                 'password'=>'jelixpass',
                 'database'=> 'jelixtests'
             );
-            $toolsClass = '\Jelix\Database\Schema\Postgresql\SQLTools';
         }
         else if ($databaseType == 'sqlite')
         {
@@ -61,15 +72,18 @@ class ContextForTest implements ContextInterface
                 'driver'=>'sqlite3',
                 "database"=>"/app/tests/units/tests.sqlite3",
             );
-            $toolsClass = '\Jelix\Database\Schema\Sqlite\SQLTools';
         }
         else {
             throw new \Exception('bad databaseType');
         }
 
+        $this->sqlType = $databaseType;
+
         $accessParameters = new AccessParameters($parameters, array('charset'=>'UTF-8'));
         $this->connection = Connection::create($accessParameters);
-        $this->dbTools = new $toolsClass($this->connection);
+        $this->dbTools = $this->connection->tools();
+
+        $this->syntaxHelpers = Connection::getSqlSyntaxHelpers($this->sqlType);
 
         $this->checkCompiledCache = $checkCompiledCache;
     }
@@ -87,6 +101,16 @@ class ContextForTest implements ContextInterface
         return $this->dbTools;
     }
 
+    public function getSqlType() : string
+    {
+        return $this->sqlType;
+    }
+
+    public function getSqlSyntaxHelpers() : SQLSyntaxHelpersInterface
+    {
+        return $this->syntaxHelpers;
+    }
+
     public function resolveDaoPath($path)
     {
         return new DaoFileForTest($path,
@@ -98,6 +122,18 @@ class ContextForTest implements ContextInterface
     public function resolveCustomRecordClassPath($path)
     {
         return new RecordClassForTest($path,
+            __DIR__.'/daos/'.$path.'.php'
+        );
+    }
+
+    public function resolveCustomFactoryClassPath($path)
+    {
+        if ($path[0] == '\\') {
+            // the given path is a full class name with a namespace, so we make the assumption that the
+            // class can be autoloaded, and we don't have to forge a path
+            return new CustomClassFile($path);
+        }
+        return new CustomClassFile($path,
             __DIR__.'/daos/'.$path.'.php'
         );
     }

@@ -4,7 +4,7 @@
  * @contributor Laurent Jouanneau
  * @contributor Philippe Villiers
  *
- * @copyright   2001-2005 CopixTeam, 2005-2025 Laurent Jouanneau
+ * @copyright   2001-2005 CopixTeam, 2005-2026 Laurent Jouanneau
  *
  * @see        https://jelix.org
  * @licence  http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
@@ -159,7 +159,7 @@ class DaoProperty
         }
         $this->datatype = strtolower($params['datatype']);
 
-        $ti = $parser->getContext()->getDbTools()->getTypeInfo($this->datatype);
+        $ti = $parser->getContext()->getSqlSyntaxHelpers()->getTypeInfo($this->datatype);
         $this->unifiedType = $ti[1];
         if (!$this->autoIncrement) {
             $this->autoIncrement = $ti[6];
@@ -203,7 +203,7 @@ class DaoProperty
         }
 
         if ($params['default'] !== null) {
-            $this->defaultValue = $parser->getContext()->getDbTools()->stringToPhpValue($this->unifiedType, $params['default']);
+            $this->defaultValue = $parser->getContext()->getSqlSyntaxHelpers()->stringToPhpValue($this->unifiedType, $params['default']);
         }
 
         // insertpattern is allowed on primary keys noy autoincremented
@@ -252,8 +252,9 @@ class DaoProperty
             $jsonType = (string) $aAttributes['jsontype'];
         }
         else {
-            $jsonType = 'natural';
+            $jsonType = 'raw';
         }
+
         if (isset($aAttributes['jsonobjectclass'])) {
             $jsonClass = (string) $aAttributes['jsonobjectclass'];
             if ($jsonClass != '') {
@@ -329,30 +330,30 @@ class DaoProperty
                     $jsonDecoder = $jsonClass.$jsonDecoder;
                 }
                 if ($matches[2] == '::') {
-                    $jsonDecoder = 'call_user_func(\'' . $jsonDecoder . '\',%FIELD%)';
+                    $jsonDecoder = 'call_user_func(\'' . $jsonDecoder . '\',%FIELDVALUE%)';
                 } else {
                     if ($decoderClass == $jsonClass) {
-                        $jsonDecoder = '%FIELD%->' . $matches[3] . '(%FIELD%)';
+                        $jsonDecoder = '%FIELD%->' . $matches[3] . '(%FIELDVALUE%)';
                     } else {
-                        $jsonDecoder = '\\Jelix\\Dao\\Json\\JsonUtilities::decodeToNewObjectUsingMethod(\'' . $decoderClass . '\', \'' . $matches[3] . '\', %FIELD%)';
+                        $jsonDecoder = '\\Jelix\\Dao\\Json\\JsonUtilities::decodeToNewObjectUsingMethod(\'' . $decoderClass . '\', \'' . $matches[3] . '\', %FIELDVALUE%)';
                     }
                 }
             } else {
                 // this is a simple function
-                $jsonDecoder = $jsonDecoder . '(%FIELD%)';
+                $jsonDecoder = $jsonDecoder . '(%FIELDVALUE%)';
             }
         } else {
             if ($jsonType == 'object') {
                 if ($jsonClass == '') {
-                    $jsonDecoder = 'json_decode(%FIELD%, false, 512, JSON_FORCE_OBJECT)';
+                    $jsonDecoder = 'json_decode(%FIELDVALUE%, false, 512, JSON_FORCE_OBJECT)';
                 }
                 else {
-                    $jsonDecoder = '\\Jelix\\Dao\\Json\\JsonUtilities::decodeToNewObject(\'' . $jsonClass . '\', %FIELD%)';
+                    $jsonDecoder = '\\Jelix\\Dao\\Json\\JsonUtilities::decodeToNewObject(\'' . $jsonClass . '\', %FIELDVALUE%)';
                 }
             } else if ($jsonType == 'array') {
-                $jsonDecoder = 'json_decode(%FIELD%, true)';
+                $jsonDecoder = 'json_decode(%FIELDVALUE%, true)';
             } else {
-                $jsonDecoder = 'json_decode(%FIELD%)';
+                $jsonDecoder = 'json_decode(%FIELDVALUE%)';
             }
         }
 

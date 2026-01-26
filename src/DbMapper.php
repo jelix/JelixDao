@@ -9,6 +9,7 @@
 namespace Jelix\Dao;
 
 use Jelix\Dao\Generator\Compiler;
+use Jelix\Database\ConnectionInterface;
 use Jelix\Database\Schema\Column;
 use Jelix\Database\Schema\Reference;
 use Jelix\Database\Schema\TableInterface;
@@ -23,20 +24,32 @@ class DbMapper
      */
     protected $context;
 
+    /**
+     * @var ConnectionInterface
+     */
+    protected $connector;
+
     protected $profile;
 
     /**
+     * Constructor.
      *
+     * As Context::getConnector() is deprecated, you must pass the connector as
+     * a second parameter.
+     *
+     * @param ContextInterface $context
+     * @param ConnectionInterface|null $connector
      */
-    public function __construct(ContextInterface $context)
+    public function __construct(ContextInterface $context, $connector = null)
     {
         $this->context = $context;
+        $this->connector = $connector ?: $context->getConnector();
     }
 
     /**
      * Create a table from a Dao file.
      *
-     * @param DaoFileInterface $daoFile    the selector of the DAO file
+     * @param DaoFileInterface $daoFile  the selector of the DAO file
      *
      * @return TableInterface
      */
@@ -44,7 +57,7 @@ class DbMapper
     {
         $parser = $this->getParser($daoFile);
 
-        $schema = $this->context->getConnector()->schema();
+        $schema = $this->connector->schema();
 
         $tables = $parser->getTables();
         $properties = $parser->getProperties();
@@ -93,7 +106,7 @@ class DbMapper
     public function insertDaoData(DaoFileInterface $daoFile, $properties, $data, $option)
     {
         $parser = $this->getParser($daoFile);
-        $tools = $this->context->getDbTools();
+        $tools = $this->connector->tools();
         $allProperties = $parser->getProperties();
         $tables = $parser->getTables();
         $table =  $tables[$parser->getPrimaryTable()];

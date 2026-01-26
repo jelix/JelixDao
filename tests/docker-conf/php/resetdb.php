@@ -34,7 +34,8 @@ while($tryAgain) {
         metadata4 jsonb default null,
         metadata5 jsonb default null,
         metadata6 jsonb default null,
-        metadata7 jsonb default null
+        metadata7 jsonb default null,
+        metadata8 jsonb default null
     )");
 
     pg_query($cnx, "CREATE TABLE products_tags (
@@ -136,7 +137,8 @@ while ($tryAgain) {
 `metadata4` JSON default NULL,
 `metadata5` JSON default NULL,
 `metadata6` JSON default NULL,
-`metadata7` JSON default NULL
+`metadata7` JSON default NULL,
+`metadata8` JSON default NULL
 ) ENGINE = InnoDB");
 
     $cnx->query("CREATE TABLE `products_tags` (
@@ -212,7 +214,8 @@ $sqlite->exec("CREATE TABLE products (
     metadata4 TEXT DEFAULT NULL,
     metadata5 TEXT DEFAULT NULL,
     metadata6 TEXT DEFAULT NULL,
-    metadata7 TEXT DEFAULT NULL
+    metadata7 TEXT DEFAULT NULL,
+    metadata8 TEXT DEFAULT NULL
 )");
 
 $sqlite->exec("CREATE TABLE labels_test (

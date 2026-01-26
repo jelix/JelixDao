@@ -5,6 +5,7 @@ require(__DIR__.'/assertComplexTrait.php');
 require(__DIR__.'/UnitTestCaseDb.php');
 require(__DIR__.'/lib/DaoFileForTest.php');
 require(__DIR__.'/lib/RecordClassForTest.php');
+require(__DIR__.'/lib/CustomClassForTest.php');
 require(__DIR__.'/lib/ContextForTest.php');
 require(__DIR__.'/lib/HookForTest.php');
 require(__DIR__.'/lib/CustomPostBlogFactory.php');

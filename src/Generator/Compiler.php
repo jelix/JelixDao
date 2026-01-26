@@ -1,7 +1,7 @@
 <?php
 /**
  * @author      Laurent Jouanneau
- * @copyright   2005-2021 Laurent Jouanneau
+ * @copyright   2005-2026 Laurent Jouanneau
  *
  * @see        https://jelix.org
  * @licence  http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
@@ -10,7 +10,10 @@
 namespace Jelix\Dao\Generator;
 
 use Jelix\Dao\ContextInterface;
+use Jelix\Dao\ContextInterface2;
 use Jelix\Dao\DaoFileInterface;
+use Jelix\Dao\DaoFileInterface2;
+use Jelix\Dao\DeprecatedContextProxy;
 use Jelix\Dao\Parser\XMLDaoParser;
 use Jelix\FileUtilities\File;
 
@@ -20,7 +23,6 @@ use Jelix\FileUtilities\File;
 class Compiler
 {
     const XML_NAMESPACE = 'http://jelix.org/ns/dao/1.0';
-
 
     /**
      * compile the content of the given DAO XML file to a PHP class
@@ -32,36 +34,47 @@ class Compiler
      */
     public function compile(DaoFileInterface $daoFile, ContextInterface $context)
     {
+        if (! ($context instanceof ContextInterface2)) {
+            $context = new DeprecatedContextProxy($context);
+        }
+
         $parser = $this->parse($daoFile, $context);
 
-        $sqlTools = $context->getDbTools();
-        $dbType = ucfirst($sqlTools->getConnection()->getSQLType());
+        $dbType = ucfirst($context->getSQLType());
         $class = '\\Jelix\\Dao\\Generator\\Adapter\\'.$dbType.'DaoGenerator';
         if (!class_exists($class)) {
             throw new Exception('Dao adapter for "'.$dbType.'" is not found', 505);
         }
         /** @var AbstractDaoGenerator $generator */
-        $generator = new $class($sqlTools, $parser);
+        $generator = new $class($context->getSqlSyntaxHelpers(), $parser);
 
         // generation of PHP classes corresponding to the DAO definition
-        $compiled = '<?php ';
+        $compiledHeader = '<?php '."\n";
         if ($context->shouldCheckCompiledClassCache()) {
-            $compiled .= "\nif (\n";
-            $compiled .= "\n filemtime('".$daoFile->getPath().'\') > '.filemtime($daoFile->getPath());
+            $compiledHeader .= "if (\n";
+            $compiledHeader .= "\n filemtime('".$daoFile->getPath().'\') > '.filemtime($daoFile->getPath());
             $importedDao = $parser->getImportedDao();
             if ($importedDao) {
                 foreach ($importedDao as $selimpdao) {
                     $path = $selimpdao->getPath();
-                    $compiled .= "\n|| filemtime('".$path.'\') > '.filemtime($path);
+                    $compiledHeader .= "\n|| filemtime('".$path.'\') > '.filemtime($path);
                 }
             }
-            $compiled .= "){ return false;\n}\nelse {\n";
-            $compiled .= $generator->buildClasses()."\n return true; }";
+            $compiledHeader .= "){ return false;\n}\nelse {\n";
+            $compiledFooter ="\n return true; }";
         } else {
-            $compiled .= $generator->buildClasses()."\n return true;";
+            $compiledFooter = "\n return true;";
         }
 
-        File::write($daoFile->getCompiledFilePath(), $compiled);
+        list($factorySources, $recordSources) = $generator->buildClasses();
+
+        if ($daoFile instanceof DaoFileInterface2) {
+            File::write($daoFile->getCompiledFactoryFilePath(), $compiledHeader.$factorySources.$compiledFooter);
+            File::write($daoFile->getCompiledRecordFilePath(), $compiledHeader.$recordSources.$compiledFooter);
+        }
+        else {
+            File::write($daoFile->getCompiledFilePath(), $compiledHeader.$recordSources."\n".$factorySources.$compiledFooter);
+        }
 
         return true;
     }
@@ -75,6 +88,10 @@ class Compiler
      */
     public function parse(DaoFileInterface $daoFile, ContextInterface $context)
     {
+        if (! ($context instanceof ContextInterface2)) {
+            $context = new DeprecatedContextProxy($context);
+        }
+
         // load the XML file
         $doc = new \DOMDocument();
 

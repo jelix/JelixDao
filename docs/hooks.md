@@ -1,15 +1,15 @@
 # Hooks
 
-JelixDao provides a mecanism to do things automatically when a factory does an 
+JelixDao provides a mechanism to do things automatically when a factory does an 
 insert/update/delete.
 
 In the hook, you can check some domain logics, send an event using the event system of 
 the application, or do any other processing.
 
-A hook is a class, implementing the `\Jelix\Dao\DaoHookInterface`. So it has some methods
-like `onInsert()`, `onUpdate`, etc. You do want you want into these methods.
+A hook is a class implementing the `\Jelix\Dao\DaoHookInterface`. So it has some methods
+like `onInsert()`, `onUpdate`, etc. You do what you want into these methods.
 
-Here an example:
+Here is an example:
 
 ```php
 
@@ -53,8 +53,8 @@ class MyHooks implements \Jelix\Dao\DaoHookInterface
 
 ```
 
-All methods accept the dao name for which a record is inserted/deleted/updated. An other
-common parameters is the `$when` parameter. The methods are called before the SQL query, 
+All methods accept the dao name for which a record is inserted/deleted/updated. Another
+common parameter is the `$when` parameter. The methods are called before the SQL query 
 and after the SQL query. This `$when` parameter indicates the moment the method is called. Its
 value can be `\Jelix\Dao\DaoHookInterface::EVENT_BEFORE` or `\Jelix\Dao\DaoHookInterface::EVENT_AFTER`.
 
