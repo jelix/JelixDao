@@ -21,12 +21,6 @@ class DaoSimpleFile implements DaoFileInterface
 
     protected $sqlType;
 
-    /**
-     * @var string
-     * @deprecated
-     */
-    protected $suffix;
-
     protected $factoryClass = '';
 
     protected $recordClass = '';
@@ -44,7 +38,6 @@ class DaoSimpleFile implements DaoFileInterface
         $this->daoFile = $daoXmlFile;
         $this->tempPath = $tempPath;
         $this->sqlType = ucfirst($sqlType);
-        $this->suffix = $suffix;
         $prefix = ucfirst(str_replace(array('/', $suffix), '', $daoName)).$this->sqlType;
         $this->factoryClass = $prefix.'Factory';
         $this->recordClass = $prefix.'Record';

@@ -14,6 +14,8 @@ Changelog
 - Methods of `DaoFileInterface2` have been moved to `DaoFileInterface`. `DaoFileInterface2` is deprecated.
   So all classes implementing `DaoFileInterface` should implement these methods.
 - Deprecated method `DaoFileInterface::getCompiledFilePath()` has been removed
+- Removed deprecated property `DaoSimpleFile::$suffix` 
+
 
 1.2.0-pre
 ---------
