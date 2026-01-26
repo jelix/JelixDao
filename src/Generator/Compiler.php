@@ -49,7 +49,7 @@ class Compiler
         $generator = new $class($context->getSqlSyntaxHelpers(), $parser);
 
         // generation of PHP classes corresponding to the DAO definition
-        $compiledHeader = '<?php '."\n";
+        $compiledHeader = "\n";
         if ($context->shouldCheckCompiledClassCache()) {
             $compiledHeader .= "if (\n";
             $compiledHeader .= "\n filemtime('".$daoFile->getPath().'\') > '.filemtime($daoFile->getPath());
@@ -66,14 +66,22 @@ class Compiler
             $compiledFooter = "\n return true;";
         }
 
-        list($factorySources, $recordSources) = $generator->buildClasses();
+        list($factoryNamespace, $factorySources, $recordNamespace, $recordSources) = $generator->buildClasses();
 
         if ($daoFile instanceof DaoFileInterface2) {
-            File::write($daoFile->getCompiledFactoryFilePath(), $compiledHeader.$factorySources.$compiledFooter);
-            File::write($daoFile->getCompiledRecordFilePath(), $compiledHeader.$recordSources.$compiledFooter);
+            $factoryHeader = '';
+            if ($factoryNamespace) {
+                $factoryHeader = "namespace $factoryNamespace;\n";
+            }
+            File::write($daoFile->getCompiledFactoryFilePath(), '<?php '.$factoryHeader. $compiledHeader.$factorySources.$compiledFooter);
+            $recordHeader = '';
+            if ($recordNamespace) {
+                $recordHeader = "namespace $recordNamespace;\n";
+            }
+            File::write($daoFile->getCompiledRecordFilePath(), '<?php '.$recordHeader.$compiledHeader.$recordSources.$compiledFooter);
         }
         else {
-            File::write($daoFile->getCompiledFilePath(), $compiledHeader.$recordSources."\n".$factorySources.$compiledFooter);
+            File::write($daoFile->getCompiledFilePath(), '<?php '.$compiledHeader.$recordSources."\n".$factorySources.$compiledFooter);
         }
 
         return true;
