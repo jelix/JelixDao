@@ -33,6 +33,11 @@ interface DaoGeneratorInterface
 
     /**
      * build all classes.
+     * @return array contains following items
+     *  - namespace of the factory class (it may be empty)
+     *  - source code of the factory class
+     *  - namespace of the record class (it may be empty)
+     *  - source code of the record class
      */
     public function buildClasses();
 }

@@ -79,6 +79,18 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         $this->syntax = $syntax;
     }
 
+    protected function explodeClassName($className)
+    {
+        $pos = strrpos($className, '\\');
+        if ($pos === false) {
+            return ['', $className];
+        }
+        return [
+            substr($className, 0, $pos),
+            substr($className, $pos+1),
+        ];
+    }
+
     /**
      * Build all classes.
      *
@@ -108,8 +120,8 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         }
 
         $daoFile = $this->_dataParser->getDaoFile();
-        $daoFactoryClass = $daoFile->getCompiledFactoryClass();
-        $daoRecordClass = $daoFile->getCompiledRecordClass();
+        list($daoFactoryNamespace, $daoFactoryClass) = $this->explodeClassName($daoFile->getCompiledFactoryClass());
+        list($daoRecordNamespace, $daoRecordClass) = $this->explodeClassName($daoFile->getCompiledRecordClass());
 
         //-----------------------
         // Build the record class
@@ -184,7 +196,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         $src[] = '   protected $_selectClause=\''.$this->sqlSelectClause.'\';';
         $src[] = '   protected $_fromClause;';
         $src[] = '   protected $_whereClause=\''.$this->sqlWhereClause.'\';';
-        $src[] = '   protected $_DaoRecordClassName=\''.$daoRecordClass.'\';';
+        $src[] = '   protected $_DaoRecordClassName=\''.$daoRecordNamespace.'\\\\'.$daoRecordClass.'\';';
         $src[] = '   protected $_daoName = \''.$daoFile->getName().'\';';
 
         if ($this->syntax::trueValue != '1') {
@@ -248,7 +260,7 @@ class AbstractDaoGenerator implements DaoGeneratorInterface
         $src[] = '}'; //end of class
         $factoryClassSources = implode("\n", $src);
 
-        return [$factoryClassSources, $recordClassSources];
+        return [$daoFactoryNamespace, $factoryClassSources, $daoRecordNamespace, $recordClassSources];
     }
 
     /**
