@@ -2,7 +2,7 @@
 
 A lightweight object relation mapping based on the Database Access Object pattern.
 
-It uses [JelixDatabase](https://github.com/jelix/JelixDatabase/) as database connector.
+It uses [JelixDatabase](https://github.com/jelix/JelixDatabase/) as a database connector.
 
 ## installation
 
