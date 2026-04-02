@@ -109,7 +109,7 @@ to filter the results.
 ```php
 $a_name = "something";
 
-// create the jDaoConditions object
+// create the DaoConditions object
 $conditions = new \Jelix\Dao\DaoConditions();
 $conditions->addCondition('label', '=', $a_name);
 $conditions->addCondition('status', '=', 5);

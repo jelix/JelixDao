@@ -20,12 +20,6 @@ Changelog
 - **New class `CustomClassFile`** that is replacing `CustomRecordClassFile` (which is now deprecated)
 - Fix deprecation warning with PHP 8.4 and 8.5
 - Fix generator: better generated joins
-- Introduce compatibility with applications that are using jDao API of Jelix 1.8 
-  and lower: classes of JelixDao inherit from some empty classes or empty interfaces
-  having the name of old implementation, so objects can be passed to functions that
-  have parameters typed with these classes (`jDaoConditions`, `jDaoFactoryBase`, 
-  `jDaoRecordBase`, `jDaoXmlException`). This feature will be removed into the
-  next major version of JelixDao.
 
 Drop support of PHP 8.1 and lower versions.
 
