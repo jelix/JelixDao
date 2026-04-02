@@ -17,8 +17,8 @@
         "ext-dom": "*",
         "ext-iconv": "*",
         "psr/log": "^1.1.2",
-        "jelix/database": "1.x-dev",
-        "jelix/file-utilities": "^1.8.4"
+        "jelix/database": "^1.4.0",
+        "jelix/file-utilities": "^1.8.6"
 
     },
     "require-dev" : {
